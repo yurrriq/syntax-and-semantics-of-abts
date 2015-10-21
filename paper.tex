@@ -83,7 +83,8 @@
 }
 
 \newcommand\MV[1]{\textsc{#1}}
-\newcommand\App[3]{#1\left\{#2\right\}\left(#3\right)}
+\newcommand\MApp[3]{#1\left\{#2\right\}\left(#3\right)}
+\newcommand\App[2]{#1\left(#2\right)}
 \newcommand\Dom[1]{\left\vert #1\right\vert}
 \newcommand\Fresh[2]{\IMode{#1}\notin\IMode{\Dom{#2}}}
 
@@ -265,7 +266,7 @@ of abstract binding trees is inductively defined in three rules:
   %
   \infer[\textit{mvar}]{
     \IsAbt{\Omega}{\Upsilon}{\Gamma}{
-      \App{\MV{m}}{u_0,\dots,u_m}{M_0,\dots,M_n}
+      \MApp{\MV{m}}{u_0,\dots,u_m}{M_0,\dots,M_n}
     }{s}
   }{
     \begin{array}{l}
@@ -281,14 +282,13 @@ of abstract binding trees is inductively defined in three rules:
   %
   \infer[\textit{app}]{
     \IsAbt{\Omega}{\Upsilon}{\Gamma}{
-      \App{\vartheta}{u_0,\dots,u_m}{M_0,\dots,M_n}
+      \App{\vartheta}{M_0,\dots,M_n}
     }{s}
   }{
     \begin{array}{l}
       \IsOperator{\Dom{\Upsilon}}{\vartheta}{
-        \MkValence{p_0,\dots,p_m}{q_0,\dots,q_n}{s}
+        \MkArity{v_0,\dots,v_n}{s}
       }\\
-      \HypJ{\Lookup{\Upsilon}{u_i}{p_i}}{\Leq{i}{m}}\\
       \HypJ{
         \IsAbt{\Omega}{\Upsilon}{\Gamma}{M_i}{q_i}
       }{
