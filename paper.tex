@@ -49,7 +49,8 @@
 \newcommand\MkFam[3]{\MkSet{#1_{#2}}_{#2\in #3}}
 \newcommand\Member[2]{\IMode{#1}\in\IMode{#2}}
 
-\newcommand\MkValence[3]{#1\parallel #2\,.\, #3}
+\newcommand\MkValence[3]{#1;#2\,.\, #3}
+\newcommand\MkBTm[3]{#1;#2\,.\, #3}
 \newcommand\MkArity[2]{\left(#1\right) #2}
 \newcommand\IsArity[1]{\IMode{#1}\ \textit{arity}}
 \newcommand\IsValence[1]{\IMode{#1}\ \textit{valence}}
@@ -80,6 +81,13 @@
   \IMode{#2}\parallel%
   \IMode{#3}\vdash%
   \IMode{#4}:\OMode{#5}%
+}
+
+\newcommand\IsBTm[5]{%
+  \IMode{#1}\triangleright%
+  \IMode{#2}\parallel%
+  \IMode{#3}\vdash%
+  \IMode{#4}:\IMode{#5}%
 }
 
 \newcommand\MV[1]{\textsc{#1}}
@@ -177,14 +185,14 @@ extension of the calculus with assignables (references):
       \SortExp
     }
   }\\
-  \IsOperator{U,u}{\mathsf{get}\{u\}}{
+  \IsOperator{U,u}{\mathsf{get}[u]}{
     \MkArity{
       \cdot
     }{
       \SortExp
     }
   }\\
-  \IsOperator{U,u}{\mathsf{set}\{u\}}{
+  \IsOperator{U,u}{\mathsf{set}[u]}{
     \MkArity{
       \MkValence{\cdot}{\cdot}{\SortExp}
     }{
@@ -196,7 +204,7 @@ extension of the calculus with assignables (references):
 Declaring a new assignable consists in providing an initial value, and an
 expression with a free symbol (which shall represent the assignable in scope).
 Weakening can be seen as inducing a ``degeneracy map'' on operators, whereas a
-renaming $u\mapsto v$ will take $\mathsf{get}\{u\}$ to $\mathsf{get}\{v\}$.
+renaming $u\mapsto v$ will take $\mathsf{get}[u]$ to $\mathsf{get}[v]$.
 
 \section{Contexts}
 
@@ -253,9 +261,9 @@ context $\Upsilon$ is a collection of bindings of sorts to symbols.
 Let the judgment $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{s}$ presuppose
 $\IsMetaCtx{\Omega}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and $\IsSort{s}$,
 meaning that $M$ is an abstract binding tree of sort $s$, with metavariables in
-$\Omega$, parameters in $\Upsilon$, and variables in $\Gamma$. Then, the syntax
-of abstract binding trees is inductively defined in three rules:
-
+$\Omega$, parameters in $\Upsilon$, and variables in $\Gamma$. Let the judgment
+$\IsBTm{\Omega}{\Upsilon}{\Gamma}{E}{v}$ presuppose $\IsValence{v}$.  Then, the
+syntax of abstract binding trees is inductively defined in four rules:
 
 \begin{gather*}
   \infer[\textit{var}]{
@@ -282,19 +290,32 @@ of abstract binding trees is inductively defined in three rules:
   %
   \infer[\textit{app}]{
     \IsAbt{\Omega}{\Upsilon}{\Gamma}{
-      \App{\vartheta}{M_0,\dots,M_n}
+      \App{\vartheta}{E_0,\dots,E_n}
     }{s}
   }{
     \begin{array}{l}
       \IsOperator{\Dom{\Upsilon}}{\vartheta}{
-        \MkArity{v_0,\dots,v_n}{s}
+        v_1,\dots,v_n
       }\\
       \HypJ{
-        \IsAbt{\Omega}{\Upsilon}{\Gamma}{M_i}{q_i}
+        \IsBTm{\Omega}{\Upsilon}{\Gamma}{E_i}{q_i}
       }{
         \Leq{i}{n}
       }
     \end{array}
+  }\\[6pt]
+  \infer[\textit{abs}]{
+    \IsBTm{\Omega}{\Upsilon}{\Gamma}{
+      (\MkBTm{\vec{u}}{\vec{x}}{E})
+    }{
+      (\MkValence{\vec{p}}{\vec{q}}{s})
+    }
+  }{
+    \IsAbt{\Omega}{\Upsilon, \vec{u}:\vec{p}}{\Gamma,\vec{x}:{\vec{q}}}{
+      E
+    }{
+      s
+    }
   }
 \end{gather*}
 
