@@ -76,6 +76,8 @@
 
 \newcommand\Lookup[3]{\IMode{#1}\ni\IMode{#2}:\OMode{#3}}
 
+\newcommand\Grothendieck[1]{\oint #1}
+
 \newcommand\IsAbt[5]{%
   \IMode{#1}\triangleright%
   \IMode{#2}\parallel%
@@ -140,7 +142,7 @@ Let $\Symbols$ be an infinite set of symbols; let $\Finsets$ be the free
 cocartesian category over $\Symbols\times\Sorts$. Then, fix a covariant
 presheaf of operators $\Operators:\Finsets\times\Arities\to\Sets$ such that the
 arrows in $\Finsets$ lift to renamings of operators' parameters; via the
-Grothendieck construction, we can also consider the set $\int\Operators$ of
+Grothendieck construction, we can also consider the set $\Grothendieck\Operators$ of
 operators $(\Upsilon,\varrho,\vartheta)$ for
 $\Member{\vartheta}{\Operators(\Upsilon,\varrho)}$.
 
@@ -158,7 +160,7 @@ $\Operators$.
 
 \paragraph{Examples}
 
-Operators are defined by specifying the fibres of $\int\Operators$ in which
+Operators are defined by specifying the fibres of $\Grothendieck\Operators$ in which
 they reside. For instance, consider the lambda calculus with a single sort,
 $\SortExp$; we give its signature by asserting the following about its
 operators:
