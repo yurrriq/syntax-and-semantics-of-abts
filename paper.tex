@@ -18,7 +18,7 @@
 
 % fonts
 % \setromanfont[Mapping=tex-text, Ligatures=Rare, Numbers=OldStyle]{Linux Libertine O}
-\setmathfont{Asana Math}
+\setmathfont{Asana-Math.otf}
 
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{prop}[thm]{Proposition}
@@ -163,7 +163,7 @@ $\SortExp$; we give its signature by asserting the following about its
 operators:
 \begin{gather*}
   \IsOperator{U}{\lambda}{
-    \MkArity{\MkValence{\cdot}{\SortExp}{\SortExp}}{\SortExp})
+    \MkArity{\MkValence{\cdot}{\SortExp}{\SortExp}}{\SortExp}
   }\\
   \IsOperator{U}{\mathsf{ap}}{
     \MkArity{
