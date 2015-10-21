@@ -67,7 +67,7 @@
 \newcommand\ArityOf{\pi_\mathfrak{a}}
 \newcommand\Sets{\mathbf{Set}}
 
-\newcommand\IsOperator[3]{\IMode{#1}\vdash \IMode{#2} : \IMode{#3}}
+\newcommand\IsOperator[3]{\IMode{#1}\vdash \IMode{#2} : \OMode{#3}}
 
 \newcommand\IsMetaCtx[1]{\IMode{#1}\ \textit{mctx}}
 \newcommand\IsVarCtx[1]{\IMode{#1}\ \textit{vctx}}
@@ -127,7 +127,7 @@ and the set of arities $\Arities$.
 \]
 
 
-Let $\Symbols$ be the infinite set of symbols; let $\Finsets$ be the free
+Let $\Symbols$ be an infinite set of symbols; let $\Finsets$ be the free
 cocartesian category over $\Symbols$. Then, fix a covariant presheaf of operators
 $\Operators:\Finsets\times\Arities\to\Sets$ such that the arrows in $\Finsets$
 lift to renamings of operators' parameters; via the Grothendieck construction,
@@ -142,16 +142,16 @@ $(U,\varrho,\vartheta)$ for $\Member{\vartheta}{\Operators(U,\varrho)}$.
   }
 \]
 
-The judgment $\IsOperator{U}{\vartheta}{\varrho}$ supports the structural
-principles of weakening and exchange, because of the functoriality of
+The judgment $\IsOperator{U}{\vartheta}{\varrho}$ enjoys the structural
+properties of weakening and exchange via the functoriality of
 $\Operators$.
 
 \paragraph{Examples}
 
 Operators are defined by specifying the fibres of $\int\Operators$ in which
 they reside. For instance, consider the lambda calculus with a single sort,
-$\SortExp$, about whose operators we may assert the following:
-
+$\SortExp$; we give its signature by asserting the following about its
+operators:
 \begin{gather*}
   \IsOperator{U}{\lambda}{
     \MkArity{\MkValence{\cdot}{\SortExp}{\SortExp}}{\SortExp})
@@ -164,8 +164,8 @@ $\SortExp$, about whose operators we may assert the following:
   }
 \end{gather*}
 
-However, consider the extension of the calculus with assignables. Then, we
-shall have the following:
+So far, we have made no use of symbols and parameters; however, consider the
+extension of the calculus with assignables (references):
 
 \begin{gather*}
   \IsOperator{U}{\mathsf{decl}}{
@@ -192,16 +192,18 @@ shall have the following:
   }
 \end{gather*}
 
+Declaring a new assignable consists in providing an initial value, and an
+expression with a free symbol (which shall represent the assignable in scope).
 Weakening can be seen as inducing a ``degeneracy map'' on operators, whereas a
 renaming $u\mapsto v$ will take $\mathsf{get}\{u\}$ to $\mathsf{get}\{v\}$.
 
 \section{Contexts}
 
-In general, we will have three kinds of context: metacontexts, variable
-contexts, and parameter contexts. A metacontext $\Omega$ consists of bindings
-of valences to metavariables; a variable context $\Gamma$ is a collection of
-bindings of sorts to variables, and a parameter context $\Upsilon$ is a
-collection of bindings of sorts to symbols.
+In general, we will have three kinds of context: metavariable contexts,
+variable contexts, and symbol (parameter) contexts. A metavariable context
+$\Omega$ consists of bindings of valences to metavariables; a variable context
+$\Gamma$ is a collection of bindings of sorts to variables, and a parameter
+context $\Upsilon$ is a collection of bindings of sorts to symbols.
 
 \begin{gather*}
   \infer{
@@ -250,7 +252,9 @@ collection of bindings of sorts to symbols.
 Let the judgment $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{s}$ presuppose
 $\IsMetaCtx{\Omega}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and $\IsSort{s}$,
 meaning that $M$ is an abstract binding tree of sort $s$, with metavariables in
-$\Omega$, parameters in $\Upsilon$, and variables in $\Gamma$.
+$\Omega$, parameters in $\Upsilon$, and variables in $\Gamma$. Then, the syntax
+of abstract binding trees is inductively defined in three rules:
+
 
 \begin{gather*}
   \infer[\textit{var}]{
