@@ -1,0 +1,297 @@
+\documentclass[11pt]{article}
+
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{amsmath, amsthm, stmaryrd, scalerel}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{fontspec}
+\usepackage{geometry}
+\usepackage{proof}
+\usepackage{supertabular}
+\usepackage{unicode-math}
+\usepackage{xltxtra}
+\usepackage{xunicode}
+
+\usepackage{setspace,url,hyperref}
+
+\definecolor{dark-gray}{gray}{0.20}
+
+% fonts
+% \setromanfont[Mapping=tex-text, Ligatures=Rare, Numbers=OldStyle]{Linux Libertine O}
+\setmathfont{Asana Math}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[thm]{Definition}
+\newtheorem{example}[thm]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[thm]{Remark}
+\numberwithin{equation}{section}
+
+\def\IModeColorName{MidnightBlue}
+\def\OModeColorName{Maroon}
+\newcommand\IMode[1]{{\color{\IModeColorName}{#1}}}
+\newcommand\OMode[1]{{\color{\OModeColorName}{#1}}}
+\newcommand\Quote[1]{{\color{Gray}{«}}#1{\color{Gray}{»}}}
+
+\newcommand\HypJ[2]{#1\ \ (#2)}
+\newcommand\GenJ[2]{\vert_{\IMode{#1}}\; #2}
+\newcommand\JJ{J}
+\newcommand\RSet{\mathfrak{R}}
+\newcommand\JSet{\mathfrak{J}}
+
+\newcommand\IsTac[1]{\IMode{#1}\ \textit{tactic}}
+
+\newcommand\MkSet[1]{\left\{#1\right\}}
+\newcommand\MkFam[3]{\MkSet{#1_{#2}}_{#2\in #3}}
+\newcommand\Member[2]{\IMode{#1}\in\IMode{#2}}
+
+\newcommand\MkValence[3]{#1\parallel #2\,.\, #3}
+\newcommand\MkArity[2]{\left(#1\right) #2}
+\newcommand\IsArity[1]{\IMode{#1}\ \textit{arity}}
+\newcommand\IsValence[1]{\IMode{#1}\ \textit{valence}}
+\newcommand\IsSort[1]{\IMode{#1}\ \textit{sort}}
+\newcommand\Leq[2]{\IMode{#1}\leq\IMode{#2}}
+
+\newcommand\Symbols{\mathbb{I}}
+\newcommand\Finsets{\mathbb{F}}
+\newcommand\Sorts{\mathcal{S}}
+\newcommand\Valences{\mathcal{V}}
+\newcommand\Arities{\mathcal{A}}
+\newcommand\Operators{\mathcal{O}}
+
+\newcommand\ParamsOf{\pi_\mathfrak{p}}
+\newcommand\ArityOf{\pi_\mathfrak{a}}
+\newcommand\Sets{\mathbf{Set}}
+
+\newcommand\IsOperator[3]{\IMode{#1}\vdash \IMode{#2} : \IMode{#3}}
+
+\newcommand\IsMetaCtx[1]{\IMode{#1}\ \textit{mctx}}
+\newcommand\IsVarCtx[1]{\IMode{#1}\ \textit{vctx}}
+\newcommand\IsSymCtx[1]{\IMode{#1}\ \textit{sctx}}
+
+\newcommand\Lookup[3]{\IMode{#1}\ni\IMode{#2}:\OMode{#3}}
+
+\newcommand\IsAbt[5]{%
+  \IMode{#1}\triangleright%
+  \IMode{#2}\parallel%
+  \IMode{#3}\vdash%
+  \IMode{#4}:\OMode{#5}%
+}
+
+\newcommand\MV[1]{\textsc{#1}}
+\newcommand\App[3]{#1\left\{#2\right\}\left(#2;\; #3\right)}
+\newcommand\Dom[1]{\left\vert #1\right\vert}
+\newcommand\Fresh[2]{\IMode{#1}\notin\IMode{\Dom{#2}}}
+
+\newcommand\SortExp{\mathsf{exp}}
+
+\begin{document}
+
+\title{Abstract Binding Trees}
+\date{}
+\author{Jonathan Sterling}
+\maketitle
+
+\section{Preliminaries}
+
+Fix a set $\Sorts$ of \emph{sorts}. We will say $\IsSort{s}$ when
+$\Member{s}{S}$. A valence $\MkValence{\vec{p}}{\vec{q}}{s}$ specifies an
+expression of sort $s$ which binds symbols in $\vec{p}$ and variables in
+$\vec{q}$.
+
+\[
+  \infer{
+    \IsValence{\MkValence{p_0,\dots,p_m}{q_0,\dots,q_n}{s}}
+  }{
+    \IsSort{s} &
+    \HypJ{\IsSort{p_i}}{\Leq{i}{m}} &
+    \HypJ{\IsSort{q_i}}{\Leq{i}{n}} &
+  }
+\]
+
+An arity $\MkArity{\vec{v}}{s}$ specifies an operator of sort $s$ with
+arguments of valences $\vec{v}$. We will call the set of valences $\Valences$,
+and the set of arities $\Arities$.
+
+\[
+  \infer{
+    \IsArity{\MkArity{v_0,...,v_n}{s}}
+  }{
+    \IsSort{s} &
+    \HypJ{\IsValence{v_i}}{\Leq{i}{n}}
+  }
+\]
+
+
+Let $\Symbols$ be the infinite set of symbols; let $\Finsets$ be the free
+cocartesian category over $\Symbols$. Then, fix a covariant presheaf of operators
+$\Operators:\Finsets\times\Arities\to\Sets$ such that the arrows in $\Finsets$
+lift to renamings of operators' parameters; via the Grothendieck construction,
+we can also consider the set $\int\Operators$ of operators
+$(U,\varrho,\vartheta)$ for $\Member{\vartheta}{\Operators(U,\varrho)}$.
+
+\[
+  \infer{
+    \IsOperator{U}{\vartheta}{\varrho}
+  }{
+    \Member{\vartheta}{\Operators(U,\varrho)}
+  }
+\]
+
+The judgment $\IsOperator{U}{\vartheta}{\varrho}$ supports the structural
+principles of weakening and exchange, because of the functoriality of
+$\Operators$.
+
+\paragraph{Examples}
+
+Operators are defined by specifying the fibres of $\int\Operators$ in which
+they reside. For instance, consider the lambda calculus with a single sort,
+$\SortExp$, about whose operators we may assert the following:
+
+\begin{gather*}
+  \IsOperator{U}{\lambda}{
+    \MkArity{\MkValence{\cdot}{\SortExp}{\SortExp}}{\SortExp})
+  }\\
+  \IsOperator{U}{\mathsf{ap}}{
+    \MkArity{
+      \MkValence{\cdot}{\cdot}{\SortExp},
+      \MkValence{\cdot}{\cdot}{\SortExp}
+    }{\SortExp}
+  }
+\end{gather*}
+
+However, consider the extension of the calculus with assignables. Then, we
+shall have the following:
+
+\begin{gather*}
+  \IsOperator{U}{\mathsf{decl}}{
+    \MkArity{
+      \MkValence{\cdot}{\cdot}{\SortExp},
+      \MkValence{\SortExp}{\cdot}{\SortExp}
+    }{
+      \SortExp
+    }
+  }\\
+  \IsOperator{U,u}{\mathsf{get}\{u\}}{
+    \MkArity{
+      \cdot
+    }{
+      \SortExp
+    }
+  }\\
+  \IsOperator{U,u}{\mathsf{set}\{u\}}{
+    \MkArity{
+      \MkValence{\cdot}{\cdot}{\SortExp}
+    }{
+      \SortExp
+    }
+  }
+\end{gather*}
+
+Weakening can be seen as inducing a ``degeneracy map'' on operators, whereas a
+renaming $u\mapsto v$ will take $\mathsf{get}\{u\}$ to $\mathsf{get}\{v\}$.
+
+\section{Contexts}
+
+In general, we will have three kinds of context: metacontexts, variable
+contexts, and parameter contexts. A metacontext $\Omega$ consists of bindings
+of valences to metavariables; a variable context $\Gamma$ is a collection of
+bindings of sorts to variables, and a parameter context $\Upsilon$ is a
+collection of bindings of sorts to symbols.
+
+\begin{gather*}
+  \infer{
+    \IsMetaCtx{\cdot}
+  }{
+  }\qquad
+  \infer{
+    \IsMetaCtx{\Omega,\MV{m}:v}
+  }{
+    \IsMetaCtx{\Omega} &
+    \IsValence{v} &
+    \Fresh{\MV{m}}{\Omega}
+  }
+\end{gather*}
+
+\begin{gather*}
+  \infer{
+    \IsVarCtx{\cdot}
+  }{
+  }\qquad
+  \infer{
+    \IsVarCtx{\Gamma,x:s}
+  }{
+    \IsVarCtx{\Gamma} &
+    \IsSort{s} &
+    \Fresh{x}{\Gamma}
+  }
+\end{gather*}
+
+\begin{gather*}
+  \infer{
+    \IsSymCtx{\cdot}
+  }{
+  }\qquad
+  \infer{
+    \IsSymCtx{\Upsilon,u:s}
+  }{
+    \IsVarCtx{\Upsilon} &
+    \IsSort{s} &
+    \Fresh{u}{\Upsilon}
+  }
+\end{gather*}
+
+\section{Abstract Binding Trees}
+
+Let the judgment $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{s}$ presuppose
+$\IsMetaCtx{\Omega}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and $\IsSort{s}$,
+meaning that $M$ is an abstract binding tree of sort $s$, with metavariables in
+$\Omega$, parameters in $\Upsilon$, and variables in $\Gamma$.
+
+\begin{gather*}
+  \infer[\textit{var}]{
+    \IsAbt{\Omega}{\Upsilon}{\Gamma}{x}{s}
+  }{
+    \Lookup{\Gamma}{x}{s}
+  }\\[6pt]
+  %
+  \infer[\textit{mvar}]{
+    \IsAbt{\Omega}{\Upsilon}{\Gamma}{
+      \App{\MV{m}}{u_0,\dots,u_m}{M_0,\dots,M_n}
+    }{s}
+  }{
+    \begin{array}{l}
+      \Lookup{\Omega}{\MV{m}}{\MkValence{p_0,\dots,p_m}{q_0,\dots,q_n}{s}}\\
+      \HypJ{\Lookup{\Upsilon}{u_i}{p_i}}{\Leq{i}{m}}\\
+      \HypJ{
+        \IsAbt{\Omega}{\Upsilon}{\Gamma}{M_i}{q_i}
+      }{
+        \Leq{i}{n}
+      }
+    \end{array}
+  }\\[6pt]
+  %
+  \infer[\textit{app}]{
+    \IsAbt{\Omega}{\Upsilon}{\Gamma}{
+      \App{\vartheta}{u_0,\dots,u_m}{M_0,\dots,M_n}
+    }{s}
+  }{
+    \begin{array}{l}
+      \IsOperator{\Dom{\Upsilon}}{\vartheta}{
+        \MkValence{p_0,\dots,p_m}{q_0,\dots,q_n}{s}
+      }\\
+      \HypJ{\Lookup{\Upsilon}{u_i}{p_i}}{\Leq{i}{m}}\\
+      \HypJ{
+        \IsAbt{\Omega}{\Upsilon}{\Gamma}{M_i}{q_i}
+      }{
+        \Leq{i}{n}
+      }
+    \end{array}
+  }
+\end{gather*}
+
+\end{document}
