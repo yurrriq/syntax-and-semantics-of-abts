@@ -137,21 +137,22 @@ and the set of arities $\Arities$.
 
 
 Let $\Symbols$ be an infinite set of symbols; let $\Finsets$ be the free
-cocartesian category over $\Symbols$. Then, fix a covariant presheaf of operators
-$\Operators:\Finsets\times\Arities\to\Sets$ such that the arrows in $\Finsets$
-lift to renamings of operators' parameters; via the Grothendieck construction,
-we can also consider the set $\int\Operators$ of operators
-$(U,\varrho,\vartheta)$ for $\Member{\vartheta}{\Operators(U,\varrho)}$.
+cocartesian category over $\Symbols\times\Sorts$. Then, fix a covariant
+presheaf of operators $\Operators:\Finsets\times\Arities\to\Sets$ such that the
+arrows in $\Finsets$ lift to renamings of operators' parameters; via the
+Grothendieck construction, we can also consider the set $\int\Operators$ of
+operators $(\Upsilon,\varrho,\vartheta)$ for
+$\Member{\vartheta}{\Operators(\Upsilon,\varrho)}$.
 
 \[
   \infer{
-    \IsOperator{U}{\vartheta}{\varrho}
+    \IsOperator{\Upsilon}{\vartheta}{\varrho}
   }{
-    \Member{\vartheta}{\Operators(U,\varrho)}
+    \Member{\vartheta}{\Operators(\Upsilon,\varrho)}
   }
 \]
 
-The judgment $\IsOperator{U}{\vartheta}{\varrho}$ enjoys the structural
+The judgment $\IsOperator{\Upsilon}{\vartheta}{\varrho}$ enjoys the structural
 properties of weakening and exchange via the functoriality of
 $\Operators$.
 
@@ -162,10 +163,10 @@ they reside. For instance, consider the lambda calculus with a single sort,
 $\SortExp$; we give its signature by asserting the following about its
 operators:
 \begin{gather*}
-  \IsOperator{U}{\lambda}{
+  \IsOperator{\Upsilon}{\lambda}{
     \MkArity{\MkValence{\cdot}{\SortExp}{\SortExp}}{\SortExp}
   }\\
-  \IsOperator{U}{\mathsf{ap}}{
+  \IsOperator{\Upsilon}{\mathsf{ap}}{
     \MkArity{
       \MkValence{\cdot}{\cdot}{\SortExp},
       \MkValence{\cdot}{\cdot}{\SortExp}
@@ -177,7 +178,7 @@ So far, we have made no use of symbols and parameters; however, consider the
 extension of the calculus with assignables (references):
 
 \begin{gather*}
-  \IsOperator{U}{\mathsf{decl}}{
+  \IsOperator{\Upsilon}{\mathsf{decl}}{
     \MkArity{
       \MkValence{\cdot}{\cdot}{\SortExp},
       \MkValence{\SortExp}{\cdot}{\SortExp}
@@ -185,14 +186,14 @@ extension of the calculus with assignables (references):
       \SortExp
     }
   }\\
-  \IsOperator{U,u}{\mathsf{get}[u]}{
+  \IsOperator{\Upsilon,u:\SortExp}{\mathsf{get}[u]}{
     \MkArity{
       \cdot
     }{
       \SortExp
     }
   }\\
-  \IsOperator{U,u}{\mathsf{set}[u]}{
+  \IsOperator{\Upsilon,u:\SortExp}{\mathsf{set}[u]}{
     \MkArity{
       \MkValence{\cdot}{\cdot}{\SortExp}
     }{
@@ -294,7 +295,7 @@ syntax of abstract binding trees is inductively defined in four rules:
     }{s}
   }{
     \begin{array}{l}
-      \IsOperator{\Dom{\Upsilon}}{\vartheta}{
+      \IsOperator{\Upsilon}{\vartheta}{
         v_1,\dots,v_n
       }\\
       \HypJ{
@@ -318,9 +319,5 @@ syntax of abstract binding trees is inductively defined in four rules:
     }
   }
 \end{gather*}
-
-%% TODO: Implement renaming for \Upsilon (is this needed, or obvious?)
-%% TODO: Implement metavariable substitution (by an abt)
-%% TODO: Implement variable substitution (by a bound term)
 
 \end{document}
