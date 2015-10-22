@@ -1,7 +1,7 @@
 \documentclass[11pt]{article}
 
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
-\usepackage{amsmath, amsthm, stmaryrd, scalerel}
+\usepackage{amsmath, amsthm, stmaryrd, scalerel, amssymb}
 \usepackage{mathtools}
 \usepackage{graphicx}
 \usepackage{fontspec}
@@ -49,8 +49,8 @@
 \newcommand\MkFam[3]{\MkSet{#1_{#2}}_{#2\in #3}}
 \newcommand\Member[2]{\IMode{#1}\in\IMode{#2}}
 
-\newcommand\MkValence[3]{\left\{#1\right\}\left[#2\right]\,.\, #3}
-\newcommand\MkBTm[3]{\left\{#1\right\}\left[#2\right]\,.\, #3}
+\newcommand\MkValence[3]{\left\{#1\right\}\left[#2\right].\, #3}
+\newcommand\MkBTm[3]{\left\{#1\right\}\left[#2\right].\, #3}
 \newcommand\MkArity[2]{\left(#1\right) #2}
 \newcommand\IsArity[1]{\IMode{#1}\ \textit{arity}}
 \newcommand\IsValence[1]{\IMode{#1}\ \textit{valence}}
@@ -96,9 +96,20 @@
 \newcommand\MApp[3]{#1\left\{#2\right\}\left(#3\right)}
 \newcommand\App[2]{#1\left(#2\right)}
 \newcommand\Dom[1]{\left\vert #1\right\vert}
-\newcommand\Fresh[2]{\IMode{#1}\notin\IMode{\Dom{#2}}}
+\newcommand\FV[1]{\mathbf{FV}\left(#1\right)}
+\newcommand\NotIn[2]{\IMode{#1}\notin\IMode{#2}}
+\newcommand\NotSubset[2]{\IMode{#1}\not\subst\IMode{#2}}
 
 \newcommand\SortExp{\mathsf{exp}}
+
+\newcommand\SubstIs[4]{%
+  \left[\IMode{#1} / \IMode{#2}\right]\IMode{#3}%
+  \leadsto\OMode{#4}%
+}
+
+\newcommand\IsEq[2]{\IMode{#1} = \IMode{#2}}
+\newcommand\IsApart[2]{\IMode{#1} \mathrel{\#} \IMode{#2}}
+
 
 \begin{document}
 
@@ -227,7 +238,7 @@ context $\Upsilon$ is a collection of bindings of sorts to symbols.
   }{
     \IsMetaCtx{\Omega} &
     \IsValence{v} &
-    \Fresh{\MV{m}}{\Omega}
+    \NotIn{\MV{m}}{\Dom\Omega}
   }
 \end{gather*}
 
@@ -241,7 +252,7 @@ context $\Upsilon$ is a collection of bindings of sorts to symbols.
   }{
     \IsVarCtx{\Gamma} &
     \IsSort{s} &
-    \Fresh{x}{\Gamma}
+    \NotIn{x}{\Dom\Gamma}
   }
 \end{gather*}
 
@@ -255,7 +266,7 @@ context $\Upsilon$ is a collection of bindings of sorts to symbols.
   }{
     \IsVarCtx{\Upsilon} &
     \IsSort{s} &
-    \Fresh{u}{\Upsilon}
+    \NotIn{u}{\Dom\Upsilon}
   }
 \end{gather*}
 
@@ -309,16 +320,83 @@ syntax of abstract binding trees is inductively defined in four rules:
   }\\[6pt]
   \infer[\textit{abs}]{
     \IsBTm{\Omega}{\Upsilon}{\Gamma}{
-      (\MkBTm{\vec{u}}{\vec{x}}{E})
+      (\MkBTm{\vec{u}}{\vec{x}}{M})
     }{
       (\MkValence{\vec{p}}{\vec{q}}{s})
     }
   }{
     \IsAbt{\Omega}{\Upsilon, \vec{u}:\vec{p}}{\Gamma,\vec{x}:{\vec{q}}}{
-      E
+      M
     }{
       s
     }
+  }
+\end{gather*}
+
+\subsection{Substitution of Variables}
+
+Variable substitution in abstract binding trees is defined inductively by a
+pair of judgments, $\SubstIs{N}{x}{M}{M'}$ and $\SubstIs{N}{x}{E}{E'}$:
+
+\begin{gather*}
+  \infer{
+    \SubstIs{N}{x}{y}{N}
+  }{
+    \IsEq{x}{y}
+  }\qquad
+  \infer{
+    \SubstIs{N}{x}{y}{y}
+  }{
+    \IsApart{x}{y}
+  }\\[6pt]
+  \infer{
+    \SubstIs{N}{x}{
+      \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
+    }{
+      \MApp{\MV{m}}{\vec{u}}{M'_0,\dots,M'_n}
+    }
+  }{
+    \HypJ{
+      \SubstIs{N}{x}{M_i}{M'_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  \infer{
+    \SubstIs{N}{x}{
+      \App{\vartheta}{E_0,\dots,E_n}
+    }{
+      \App{\vartheta}{E'_0,\dots,E'_n}
+    }
+  }{
+    \HypJ{
+      \SubstIs{N}{x}{E_i}{E'_i}
+    }{
+      \Leq{i}{n}
+    }
+  }
+\end{gather*}
+\begin{gather*}
+  \infer{
+    \SubstIs{N}{x}{
+      \MkBTm{\vec{u}}{\vec{y}}{M}
+    }{
+      \MkBTm{\vec{u}}{\vec{y}}{M'}
+    }
+  }{
+    \NotIn{x}{\vec{y}} &
+    \IsApart{\vec{y}}{\FV{N}} &
+    \SubstIs{N}{x}{M}{M'}
+  }\qquad
+  \infer{
+    \SubstIs{N}{x}{
+      \MkBTm{\vec{u}}{\vec{y}}{M}
+    }{
+      \MkBTm{\vec{u}}{\vec{y}}{M}
+    }
+  }{
+    \Member{x}{\vec{y}} &
+    \IsApart{\vec{y}}{\FV{N}}
   }
 \end{gather*}
 
