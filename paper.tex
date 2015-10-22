@@ -77,7 +77,9 @@
 
 \newcommand\Lookup[3]{\IMode{#1}\ni\IMode{#2}:\OMode{#3}}
 
-\newcommand\Grothendieck[1]{\oint #1}
+\newcommand\Grothendieck[2]{\oint^{#1} #2#1}
+\newcommand\Pair[2]{\langle #1, #2 \rangle}
+
 \newcommand\Comma[2]{#1 \downarrow #2}
 
 \newcommand\IsAbt[5]{%
@@ -172,18 +174,20 @@ $U$ and sort-assignments $\mathfrak{s}:U\to\Sorts$, and whose morphisms are
 sort-preserving renamings; we will write $\Upsilon$ for a symbol context
 $(U,\mathfrak{s})$.
 
-Then, fix a covariant presheaf of operators
-$\Operators:\SCtx\times\Arities\to\Sets$ such that the arrows in $\SCtx$ lift
-to renamings of operators' parameters; via the Grothendieck construction, we
-can also consider the set $\Grothendieck\Operators$ of operators
-$(\Upsilon,\varrho,\vartheta)$ for
-$\Member{\vartheta}{\Operators(\Upsilon,\varrho)}$.
+Via the Grothendieck construction\footnote{Category of elements.}
+$\Grothendieck{}{}$ on the operator presheaf $\Operators$ we also have a
+category with objects
+$\Member{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Grothendieck{}{\Operators}}$
+for $\Member{\vartheta}{\Operators\Pair{\Upsilon}{\varrho}}$ and morphisms
+$\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{\varrho'}}{\vartheta'}}$
+for $f : \Pair{\Upsilon}{\varrho}\to\Pair{\Upsilon'}{\varrho'}$ such that
+$\Member{\vartheta}{f^{*}\Operators} = \vartheta'$.
 
 \[
   \infer{
     \IsOperator{\Upsilon}{\vartheta}{\varrho}
   }{
-    \Member{\vartheta}{\Operators(\Upsilon,\varrho)}
+    \Member{\vartheta}{\Operators\langle\Upsilon,\varrho\rangle}
   }
 \]
 
@@ -193,7 +197,7 @@ $\Operators$.
 
 \paragraph{Examples}
 
-Operators are defined by specifying the fibres of $\Grothendieck\Operators$ in which
+Operators are defined by specifying the fibres of $\Grothendieck{}{\Operators}$ in which
 they reside. For instance, consider the lambda calculus with a single sort,
 $\SortExp$; we give its signature by asserting the following about its
 operators:
