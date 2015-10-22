@@ -174,9 +174,11 @@ $U$ and sort-assignments $\mathfrak{s}:U\to\Sorts$, and whose morphisms are
 sort-preserving renamings; we will write $\Upsilon$ for a symbol context
 $(U,\mathfrak{s})$.
 
-Via the Grothendieck construction\footnote{Category of elements.}
-$\Grothendieck{}{}$ on the operator presheaf $\Operators$ we also have a
-category with objects
+Then, fix a covariant presheaf of operators
+$\Operators:\SCtx\times\Arities\to\Sets$ such that the arrows in $\SCtx$ lift
+to renamings of operators' parameters. Via the Grothendieck
+construction\footnote{Category of elements.} $\Grothendieck{}{}$ on the
+operator presheaf $\Operators$ we also have a category with objects
 $\Member{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Grothendieck{}{\Operators}}$
 for $\Member{\vartheta}{\Operators\Pair{\Upsilon}{\varrho}}$ and morphisms
 $\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{\varrho'}}{\vartheta'}}$
