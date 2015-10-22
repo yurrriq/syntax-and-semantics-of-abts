@@ -48,6 +48,7 @@
 \newcommand\MkSet[1]{\left\{#1\right\}}
 \newcommand\MkFam[3]{\MkSet{#1_{#2}}_{#2\in #3}}
 \newcommand\Member[2]{\IMode{#1}\in\IMode{#2}}
+\newcommand\EqMember[3]{\IMode{#1}=\IMode{#2}\in\IMode{#3}}
 
 \newcommand\MkValence[3]{\left\{#1\right\}\left[#2\right].\, #3}
 \newcommand\MkBTm[3]{\left\{#1\right\}\left[#2\right].\, #3}
@@ -184,8 +185,7 @@ $\Member{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Grothendieck{}{\Operators}
 for $\Member{\vartheta}{\Operators\Pair{\Upsilon}{\varrho}}$ and morphisms
 $\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{\varrho'}}{\vartheta'}}$
 for $f : \Pair{\Upsilon}{\varrho}\to\Pair{\Upsilon'}{\varrho'}$ such that
-$\Member{\Restriction{f}\vartheta =
-  \vartheta'}{\Operators\Pair{\Upsilon'}{\varrho'}}$.
+$\EqMember{\Restriction{f}\vartheta}{\vartheta'}{\Operators\Pair{\Upsilon'}{\varrho'}}$.
 
 \[
   \infer{
