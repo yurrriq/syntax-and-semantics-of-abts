@@ -84,9 +84,11 @@
 \newcommand\Grothendieck[2]{\oint^{#1} #2#1}
 \newcommand\Pair[2]{\langle #1, #2 \rangle}
 \newcommand\Restriction[1]{#1^{*}}
-\newcommand\Singleton{\MkSet{\bullet}}
+\newcommand\Singleton{\bullet}
 
 \newcommand\Comma[2]{#1 \downarrow #2}
+\newcommand\Coslice[2]{#1\, /\, #2}
+\newcommand\Slice[2]{#1\, /\, #2}
 
 \newcommand\IsAbt[5]{%
   \IMode{#1}\triangleright%
@@ -188,7 +190,7 @@ construction\footnote{In this case, $C\Grothendieck{}{\Psi}$ represents the
   category of elements of a copresheaf $\Psi : C\to\Sets$ but we keep the $C$
   implicit and simply refer to it as the Grothendieck construction.
   Alternatively, this construction can be understood as a coend
-  $C\Grothendieck{}{\Psi} \cong \int^{c \in C}c / C \otimes
+  $C\Grothendieck{}{\Psi} \cong \int^{c \in C}\Coslice{c}{C} \otimes
   \Discrete{\Psi(c)}$.} $\Grothendieck{}{(-)} : \Sets^{C}\to\Cats$ on operators
 we have a category of objects
 $\Member{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Grothendieck{}{\Operators}}$
@@ -198,14 +200,15 @@ for $f : \Pair{\Upsilon}{\varrho}\to\Pair{\Upsilon'}{\varrho'}$ such that
 $\EqMember{\Restriction{f}\vartheta}{\vartheta'}{\Operators\Pair{\Upsilon'}{\varrho'}}$.
 Equivalently, $\Grothendieck{}{\Operators}$ is the pullback of $\Operators$
 along the universal $\Sets$-bundle where $\pi_{\Operators}$ is a discrete
-Grothendieck opfibration and $ap_{\Singleton}$ is the forgetful functor from pointed sets:
+Grothendieck opfibration and $ap_{\bullet}$ is the forgetful functor from
+pointed sets:
 
 \[
 \begin{tikzcd}[ampersand replacement = \&, sep = large]
   {\Grothendieck{}{\Operators}}
     \arrow[r, "{\pi_{!}}"]
     \arrow[d, "{\pi_{\Operators}}" left]
-  \& {\Singleton / \Sets}
+  \& {\Coslice{\Singleton}{\Sets}}
     \arrow[d, "{ap_{\Singleton}}"] \\
   {\SCtx\times\Arities}
      \arrow[r, "{\Operators}" below]
