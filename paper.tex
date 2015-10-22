@@ -8,6 +8,7 @@
 \usepackage{geometry}
 \usepackage{proof}
 \usepackage{supertabular}
+\usepackage{tikz-cd}
 \usepackage{unicode-math}
 \usepackage{xltxtra}
 \usepackage{xunicode}
@@ -67,6 +68,8 @@
 
 \newcommand\ParamsOf{\pi_\mathfrak{p}}
 \newcommand\ArityOf{\pi_\mathfrak{a}}
+\newcommand\Cats{\mathbf{Cat}}
+\newcommand\Discrete[1]{#1_{\equiv}}
 \newcommand\Sets{\mathbf{Set}}
 \newcommand\SCtx{\mathbf{SCtx}}
 
@@ -81,6 +84,7 @@
 \newcommand\Grothendieck[2]{\oint^{#1} #2#1}
 \newcommand\Pair[2]{\langle #1, #2 \rangle}
 \newcommand\Restriction[1]{#1^{*}}
+\newcommand\Singleton{\{\bullet\}}
 
 \newcommand\Comma[2]{#1 \downarrow #2}
 
@@ -169,23 +173,45 @@ and the set of arities $\Arities$.
 
 
 Let $\Symbols$ be an infinite set of symbols. Let $\Finsets$ be the category of
-finite subsets of $\Symbols$ and their injective maps; then the comma construction
-$\Define{\SCtx}{\Comma{\Finsets}{\Sorts}}$, with $\Sorts$ regarded as a discrete category, is
-the category of contexts of symbols, whose objects are finite sets of symbols
-$U$ and sort-assignments $\mathfrak{s}:U\to\Sorts$, and whose morphisms are
+finite subsets of $\Symbols$ and their injective maps; then the comma
+construction $\Define{\SCtx}{\Comma{\Finsets}{\Discrete{\Sorts}}}$, with
+$\Discrete{\Sorts}$ the discrete category on the set $\mathcal{S}$, is the
+category of contexts of symbols, whose objects are finite sets of symbols $U$
+and sort-assignments $\mathfrak{s}:U\to\Sorts$, and whose morphisms are
 sort-preserving renamings; we will write $\Upsilon$ for a symbol context
 $(U,\mathfrak{s})$.
 
 Then, fix a covariant presheaf of operators
 $\Operators:\SCtx\times\Arities\to\Sets$ such that the arrows in $\SCtx$ lift to
 renamings of operators' parameters. Via the Grothendieck
-construction\footnote{Category of elements.} $\Grothendieck{}{}$ on the operator
-presheaf $\Operators$ we also have a category with objects
+construction\footnote{In this case, $C\Grothendieck{}{\Psi}$ represents the
+  category of elements of a copresheaf $\Psi : C\to\Sets$ but we keep the $C$
+  implicit and simply refer to it as the Grothendieck construction.
+  Alternatively, this construction can be understood as a coend
+  $C\Grothendieck{}{\Psi} \cong \int^{c \in C}c / C \otimes
+  \Discrete{\Psi(c)}$.} $\Grothendieck{}{(-)} : \Sets^{C}\to\Cats$ on operators
+we have a category of objects
 $\Member{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Grothendieck{}{\Operators}}$
 for $\Member{\vartheta}{\Operators\Pair{\Upsilon}{\varrho}}$ and morphisms
 $\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{\varrho'}}{\vartheta'}}$
 for $f : \Pair{\Upsilon}{\varrho}\to\Pair{\Upsilon'}{\varrho'}$ such that
 $\EqMember{\Restriction{f}\vartheta}{\vartheta'}{\Operators\Pair{\Upsilon'}{\varrho'}}$.
+Equivalently, $\Grothendieck{}{\Operators}$ is the pullback of $\Operators$
+along the universal $\Sets$-bundle where $\pi_{\Operators}$ is a discrete
+Grothendieck fibration and $ap_{\Singleton}$ is the forgetful functor from pointed sets:
+
+\[
+\begin{tikzcd}[ampersand replacement = \&, sep = large]
+  {\Grothendieck{}{\Operators}}
+    \arrow[r, "{\pi_{\Singleton}}"]
+    \arrow[d, "{\pi_{\Operators}}" left]
+  \& {\Singleton / \Sets}
+    \arrow[d, "{ap_{\Singleton}}"] \\
+  {\SCtx\times\Arities}
+     \arrow[r, "{\Operators}" below]
+  \& {\Sets} \\
+\end{tikzcd}
+\]
 
 \[
   \infer{
