@@ -67,6 +67,7 @@
 
 \newcommand\ParamsOf{\pi_\mathfrak{p}}
 \newcommand\ArityOf{\pi_\mathfrak{a}}
+\newcommand\Cats{\mathbf{Cat}}
 \newcommand\Sets{\mathbf{Set}}
 \newcommand\SCtx{\mathbf{SCtx}}
 
@@ -179,8 +180,13 @@ $(U,\mathfrak{s})$.
 Then, fix a covariant presheaf of operators
 $\Operators:\SCtx\times\Arities\to\Sets$ such that the arrows in $\SCtx$ lift to
 renamings of operators' parameters. Via the Grothendieck
-construction\footnote{Category of elements.} $\Grothendieck{}{}$ on the operator
-presheaf $\Operators$ we also have a category with objects
+construction\footnote{In this case, $C\Grothendieck{}{\Psi}$ represents the
+  category of elements of a copresheaf $\Psi : C\to\Sets$ but we keep the $C$
+  implicit and simply refer to it as the Grothendieck construction.
+  Alternatively, this construction can be understood as a coend
+  $C\Grothendieck{}{\Psi} \cong \int^{c \in C}c / C \otimes |\Psi(c)|$.}
+$\Grothendieck{}{(-)} : \Sets^{C}\to\Cats$ on operators we have a category of
+objects
 $\Member{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Grothendieck{}{\Operators}}$
 for $\Member{\vartheta}{\Operators\Pair{\Upsilon}{\varrho}}$ and morphisms
 $\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{\varrho'}}{\vartheta'}}$
