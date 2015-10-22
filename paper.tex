@@ -67,6 +67,7 @@
 \newcommand\ParamsOf{\pi_\mathfrak{p}}
 \newcommand\ArityOf{\pi_\mathfrak{a}}
 \newcommand\Sets{\mathbf{Set}}
+\newcommand\SCtx{\mathbf{SCtx}}
 
 \newcommand\IsOperator[3]{\IMode{#1}\Vdash \IMode{#2} : \OMode{#3}}
 
@@ -77,6 +78,7 @@
 \newcommand\Lookup[3]{\IMode{#1}\ni\IMode{#2}:\OMode{#3}}
 
 \newcommand\Grothendieck[1]{\oint #1}
+\newcommand\Comma[2]{#1 \downarrow #2}
 
 \newcommand\IsAbt[5]{%
   \IMode{#1}\triangleright%
@@ -97,18 +99,31 @@
 \newcommand\App[2]{#1\left(#2\right)}
 \newcommand\Dom[1]{\left\vert #1\right\vert}
 \newcommand\FV[1]{\mathbf{FV}\left(#1\right)}
+\newcommand\FS[1]{\mathbf{FS}\left(#1\right)}
 \newcommand\NotIn[2]{\IMode{#1}\notin\IMode{#2}}
-\newcommand\NotSubset[2]{\IMode{#1}\not\subst\IMode{#2}}
-
 \newcommand\SortExp{\mathsf{exp}}
 
-\newcommand\SubstIs[4]{%
-  \left[\IMode{#1} / \IMode{#2}\right]\IMode{#3}%
+\newcommand\Hom[3]{#1\left[#2,#3\right]}
+
+\newcommand\Subst[3]{
+  \left[#1\, /\, #2\right]#3%
+}
+
+\newcommand\IsRenaming[3]{
+  \IMode{#2}\upharpoonright\IMode{#1}%
+  \leadsto\OMode{#3}%
+}
+
+\newcommand\IsSubst[4]{%
+  \Subst{\IMode{#1}}{\IMode{#2}}{\IMode{#3}}%
   \leadsto\OMode{#4}%
 }
 
+
 \newcommand\IsEq[2]{\IMode{#1} = \IMode{#2}}
 \newcommand\IsApart[2]{\IMode{#1} \mathrel{\#} \IMode{#2}}
+
+\newcommand\Define[2]{\IMode{#1}\triangleq\OMode{#2}}
 
 
 \begin{document}
@@ -149,12 +164,19 @@ and the set of arities $\Arities$.
 \]
 
 
-Let $\Symbols$ be an infinite set of symbols; let $\Finsets$ be the free
-cocartesian category over $\Symbols\times\Sorts$. Then, fix a covariant
-presheaf of operators $\Operators:\Finsets\times\Arities\to\Sets$ such that the
-arrows in $\Finsets$ lift to renamings of operators' parameters; via the
-Grothendieck construction, we can also consider the set $\Grothendieck\Operators$ of
-operators $(\Upsilon,\varrho,\vartheta)$ for
+Let $\Symbols$ be an infinite set of symbols. Let $\Finsets$ be the category of
+finite subsets of $\Symbols$ and their injective maps; then the comma construction
+$\Define{\SCtx}{\Comma{\Finsets}{\Sorts}}$, with $\Sorts$ regarded as a discrete category, is
+the category of contexts of symbols, whose objects are finite sets of symbols
+$U$ and sort-assignments $\mathfrak{s}:U\to\Sorts$, and whose morphisms are
+sort-preserving renamings; we will write $\Upsilon$ for a symbol context
+$(U,\mathfrak{s})$.
+
+Then, fix a covariant presheaf of operators
+$\Operators:\SCtx\times\Arities\to\Sets$ such that the arrows in $\SCtx$ lift
+to renamings of operators' parameters; via the Grothendieck construction, we
+can also consider the set $\Grothendieck\Operators$ of operators
+$(\Upsilon,\varrho,\vartheta)$ for
 $\Member{\vartheta}{\Operators(\Upsilon,\varrho)}$.
 
 \[
@@ -320,9 +342,9 @@ syntax of abstract binding trees is inductively defined in four rules:
   }\\[6pt]
   \infer[\textit{abs}]{
     \IsBTm{\Omega}{\Upsilon}{\Gamma}{
-      (\MkBTm{\vec{u}}{\vec{x}}{M})
+      \left(\MkBTm{\vec{u}}{\vec{x}}{M}\right)
     }{
-      (\MkValence{\vec{p}}{\vec{q}}{s})
+      \left(\MkValence{\vec{p}}{\vec{q}}{s}\right)
     }
   }{
     \IsAbt{\Omega}{\Upsilon, \vec{u}:\vec{p}}{\Gamma,\vec{x}:{\vec{q}}}{
@@ -333,44 +355,55 @@ syntax of abstract binding trees is inductively defined in four rules:
   }
 \end{gather*}
 
+Abstract binding trees are identified up to $\alpha$-equivalence.
+
+%%% \subsection{Renaming of Symbols}
+%%%
+%%% The renaming of symbols in abstract binding trees is defined inductively by the
+%%% judgment $\IsRenaming{\psi}{M}{M'}$, where
+%%% $\Member{\psi}{\Hom{\SCtx}{\FS{M}}{-}}$
+%%%
+%%% \begin{gather*}
+%%% \end{gather*}
+
 \subsection{Substitution of Variables}
 
 Variable substitution in abstract binding trees is defined inductively by a
-pair of judgments, $\SubstIs{N}{x}{M}{M'}$ and $\SubstIs{N}{x}{E}{E'}$:
+pair of judgments, $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{E'}$:
 
 \begin{gather*}
   \infer{
-    \SubstIs{N}{x}{y}{N}
+    \IsSubst{N}{x}{y}{N}
   }{
     \IsEq{x}{y}
   }\qquad
   \infer{
-    \SubstIs{N}{x}{y}{y}
+    \IsSubst{N}{x}{y}{y}
   }{
     \IsApart{x}{y}
   }\\[6pt]
   \infer{
-    \SubstIs{N}{x}{
+    \IsSubst{N}{x}{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{
       \MApp{\MV{m}}{\vec{u}}{M'_0,\dots,M'_n}
     }
   }{
     \HypJ{
-      \SubstIs{N}{x}{M_i}{M'_i}
+      \IsSubst{N}{x}{M_i}{M'_i}
     }{
       \Leq{i}{n}
     }
   }\\[6pt]
   \infer{
-    \SubstIs{N}{x}{
+    \IsSubst{N}{x}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
       \App{\vartheta}{E'_0,\dots,E'_n}
     }
   }{
     \HypJ{
-      \SubstIs{N}{x}{E_i}{E'_i}
+      \IsSubst{N}{x}{E_i}{E'_i}
     }{
       \Leq{i}{n}
     }
@@ -378,7 +411,7 @@ pair of judgments, $\SubstIs{N}{x}{M}{M'}$ and $\SubstIs{N}{x}{E}{E'}$:
 \end{gather*}
 \begin{gather*}
   \infer{
-    \SubstIs{N}{x}{
+    \IsSubst{N}{x}{
       \MkBTm{\vec{u}}{\vec{y}}{M}
     }{
       \MkBTm{\vec{u}}{\vec{y}}{M'}
@@ -386,10 +419,10 @@ pair of judgments, $\SubstIs{N}{x}{M}{M'}$ and $\SubstIs{N}{x}{E}{E'}$:
   }{
     \NotIn{x}{\vec{y}} &
     \IsApart{\vec{y}}{\FV{N}} &
-    \SubstIs{N}{x}{M}{M'}
+    \IsSubst{N}{x}{M}{M'}
   }\qquad
   \infer{
-    \SubstIs{N}{x}{
+    \IsSubst{N}{x}{
       \MkBTm{\vec{u}}{\vec{y}}{M}
     }{
       \MkBTm{\vec{u}}{\vec{y}}{M}
@@ -398,6 +431,59 @@ pair of judgments, $\SubstIs{N}{x}{M}{M'}$ and $\SubstIs{N}{x}{E}{E'}$:
     \Member{x}{\vec{y}} &
     \IsApart{\vec{y}}{\FV{N}}
   }
+\end{gather*}
+
+Because terms are identified up to $\alpha$-equivalence, the variable
+substitution judgment is functional in its inputs, and so we are justified in
+writing $\Subst{N}{x}{M}$ for $M'$ when $\IsSubst{N}{x}{M}{M'}$. We write
+$\Subst{\vec{N}}{\vec{x}}{M}$ for the simultaneous substitution of $\vec{N}$
+for $\vec{x}$ in $M$.
+
+\subsection{Substitution of Metavariables}
+
+Metavariable substitution is defined inductively by the judgment
+$\IsSubst{E}{\MV{m}}{M}{M'}$:
+
+\begin{gather*}
+  \infer{
+    \IsSubst{E}{\MV{m}}{x}{x}
+  }{
+  }\\[6pt]
+  \infer{
+    \IsSubst{E}{\MV{m}}{
+      \MApp{\MV{n}}{\vec{u}}{M_0,\dots,M_n}
+    }{
+      \MApp{\MV{n}}{\vec{u}}{M'_0,\dots,M'_n}
+    }
+  }{
+    \IsApart{\MV{m}}{\MV{n}} &
+    \HypJ{
+      \IsSubst{E}{\MV{n}}{M_i}{M'_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  %%% \infer{
+  %%%   \IsSubst{
+  %%%     \MkBTm{\vec{u}}{x_0,\dots,x_n}{N}
+  %%%   }{\MV{m}}{
+  %%%     \MApp{\MV{n}}{\vec{v}}{M_0,\dots,M_n}
+  %%%   }{
+  %%%     %TODO!!!
+  %%%     %\Rename{\vec{v}}{\vec{u}}{
+  %%%     \Subst{\vec{M}}{\vec{x}}{N}
+  %%%     % }
+  %%%   }
+  %%% }{
+  %%%   \IsEq{\MV{m}}{\MV{n}}
+  %%% }\\[6pt]
+  %%% \infer{
+  %%%   \IsSubst{E}{\MV{m}}{
+  %%%     \App{\vartheta}{F_0,\dots,F_n}
+  %%%   }{
+  %%%   }
+  %%% }{
+  %%% }
 \end{gather*}
 
 \end{document}
