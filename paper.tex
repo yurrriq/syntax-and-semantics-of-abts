@@ -68,6 +68,7 @@
 \newcommand\ParamsOf{\pi_\mathfrak{p}}
 \newcommand\ArityOf{\pi_\mathfrak{a}}
 \newcommand\Cats{\mathbf{Cat}}
+\newcommand\Discrete[1]{#1_{\equiv}}
 \newcommand\Sets{\mathbf{Set}}
 \newcommand\SCtx{\mathbf{SCtx}}
 
@@ -170,10 +171,11 @@ and the set of arities $\Arities$.
 
 
 Let $\Symbols$ be an infinite set of symbols. Let $\Finsets$ be the category of
-finite subsets of $\Symbols$ and their injective maps; then the comma construction
-$\Define{\SCtx}{\Comma{\Finsets}{\Sorts}}$, with $\Sorts$ regarded as a discrete category, is
-the category of contexts of symbols, whose objects are finite sets of symbols
-$U$ and sort-assignments $\mathfrak{s}:U\to\Sorts$, and whose morphisms are
+finite subsets of $\Symbols$ and their injective maps; then the comma
+construction $\Define{\SCtx}{\Comma{\Finsets}{\Discrete{\Sorts}}}$, with
+$\Discrete{\Sorts}$ the discrete category on the set $\mathcal{S}$, is the
+category of contexts of symbols, whose objects are finite sets of symbols $U$
+and sort-assignments $\mathfrak{s}:U\to\Sorts$, and whose morphisms are
 sort-preserving renamings; we will write $\Upsilon$ for a symbol context
 $(U,\mathfrak{s})$.
 
@@ -184,7 +186,7 @@ construction\footnote{In this case, $C\Grothendieck{}{\Psi}$ represents the
   category of elements of a copresheaf $\Psi : C\to\Sets$ but we keep the $C$
   implicit and simply refer to it as the Grothendieck construction.
   Alternatively, this construction can be understood as a coend
-  $C\Grothendieck{}{\Psi} \cong \int^{c \in C}c / C \otimes |\Psi(c)|$.}
+  $C\Grothendieck{}{\Psi} \cong \int^{c \in C}c / C \otimes \Discrete{\Psi(c)}$.}
 $\Grothendieck{}{(-)} : \Sets^{C}\to\Cats$ on operators we have a category of
 objects
 $\Member{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Grothendieck{}{\Operators}}$
