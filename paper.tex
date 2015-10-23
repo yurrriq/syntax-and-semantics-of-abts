@@ -86,6 +86,7 @@
 \newcommand\Pair[2]{\langle #1, #2 \rangle}
 \newcommand\Restriction[1]{#1^{*}}
 \newcommand\Singleton{\bullet}
+\newcommand\Forget[1]{|\, #1\, |}
 
 \newcommand\Comma[2]{#1 \downarrow #2}
 \newcommand\Coslice[2]{#1\, /\, #2}
@@ -201,16 +202,16 @@ for $\Of{f}{\Pair{\Upsilon}{\varrho}\to\Pair{\Upsilon'}{\varrho'}}$ such that
 $\EqMember{\Restriction{f}\vartheta}{\vartheta'}{\Operators\Pair{\Upsilon'}{\varrho'}}$.
 Equivalently, $\Grothendieck{}{\Operators}$ is the pullback of $\Operators$
 along the universal $\Sets$-bundle where $\pi_{\Operators}$ is a discrete
-Grothendieck opfibration and $ap_{\bullet}$ is the forgetful functor from
-pointed sets:
+Grothendieck opfibration and $\Forget{-}_{\Singleton}$ is the forgetful functor
+from pointed sets:
 
 \[
 \begin{tikzcd}[ampersand replacement = \&, sep = large]
   {\Grothendieck{}{\Operators}}
-    \arrow[r, "{\pi_{!}}"]
+    \arrow[r, "{\pi_{\in}}"]
     \arrow[d, "{\pi_{\Operators}}" left]
   \& {\Coslice{\Singleton}{\Sets}}
-    \arrow[d, "{ap_{\Singleton}}"] \\
+    \arrow[d, "{\Forget{-}_{\Singleton}}"] \\
   {\SCtx\times\Arities}
      \arrow[r, "{\Operators}" below]
   \& {\Sets} \\
