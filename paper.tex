@@ -200,7 +200,7 @@ construction\footnote{In this case, $C\Grothendieck{}{\Psi}$ represents the
   Alternatively, this construction can be understood as a coend
 $\IMode{C\Grothendieck{}{\Psi}}\cong \IMode{\int^{c \in C}\Coslice{c}{C}
 \otimes \Discrete{\Psi(c)}}$.} $\Of{\Grothendieck{}{(-)}}{\Sets^{C}\to\Cats}$
-on operators we have a category of objects
+on operators, we have a category of objects
 $\Member{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Grothendieck{}{\Operators}}$
 for $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and morphisms
 $\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{a'}}{\vartheta'}}$
@@ -283,15 +283,15 @@ extension of the calculus with assignables (references):
 \end{gather*}
 
 Declaring a new assignable consists in providing an initial value, and an
-expression with a free symbol (which shall represent the assignable in scope).
+expression binding a symbol (which shall represent the assignable in scope).
 Note that the functoriality of $\Operators$ guarantees for any renaming
 $\Of{\varrho}{\Upsilon\to\Upsilon'}$ and $\Of{f}{a\to a'}$, a restriction map
 $\Restriction{\Pair{\varrho}{f}}$ such that
 $\IsOperator{\Upsilon'}{\Restriction{\Pair{\varrho}{f}}(\vartheta)}{a}$ when
 $\IsOperator{\Upsilon}{\vartheta}{a'}$. Because the category
-$\Discrete{\Arities}$ is discrete and has only identity arrows, we will often
-write $\Restriction{\varrho}$ to mean $\Restriction{\Pair{\varrho}{\ArrId}}$
-through an abuse of notation. In particular, the renaming
+$\Discrete{\Arities}$ is discrete and has only identity arrows, through an
+abuse of notation we will often write $\Restriction{\varrho}$ to mean
+$\Restriction{\Pair{\varrho}{\ArrId}}$. In particular, the renaming
 $\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathsf{get}[u]$ to
 $\mathsf{get}[v]$.
 
