@@ -283,9 +283,9 @@ Declaring a new assignable consists in providing an initial value, and an
 expression binding a symbol (which shall represent the assignable in scope).
 Note that the functoriality of $\Operators$ guarantees for any renaming
 $\Of{\varrho}{\Upsilon\to\Upsilon'}$ and $\Of{f}{a\to a'}$, a lifted map
-$\Lift{\varrho}{f}$ such that
-$\IsOperator{\Upsilon'}{\Lift{\varrho}{f}(\vartheta)}{a}$ when
-$\IsOperator{\Upsilon}{\vartheta}{a'}$. Because the category
+$\Of{\Lift{\varrho}{f}}{\Operators\Pair{\Upsilon}{a}\to\Operators\Pair{\Upsilon'}{a'}}$
+such that $\IsOperator{\Upsilon'}{\Lift{\varrho}{f}(\vartheta)}{a'}$ when
+$\IsOperator{\Upsilon}{\vartheta}{a}$. Because the category
 $\Discrete{\Arities}$ is discrete and has only identity arrows, through an abuse
 of notation we will often write $\Lift{\varrho}{}$ to mean
 $\Lift{\varrho}{\ArrId{}}$. In particular, the renaming
