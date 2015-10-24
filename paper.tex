@@ -408,7 +408,9 @@ syntax of abstract binding trees is inductively defined in four rules:
   }
 \end{gather*}
 
-Abstract binding trees are identified up to $\alpha$-equivalence.
+Abstract binding trees are identified up to $\alpha$-equivalence. Let $\FS{M}$
+be the collection of symbols free in $M$, and let $\FV{M}$ be the collection of
+variables free $\pi_\Operators$ to operators in $M$. %% TODO: actually define these
 
 \subsection{Renaming of Symbols}
 
@@ -524,6 +526,7 @@ pair of judgments, $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
     }
   }{
     \NotIn{x}{\vec{y}} &
+    \IsApart{\vec{u}}{\FS{N}} &
     \IsApart{\vec{y}}{\FV{N}} &
     \IsSubst{N}{x}{M}{M'}
   }\qquad
@@ -535,6 +538,7 @@ pair of judgments, $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
     }
   }{
     \Member{x}{\vec{y}} &
+    \IsApart{\vec{u}}{\FS{N}} &
     \IsApart{\vec{y}}{\FV{N}}
   }
 \end{gather*}
@@ -603,7 +607,8 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
       \MkBTm{\vec{u}}{\vec{x}}{N}
     }
   }{
-    \IsApart{\vec{u}}{\FV{E}} &
+    \IsApart{\vec{u}}{\FS{E}} &
+    \IsApart{\vec{x}}{\FV{E}} &
     \IsSubst{E}{\MV{m}}{M}{N}
   }
 \end{gather*}
