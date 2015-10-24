@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{fontspec}
 \usepackage{geometry}
+\usepackage{ifthen}
 \usepackage{proof}
 \usepackage{supertabular}
 \usepackage{tikz-cd}
@@ -56,7 +57,7 @@
 \newcommand\IsSort[1]{\IMode{#1}\ \textit{sort}}
 \newcommand\Leq[2]{\IMode{#1}\leq\IMode{#2}}
 
-\newcommand\ArrId{\mathbf{id}}
+\newcommand\ArrId[1]{1_{#1}}
 \newcommand\Match[2]{\IMode{#1}\equiv\OMode{#2}}
 
 \newcommand\Symbols{\mathbb{I}}
@@ -81,7 +82,10 @@
 
 \newcommand\Grothendieck[2]{\oint^{#1} #2#1}
 \newcommand\Pair[2]{\langle #1, #2 \rangle}
-\newcommand\Restriction[1]{#1^{*}}
+\newcommand\Lift[2]{
+  \Operators\langle#1\ifthenelse{\equal{#2}{}}{}{, #2}\rangle
+}
+\newcommand\PairTimes[2]{\langle #1\, {\scriptstyle {{\times}}}\, #2 \rangle}
 \newcommand\Singleton{\bullet}
 \newcommand\Forget[1]{|\, #1\, |}
 
@@ -198,7 +202,7 @@ $\Member{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Grothendieck{}{\Operators}}$
 for $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and morphisms
 $\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{a'}}{\vartheta'}}$
 for $\Of{f}{\Pair{\Upsilon}{a}\to\Pair{\Upsilon'}{a'}}$ such that
-$\EqMember{\Restriction{f}\vartheta}{\vartheta'}{\Operators\Pair{\Upsilon'}{a'}}$.
+$\EqMember{\Lift{f}{}(\vartheta)}{\vartheta'}{\Operators\Pair{\Upsilon'}{a'}}$.
 Equivalently, $\Grothendieck{}{\Operators}$ is the pullback of $\Operators$
 along the universal $\Sets$-bundle where $\pi_{\Operators}$ is a discrete
 Grothendieck opfibration and $\Forget{-}_{\Singleton}$ is the forgetful functor
@@ -278,15 +282,14 @@ extension of the calculus with assignables (references):
 Declaring a new assignable consists in providing an initial value, and an
 expression binding a symbol (which shall represent the assignable in scope).
 Note that the functoriality of $\Operators$ guarantees for any renaming
-$\Of{\varrho}{\Upsilon\to\Upsilon'}$ and $\Of{f}{a\to a'}$, a restriction map
-$\Restriction{\Pair{\varrho}{f}}$ such that
-$\IsOperator{\Upsilon'}{\Restriction{\Pair{\varrho}{f}}(\vartheta)}{a}$ when
+$\Of{\varrho}{\Upsilon\to\Upsilon'}$ and $\Of{f}{a\to a'}$, a lifted map
+$\Lift{\varrho}{f}$ such that
+$\IsOperator{\Upsilon'}{\Lift{\varrho}{f}(\vartheta)}{a}$ when
 $\IsOperator{\Upsilon}{\vartheta}{a'}$. Because the category
-$\Discrete{\Arities}$ is discrete and has only identity arrows, through an
-abuse of notation we will often write $\Restriction{\varrho}$ to mean
-$\Restriction{\Pair{\varrho}{\ArrId}}$. In particular, the renaming
-$\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathsf{get}[u]$ to
-$\mathsf{get}[v]$.
+$\Discrete{\Arities}$ is discrete and has only identity arrows, through an abuse
+of notation we will often write $\Lift{\varrho}{}$ to mean
+$\Lift{\varrho}{\ArrId{}}$. In particular, the renaming
+$\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathsf{get}[u]$ to $\mathsf{get}[v]$.
 
 \section{Contexts}
 
@@ -441,7 +444,7 @@ and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
       \App{\vartheta'}{F_0,\dots,F_n}
     }
   }{
-    \Match{\Restriction{\varrho}(\vartheta)}{\vartheta'} &
+    \Match{\Lift{\varrho}{}(\vartheta)}{\vartheta'} &
     \HypJ{
       \IsRenaming{\varrho}{E_i}{F_i}
     }{
