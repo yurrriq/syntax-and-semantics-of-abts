@@ -60,7 +60,7 @@
 \newcommand\IsSort[1]{\IMode{#1}\ \textit{sort}}
 \newcommand\Leq[2]{\IMode{#1}\leq\IMode{#2}}
 
-\newcommand\ArrDom[1]{\mathsf{dom}(#1)}
+\newcommand\ArrId{\mathbf{id}}
 \newcommand\Match[2]{\IMode{#1}\equiv\OMode{#2}}
 
 \newcommand\Symbols{\mathbb{I}}
@@ -285,9 +285,13 @@ extension of the calculus with assignables (references):
 Declaring a new assignable consists in providing an initial value, and an
 expression with a free symbol (which shall represent the assignable in scope).
 Note that the functoriality of $\Operators$ guarantees for any renaming
-$\Of{\varrho}{\Upsilon\to\Upsilon'}$ a restriction map $\Restriction{\varrho}$
-such that $\IsOperator{\Upsilon'}{\Restriction{\varrho}(\vartheta)}{a}$ when
-$\IsOperator{\Upsilon}{\vartheta}{a}$. In particular, the renaming
+$\Of{\varrho}{\Upsilon\to\Upsilon'}$ and $\Of{f}{a\to a'}$, a restriction map
+$\Restriction{\Pair{\varrho}{f}}$ such that
+$\IsOperator{\Upsilon'}{\Restriction{\Pair{\varrho}{f}}(\vartheta)}{a}$ when
+$\IsOperator{\Upsilon}{\vartheta}{a'}$. Because the category
+$\Discrete{\Arities}$ is discrete and has only identity arrows, we will often
+write $\Restriction{\varrho}$ to mean $\Restriction{\Pair{\varrho}{\ArrId}}$
+through an abuse of notation. In particular, the renaming
 $\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathsf{get}[u]$ to
 $\mathsf{get}[v]$.
 
