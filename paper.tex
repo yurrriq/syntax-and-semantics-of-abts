@@ -120,11 +120,11 @@
 
 \newcommand\Hom[3]{#1\left[#2,#3\right]}
 
-\newcommand\Renaming[2]{
+\newcommand\Rename[2]{
   #2\upharpoonright #1
 }
 \newcommand\IsRenaming[3]{
-  \Renaming{\IMode{#1}}{\IMode{#2}}%
+  \Rename{\IMode{#1}}{\IMode{#2}}%
   \leadsto\OMode{#3}%
 }
 
@@ -467,7 +467,7 @@ and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
 Above, the notation $\varrho\setminus\vec{u}$ means the omission of the
 variables $\vec{u}$ from the renaming $\varrho$. Because terms are identified
 up to $\alpha$-equivalence, the renaming judgment is functional in its input,
-and so we are justified in writing $\Renaming{\varrho}{M}$ for $N$ when
+and so we are justified in writing $\Rename{\varrho}{M}$ for $N$ when
 $\IsRenaming{\varrho}{M}{N}$.
 
 %%% TODO: show that renaming preserves wellformedness
@@ -475,7 +475,7 @@ $\IsRenaming{\varrho}{M}{N}$.
 \subsection{Substitution of Variables}
 
 Variable substitution in abstract binding trees is defined inductively by a
-pair of judgments, $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{E'}$:
+pair of judgments, $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
 
 \begin{gather*}
   \infer{
@@ -505,11 +505,11 @@ pair of judgments, $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{E'}$:
     \IsSubst{N}{x}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
-      \App{\vartheta}{E'_0,\dots,E'_n}
+      \App{\vartheta}{F_0,\dots,F_n}
     }
   }{
     \HypJ{
-      \IsSubst{N}{x}{E_i}{E'_i}
+      \IsSubst{N}{x}{E_i}{F_i}
     }{
       \Leq{i}{n}
     }
@@ -545,8 +545,11 @@ simultaneous substitution of $\vec{N}$ for $\vec{x}$ in $M$.
 
 \subsection{Substitution of Metavariables}
 
-Metavariable substitution is defined inductively by the judgment
-$\IsSubst{E}{\MV{m}}{M}{M'}$:
+Metavariables are substituted by bound terms; since a metavariable may only
+appear in an application expression $\MApp{\MV{m}}{\cdots}{\cdots}$, we will
+instantiate the bound term at the supplied parameters and arguments.
+Substitution for metavariables is defined inductively by the judgments
+$\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
 
 \begin{gather*}
   \infer{
@@ -557,37 +560,55 @@ $\IsSubst{E}{\MV{m}}{M}{M'}$:
     \IsSubst{E}{\MV{m}}{
       \MApp{\MV{n}}{\vec{u}}{M_0,\dots,M_n}
     }{
-      \MApp{\MV{n}}{\vec{u}}{M'_0,\dots,M'_n}
+      \MApp{\MV{n}}{\vec{u}}{N_0,\dots,N_n}
     }
   }{
     \IsApart{\MV{m}}{\MV{n}} &
     \HypJ{
-      \IsSubst{E}{\MV{n}}{M_i}{M'_i}
+      \IsSubst{E}{\MV{n}}{M_i}{N_i}
     }{
       \Leq{i}{n}
     }
   }\\[6pt]
-  %%% \infer{
-  %%%   \IsSubst{
-  %%%     \MkBTm{\vec{u}}{x_0,\dots,x_n}{N}
-  %%%   }{\MV{m}}{
-  %%%     \MApp{\MV{n}}{\vec{v}}{M_0,\dots,M_n}
-  %%%   }{
-  %%%     %TODO!!!
-  %%%     %\Rename{\vec{v}}{\vec{u}}{
-  %%%     \Subst{\vec{M}}{\vec{x}}{N}
-  %%%     % }
-  %%%   }
-  %%% }{
-  %%%   \IsEq{\MV{m}}{\MV{n}}
-  %%% }\\[6pt]
-  %%% \infer{
-  %%%   \IsSubst{E}{\MV{m}}{
-  %%%     \App{\vartheta}{F_0,\dots,F_n}
-  %%%   }{
-  %%%   }
-  %%% }{
-  %%% }
+  \infer{
+    \IsSubst{
+      \MkBTm{\vec{u}}{\vec{x}}{N}
+    }{\MV{m}}{
+      \MApp{\MV{n}}{\vec{v}}{\vec{M}}
+    }{
+      N''
+    }
+  }{
+    \IsEq{\MV{m}}{\MV{n}} &
+    \IsSubst{\vec{M}}{\vec{x}}{N}{N'} &
+    \IsRenaming{\MkSet{\vec{u}\mapsto\vec{v}}}{N'}{N''}
+  }\\[6pt]
+  \infer{
+    \IsSubst{E}{\MV{m}}{
+      \App{\vartheta}{F_0,\dots,F_n}
+    }{
+      \App{\vartheta}{F'_0,\dots,F'_n}
+    }
+  }{
+    \HypJ{
+      \IsSubst{E}{\MV{m}}{F_i}{F'_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  \infer{
+    \IsSubst{E}{\MV{m}}{
+      \MkBTm{\vec{u}}{\vec{x}}{M}
+    }{
+      \MkBTm{\vec{u}}{\vec{x}}{N}
+    }
+  }{
+    \IsApart{\vec{u}}{\FV{E}} &
+    \IsSubst{E}{\MV{m}}{M}{N}
+  }
 \end{gather*}
+
+As before, we will write $\Subst{E}{\MV{m}}{M}$ for $N$ when
+$\IsSubst{E}{\MV{m}}{M}{N}$.
 
 \end{document}
