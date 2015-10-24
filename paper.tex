@@ -195,11 +195,11 @@ construction\footnote{In this case, $C\Grothendieck{}{\Psi}$ represents the
 $\IMode{C\Grothendieck{}{\Psi}}\cong \IMode{\int^{c \in C}\Coslice{c}{C}
 \otimes \Discrete{\Psi(c)}}$.} $\Of{\Grothendieck{}{(-)}}{\Sets^{C}\to\Cats}$
 on operators we have a category of objects
-$\Member{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Grothendieck{}{\Operators}}$
-for $\Member{\vartheta}{\Operators\Pair{\Upsilon}{\varrho}}$ and morphisms
-$\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{\varrho}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{\varrho'}}{\vartheta'}}$
-for $\Of{f}{\Pair{\Upsilon}{\varrho}\to\Pair{\Upsilon'}{\varrho'}}$ such that
-$\EqMember{\Restriction{f}\vartheta}{\vartheta'}{\Operators\Pair{\Upsilon'}{\varrho'}}$.
+$\Member{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Grothendieck{}{\Operators}}$
+for $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and morphisms
+$\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{a'}}{\vartheta'}}$
+for $\Of{f}{\Pair{\Upsilon}{a}\to\Pair{\Upsilon'}{a'}}$ such that
+$\EqMember{\Restriction{f}\vartheta}{\vartheta'}{\Operators\Pair{\Upsilon'}{a'}}$.
 Equivalently, $\Grothendieck{}{\Operators}$ is the pullback of $\Operators$
 along the universal $\Sets$-bundle where $\pi_{\Operators}$ is a discrete
 Grothendieck opfibration and $\Forget{-}_{\Singleton}$ is the forgetful functor
@@ -220,13 +220,13 @@ from pointed sets:
 
 \[
   \infer{
-    \IsOperator{\Upsilon}{\vartheta}{\varrho}
+    \IsOperator{\Upsilon}{\vartheta}{a}
   }{
-    \Member{\vartheta}{\Operators\langle\Upsilon,\varrho\rangle}
+    \Member{\vartheta}{\Operators\langle\Upsilon,a\rangle}
   }
 \]
 
-The judgment $\IsOperator{\Upsilon}{\vartheta}{\varrho}$ enjoys the structural
+The judgment $\IsOperator{\Upsilon}{\vartheta}{a}$ enjoys the structural
 properties of weakening and exchange via the functoriality of
 $\Operators$.
 
@@ -278,8 +278,12 @@ extension of the calculus with assignables (references):
 
 Declaring a new assignable consists in providing an initial value, and an
 expression with a free symbol (which shall represent the assignable in scope).
-Weakening can be seen as inducing a ``degeneracy map'' on operators, whereas a
-renaming $u\mapsto v$ will take $\mathsf{get}[u]$ to $\mathsf{get}[v]$.
+Note that the functoriality of $\Operators$ guarantees for any renaming
+$\Of{\varrho}{\Upsilon\to\Upsilon'}$ a restriction map $\Restriction{\varrho}$
+such that $\IsOperator{\Upsilon'}{\Restriction{\varrho}(\vartheta)}{a}$ when
+$\IsOperator{\Upsilon}{\vartheta}{a}$. In particular, the renaming
+$\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathsf{get}[u]$ to
+$\mathsf{get}[v]$.
 
 \section{Contexts}
 
