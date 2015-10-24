@@ -34,20 +34,16 @@
 
 \def\IModeColorName{MidnightBlue}
 \def\OModeColorName{Maroon}
+
 \newcommand\IMode[1]{{\color{\IModeColorName}{#1}}}
 \newcommand\OMode[1]{{\color{\OModeColorName}{#1}}}
-\newcommand\Quote[1]{{\color{Gray}{«}}#1{\color{Gray}{»}}}
 
 \newcommand\HypJ[2]{#1\ \ (#2)}
 \newcommand\GenJ[2]{\vert_{\IMode{#1}}\; #2}
-\newcommand\JJ{J}
-\newcommand\RSet{\mathfrak{R}}
-\newcommand\JSet{\mathfrak{J}}
 
 \newcommand\IsTac[1]{\IMode{#1}\ \textit{tactic}}
 
 \newcommand\MkSet[1]{\left\{#1\right\}}
-\newcommand\MkFam[3]{\MkSet{#1_{#2}}_{#2\in #3}}
 \newcommand\Member[2]{\IMode{#1}\in\IMode{#2}}
 \newcommand\EqMember[3]{\IMode{#1}=\IMode{#2}\in\IMode{#3}}
 \newcommand\Of[2]{\IMode{#1} : \IMode{#2}}
@@ -70,8 +66,6 @@
 \newcommand\Arities{\mathcal{A}}
 \newcommand\Operators{\mathcal{O}}
 
-\newcommand\ParamsOf{\pi_\mathfrak{p}}
-\newcommand\ArityOf{\pi_\mathfrak{a}}
 \newcommand\Cats{\mathbf{Cat}}
 \newcommand\Discrete[1]{#1_{\equiv}}
 \newcommand\Sets{\mathbf{Set}}
@@ -93,7 +87,6 @@
 
 \newcommand\Comma[2]{#1 \downarrow #2}
 \newcommand\Coslice[2]{#1\, /\, #2}
-\newcommand\Slice[2]{#1\, /\, #2}
 
 \newcommand\IsAbt[5]{%
   \IMode{#1}\triangleright%
