@@ -60,6 +60,9 @@
 \newcommand\IsSort[1]{\IMode{#1}\ \textit{sort}}
 \newcommand\Leq[2]{\IMode{#1}\leq\IMode{#2}}
 
+\newcommand\ArrDom[1]{\mathsf{dom}(#1)}
+\newcommand\Match[2]{\IMode{#1}\equiv\OMode{#2}}
+
 \newcommand\Symbols{\mathbb{I}}
 \newcommand\Finsets{\mathbb{F}}
 \newcommand\Sorts{\mathcal{S}}
@@ -117,13 +120,16 @@
 
 \newcommand\Hom[3]{#1\left[#2,#3\right]}
 
-\newcommand\Subst[3]{
-  \left[#1\, /\, #2\right]#3%
+\newcommand\Renaming[2]{
+  #2\upharpoonright #1
+}
+\newcommand\IsRenaming[3]{
+  \Renaming{\IMode{#1}}{\IMode{#2}}%
+  \leadsto\OMode{#3}%
 }
 
-\newcommand\IsRenaming[3]{
-  \IMode{#2}\upharpoonright\IMode{#1}%
-  \leadsto\OMode{#3}%
+\newcommand\Subst[3]{
+  \left[#1\, /\, #2\right]#3%
 }
 
 \newcommand\IsSubst[4]{%
@@ -400,6 +406,66 @@ syntax of abstract binding trees is inductively defined in four rules:
 
 Abstract binding trees are identified up to $\alpha$-equivalence.
 
+\subsection{Renaming of Symbols}
+
+The only place that symbols appear in our calculus is as parameters to
+operators (unlike variables, symbols are not terms). Therefore, the functorial
+action of the operator presheaf can be lifted into terms by recursion on their
+structure, via a pair of judgments $\IsRenaming{\varrho}{M}{N}$ and
+$\IsRenaming{\varrho}{E}{F}$, presupposing
+$\Of{\varrho}{\Upsilon\to\Upsilon'}$, and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{s}$
+and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
+
+\begin{gather*}
+  \infer{
+    \IsRenaming{\varrho}{x}{x}
+  }{
+  }\\[6pt]
+  \infer{
+    \IsRenaming{\varrho}{
+      \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
+    }{
+      \MApp{\MV{m}}{\vec{v}}{N_0,\dots,N_n}
+    }
+  }{
+    \Match{\varrho(\vec{u})}{\vec{v}} &
+    \HypJ{
+      \IsRenaming{\varrho}{M_i}{N_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  \infer{
+    \IsRenaming{\varrho}{
+      \App{\vartheta}{E_0,\dots,E_n}
+    }{
+      \App{\vartheta'}{F_0,\dots,F_n}
+    }
+  }{
+    \Match{\Restriction{\varrho}(\vartheta)}{\vartheta'} &
+    \HypJ{
+      \IsRenaming{\varrho}{E_i}{F_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  \infer{
+    \IsRenaming{\varrho}{
+      \left(\MkBTm{\vec{u}}{\vec{x}}{M}\right)
+    }{
+      \left(\MkBTm{\vec{u}}{\vec{x}}{N}\right)
+    }
+  }{
+    \IsRenaming{\varrho\setminus\vec{u}}{M}{N}
+  }
+\end{gather*}
+
+Above, the notation $\varrho\setminus\vec{u}$ means the omission of the
+variables $\vec{u}$ from the renaming $\varrho$. Because terms are identified
+up to $\alpha$-equivalence, the renaming judgment is functional in its input,
+and so we are justified in writing $\Renaming{\varrho}{M}$ for $N$ when
+$\IsRenaming{\varrho}{M}{N}$.
+
 \subsection{Substitution of Variables}
 
 Variable substitution in abstract binding trees is defined inductively by a
@@ -467,11 +533,9 @@ pair of judgments, $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{E'}$:
   }
 \end{gather*}
 
-Because terms are identified up to $\alpha$-equivalence, the variable
-substitution judgment is functional in its inputs, and so we are justified in
-writing $\Subst{N}{x}{M}$ for $M'$ when $\IsSubst{N}{x}{M}{M'}$. We write
-$\Subst{\vec{N}}{\vec{x}}{M}$ for the simultaneous substitution of $\vec{N}$
-for $\vec{x}$ in $M$.
+Going forward, we will write $\Subst{N}{x}{M}$ for $M'$ when
+$\IsSubst{N}{x}{M}{M'}$, and $\Subst{\vec{N}}{\vec{x}}{M}$ for the
+simultaneous substitution of $\vec{N}$ for $\vec{x}$ in $M$.
 
 \subsection{Substitution of Metavariables}
 
