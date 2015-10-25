@@ -205,16 +205,17 @@ $(U,\mathfrak{s})$.
 Then, fix a covariant presheaf (copresheaf) of operators
 $\Of{\Operators}{\SCtx\times\Discrete{\Arities}\to\Sets}$ such that the arrows
 in $\SCtx$ lift to renamings of operators' parameters. Via the Grothendieck
-construction\footnote{In this case, $C\Grothendieck{}{\Psi}$ represents the
-  category of elements of a copresheaf $\Of{\Psi}{C\to\Sets}$ but we keep the
-  $C$ implicit and simply refer to it as the Grothendieck construction.
-  Alternatively, this construction can be understood as a coend
-  $\IMode{C\Grothendieck{}{\Psi}}\cong \IMode{\int^{c \in C}\Coslice{c}{C}
-    \otimes \Discrete{\Psi(c)}}$.}
-$\Of{\Grothendieck{}{(-)}}{\Sets^{C}\to\Cats}$ on operators, we have a category
-of objects
-$\Member{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Grothendieck{}{\Operators}}$ for
-$\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and morphisms
+construction\footnote{In this case, $\mathbf{C}\Grothendieck{}{\Psi}$
+  represents the category of elements of a copresheaf
+  $\Of{\Psi}{\mathbf{C}\to\Sets}$ but we keep the $\mathbf{C}$ implicit and
+  simply refer to it as the Grothendieck construction.  Alternatively, this
+  construction can be understood as a coend
+$\IMode{\mathbf{C}\Grothendieck{}{\Psi}}\cong \IMode{\int^{c \in
+\mathbf{C}}\Coslice{c}{\mathbf{C}} \otimes \Discrete{\Psi(c)}}$.}
+$\Of{\Grothendieck{}{(-)}}{\Sets^{\mathbf{C}}\to\Cats}$ on operators, we have a
+category of objects
+$\Member{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Grothendieck{}{\Operators}}$
+for $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and morphisms
 $\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{a'}}{\vartheta'}}$
 for $\Of{\Pair{\varrho}{f}}{\Pair{\Upsilon}{a}\to\Pair{\Upsilon'}{a'}}$ such
 that
@@ -648,14 +649,14 @@ existing specification.
 
 Because we have not committed to using the built-in binding machinery to
 express the well-scopedness of telescopes and sequents, we are free to use
-\emph{symbols} in order to model the variables in the context. This is actually
-quite sensible if we are trying to actually faithfully represent the syntax of
-telescopes and sequents, rather than replace them with their counterparts on the
-meta-level. It is certainly not intended that we should be able to take a
-context $\Match{H}{x:A}$ and apply the substitution
-$\IsSubst{M}{x}{H}{M:A}$, which is nonsensical; on the other hand, if $x$
-had been a \emph{symbol}, all we could do is rename it in the context, since
-substitution is not defined for symbols.
+\emph{symbols} in order to model the variables in the context. This is in fact
+quite sensible if we are actually trying to faithfully represent the syntax of
+telescopes and sequents, rather than replace them with their counterparts on
+the meta-level. It is certainly not intended that we should be able to take a
+context $\Match{H}{x:A}$ and apply the substitution $\IsSubst{M}{x}{H}{M:A}$,
+which is nonsensical; on the other hand, if $x$ had been a \emph{symbol}, all
+we could do is rename it in the context, since substitution is not defined for
+symbols.
 
 This insight leads the way to a simple abt signature for the theory of telescopes
 and sequents.
