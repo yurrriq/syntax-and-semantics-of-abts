@@ -652,8 +652,8 @@ express the well-scopedness of telescopes and sequents, we are free to use
 quite sensible if we are trying to actually faithfully represent the syntax of
 telescopes and sequents, rather than replace them with their counterparts on the
 meta-level. It is certainly not intended that we should be able to take a
-context $\Match{\Gamma}{x:A}$ and apply the substitution
-$\IsSubst{M}{x}{\Gamma}{M:A}$, which is nonsensical; on the other hand, if $x$
+context $\Match{H}{x:A}$ and apply the substitution
+$\IsSubst{M}{x}{H}{M:A}$, which is nonsensical; on the other hand, if $x$
 had been a \emph{symbol}, all we could do is rename it in the context, since
 substitution is not defined for symbols.
 
@@ -737,12 +737,12 @@ Terms written using the abstract syntax will be difficult to read, so let us
 define some notation:
 \begin{align*}
   \IMode{\diamond} &\triangleq \OMode{\OpNil}\\
-  \IMode{\Gamma, u:P} &\triangleq \OMode{
-    \App{\OpSnoc{u}}{\Gamma, P}
+  \IMode{H, u:P} &\triangleq \OMode{
+    \App{\OpSnoc{u}}{H, P}
   }\\
-  \IMode{\Gamma\gg P} &\triangleq \OMode{
+  \IMode{H\gg A} &\triangleq \OMode{
     \App{\OpSequent}{
-      \Gamma, P
+      H, A
     }
   }\\
   \IMode{`u} &\triangleq \OMode{\OpVar{u}}
@@ -796,5 +796,57 @@ extrinsic wellformedness properties we wish to verify, presupposing
 $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{s}$.
 
 %% TODO: implement refinement judgment for wellscopedness
+
+For the sake of this example, we will just stipulate that anything of sort $\SortExp$ or $\SortType$ is
+grammatical:
+\begin{align*}
+  \infer{
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{A}{\SortType}
+  }{
+  }\qquad
+  \infer{
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{M}{\SortExp}
+  }{
+  }
+\end{align*}
+
+The refinements for parametric judgment and sequents simply delegate to their
+subterms:
+\begin{gather*}
+  \infer{
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{
+      \App{\OpNabla{\vec{s}}}{
+        \MkBTm{\vec{u}}{}{J}
+      }
+    }{\SortJdg}
+  }{
+    \IsWf{\Omega}{\Upsilon,\vec{u}:\vec{s}}{\Gamma}{J}{\SortJdg}
+  }\\[6pt]
+  \infer{
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{
+      H\gg A
+    }{\SortJdg}
+  }{
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{H}{\SortTele} &
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{A}{\SortType}
+  }
+\end{gather*}
+
+The refinement for telescopes proceeds by induction:
+\begin{gather*}
+  \infer{
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{\diamond}{\SortTele}
+  }{
+  }
+  \qquad
+  \infer{
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{H,u:A}{\SortTele}
+  }{
+    \begin{array}{l}
+      \IsWf{\Omega}{\Upsilon\setminus\MkSet{u}}{\Gamma}{H}{\SortTele}\\
+      \IsWf{\Omega}{\Upsilon\setminus\MkSet{u}}{\Gamma}{A}{\SortType}
+    \end{array}
+  }
+\end{gather*}
 
 \end{document}
