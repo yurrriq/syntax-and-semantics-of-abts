@@ -652,11 +652,7 @@ express the well-scopedness of telescopes and sequents, we are free to use
 \emph{symbols} in order to model the variables in the context. This is in fact
 quite sensible if we are actually trying to faithfully represent the syntax of
 telescopes and sequents, rather than replace them with their counterparts on
-the meta-level. It is certainly not intended that we should be able to take a
-context $\Match{H}{x:A}$ and apply the substitution $\IsSubst{M}{x}{H}{M:A}$,
-which is nonsensical; on the other hand, if $x$ had been a \emph{symbol}, all
-we could do is rename it in the context, since substitution is not defined for
-symbols.
+the meta-level.
 
 This insight leads the way to a simple abt signature for the theory of telescopes
 and sequents.
