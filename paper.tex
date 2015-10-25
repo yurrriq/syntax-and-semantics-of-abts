@@ -106,6 +106,12 @@
   \IMode{#3}\vdash%
   \IMode{#4}:\OMode{#5}%
 }
+\newcommand\IsWf[5]{%
+  \IMode{#1}\triangleright%
+  \IMode{#2}\parallel%
+  \IMode{#3}\vdash%
+  \IMode{#4}\in_{\mathbf{wf}}\OMode{#5}%
+}
 
 \newcommand\IsBTm[5]{%
   \IMode{#1}\triangleright%
@@ -779,6 +785,15 @@ Then, we may write a closed sequent judgment as follows:
     }
   }{\SortJdg}
 \]
+
+\subsection{Refinements for wellformedness}
+
+Having specified an approximation of the grammar of telescopes and sequents in
+the abt logical framework, we can proceed to define proper wellformedness via
+\emph{inductive refinement}. The basic idea is to introduce a new form of
+(meta)-judgment $\IsWf{\Omega}{\Upsilon}{\Gamma}{M}{s}$ which expresses the
+extrinsic wellformedness properties we wish to verify, presupposing
+$\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{s}$.
 
 %% TODO: implement refinement judgment for wellscopedness
 
