@@ -836,18 +836,31 @@ Likewise, wellformedness for variables and metavariables is defined uniformly:
 
 The remainder of the definition of refinement proceeds by induction on sorts
 and operators. For the sake of this example, we will just stipulate that
-anything of sort $\SortExp$ or $\SortType$ is grammatical:
+anything of sort $\SortExp$ or $\SortType$ is grammatical if its subterms are
+grammatical:
 
-\begin{align*}
-  \infer{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{A}{\SortType}
+\[
+  \infer[
+    \text{for $\Member{s}{\MkSet{\SortExp,\SortType}}$}
+  ]{
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{
+      \App{\vartheta}{E_0,\dots,E_n}
+    }{s}
   }{
-  }\qquad
-  \infer{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{M}{\SortExp}
-  }{
+    \begin{array}{l}
+      \IsOperator{\Upsilon}{\vartheta}{
+        \MkArity{
+          v_0,\dots,v_n
+        }{s}
+      }\\
+      \HypJ{
+        \IsWf{\Omega}{\Upsilon}{\Gamma}{E_i}{v_i}
+      }{
+        \Leq{i}{n}
+      }
+    \end{array}
   }
-\end{align*}
+\]
 
 The refinements for parametric judgment and sequents simply delegate to their
 subterms:
