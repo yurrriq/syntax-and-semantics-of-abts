@@ -110,7 +110,7 @@
   \IMode{#1}\triangleright%
   \IMode{#2}\parallel%
   \IMode{#3}\vdash%
-  \IMode{#4}\in_{\mathbf{wf}}\OMode{#5}%
+  \IMode{#4}\in_{\mathbf{wf}}\IMode{#5}%
 }
 
 \newcommand\IsBTm[5]{%
@@ -790,12 +790,54 @@ the abt logical framework, we can proceed to define proper wellformedness via
 \emph{inductive refinement}. The basic idea is to introduce a new form of
 (meta)-judgment $\IsWf{\Omega}{\Upsilon}{\Gamma}{M}{s}$ which expresses the
 extrinsic wellformedness properties we wish to verify, presupposing
-$\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{s}$.
+$\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{s}$. Additionally, we introduce an
+analogous judgment on bound terms, $\IsWf{\Omega}{\Upsilon}{\Gamma}{E}{v}$
+presupposing $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$, defined uniformly as
+follows:
+\[
+  \infer{
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{
+      \MkBTm{\vec{u}}{\vec{x}}{M}
+    }{
+      \MkValence{\vec{p}}{\vec{q}}{s}
+    }
+  }{
+    \IsWf{\Omega}{\Upsilon,\vec{u}:\vec{p}}{\Gamma,\vec{x}:\vec{q}}{M}{s}
+  }
+\]
 
-%% TODO: implement refinement judgment for wellscopedness
+Likewise, wellformedness for variables and metavariables is defined uniformly:
+\begin{gather*}
+  \infer{
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{x}{s}
+  }{
+  }\qquad
+  \infer{
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{
+      \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
+    }{s}
+  }{
+    \begin{array}{l}
+      \Lookup{\Omega}{\MV{m}}{\MkValence{\vec{p}}{q_0,\dots,q_n}{s}}\\
+      \HypJ{
+        \IsWf{\Omega}{\Upsilon}{\Gamma}{M_i}{q_i}
+      }{
+        \Leq{i}{n}
+      }
+    \end{array}
+  }
+\end{gather*}
 
-For the sake of this example, we will just stipulate that anything of sort $\SortExp$ or $\SortType$ is
-grammatical:
+\begin{remark}
+  Note that the refinement for variables $x$ is not trivial, since it is only
+  defined in case the presupposition $\IsAbt{\Omega}{\Upsilon}{\Gamma}{x}{s}$
+  is satisfied.
+\end{remark}
+
+The remainder of the definition of refinement proceeds by induction on sorts
+and operators. For the sake of this example, we will just stipulate that
+anything of sort $\SortExp$ or $\SortType$ is grammatical:
+
 \begin{align*}
   \infer{
     \IsWf{\Omega}{\Upsilon}{\Gamma}{A}{\SortType}
