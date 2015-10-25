@@ -754,7 +754,32 @@ Now, we have the following well-formed sequent:
   }{\SortJdg}
 \]
 
-%% TODO: add \nabla operator to close the context
+\newcommand\OpNabla[1]{\nabla[#1]}
+
+The above sequent has free symbols, but we can close over them by adding a form
+of parametric higher-order judgment to our object language, indexed by a
+collection of sorts $\vec{s}$:
+\[
+  \IsOperator{\Upsilon}{\OpNabla{\vec{s}}}{
+    \MkArity{
+      \MkValence{\vec{s}}{}{\SortJdg}
+    }{\SortJdg}
+  }
+\]
+
+Then, we may write a closed sequent judgment as follows:
+\[
+  \IsAbt{\cdot}{\cdot}{\cdot}{
+    \App{\OpNabla{\SortExp,\SortExp}}{
+      \MkBTm{u,v}{}{
+        \diamond,u:\OpBool,v:\App{\OpSo}{`u}%
+        \gg%
+        \App{\OpSo}{`u}
+      }
+    }
+  }{\SortJdg}
+\]
+
 %% TODO: implement refinement judgment for wellscopedness
 
 \end{document}
