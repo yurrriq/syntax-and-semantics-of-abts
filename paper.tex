@@ -654,7 +654,7 @@ substitution is not defined for symbols.
 This insight leads the way to a simple abt signature for the theory of telescopes
 and sequents.
 %
-\newcommand\SortCtx{\mathsf{ctx}}
+\newcommand\SortTele{\mathsf{tele}}
 \newcommand\SortJdg{\mathsf{jdg}}
 \newcommand\SortType{\mathsf{type}}
 \newcommand\SortExpr{\mathsf{exp}}
@@ -665,7 +665,7 @@ and sequents.
 %
 \[
   \begin{array}{l}
-    \IsSort{\SortCtx}\\
+    \IsSort{\SortTele}\\
     \IsSort{\SortExpr}\\
     \IsSort{\SortType}\\
     \IsSort{\SortJdg}\\\\
@@ -673,17 +673,17 @@ and sequents.
       \MkArity{}{\SortExpr}
     }\\\\
     \IsOperator{\Upsilon}{\OpNil}{
-      \MkArity{}{\SortCtx}
+      \MkArity{}{\SortTele}
     }\\
     \IsOperator{\Upsilon, u:\SortExpr}{\OpSnoc{u}}{
       \MkArity{
-        \MkValence{}{}{\SortCtx},
+        \MkValence{}{}{\SortTele},
         \MkValence{}{}{\SortType}
-      }{\SortCtx}
+      }{\SortTele}
     }\\\\
     \IsOperator{\Upsilon}{\OpSequent}{
       \MkArity{
-        \MkValence{}{}{\SortCtx},
+        \MkValence{}{}{\SortTele},
         \MkValence{}{}{\SortType}
       }{\SortJdg}
     }
