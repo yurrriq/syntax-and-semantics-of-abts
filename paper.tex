@@ -417,9 +417,9 @@ syntax of abstract binding trees (abts) is inductively defined in four rules:
   }
 \end{gather*}
 
-Abts are identified up to $\alpha$-equivalence. Let $\FS{M}$
-be the collection of symbols free in $M$, and let $\FV{M}$ be the collection of
-variables free $\pi_\Operators$ to operators in $M$. %% TODO: actually define these
+Abts are identified up to $\alpha$-equivalence. Let $\FS{M}$ be the collection
+of symbols free in $M$, and let $\FV{M}$ be the collection of variables free in
+$M$. %% TODO: actually define these
 
 \subsection{Renaming of Symbols}
 
@@ -698,7 +698,7 @@ and sequents.
 \newcommand\OpBool{\mathsf{bool}}
 \newcommand\OpSo{\mathsf{isTrue}}
 
-Suppose we have defined encoded a fragment of type theory as well:
+Suppose we have encoded a fragment of type theory as well:
 \[
   \begin{array}{l}
     \IsOperator{\Upsilon}{\top}{
@@ -863,7 +863,7 @@ grammatical:
 \]
 
 The refinements for parametric judgment and sequents simply delegate to their
-subterms:
+subterms as well:
 \begin{gather*}
   \infer{
     \IsWf{\Omega}{\Upsilon}{\Gamma}{
