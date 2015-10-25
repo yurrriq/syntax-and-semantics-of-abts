@@ -49,7 +49,14 @@
 \newcommand\EqMember[3]{\IMode{#1}=\IMode{#2}\in\IMode{#3}}
 \newcommand\Of[2]{\IMode{#1} : \IMode{#2}}
 
-\newcommand\MkValence[3]{\{#1\}[#2].\, #3}
+\newcommand\MkValence[3]{%
+  \ifthenelse{\equal{#1}{}}{}{%
+    \{#1\}%
+  }%
+  \ifthenelse{\equal{#2}{}}{}{%
+    [#2]%
+  }.\, #3
+}
 \newcommand\MkBTm[3]{\{#1\}[#2].\, #3}
 \newcommand\MkArity[2]{(#1) #2}
 \newcommand\IsArity[1]{\IMode{#1}\ \textit{arity}}
@@ -83,7 +90,8 @@
 \newcommand\Grothendieck[2]{\oint^{#1} #2#1}
 \newcommand\Pair[2]{\langle #1, #2 \rangle}
 \newcommand\Lift[2]{
-  \Operators\langle#1\ifthenelse{\equal{#2}{}}{}{, #2}\rangle
+  \Operators\langle#1%
+  \ifthenelse{\equal{#2}{}}{}{, #2}\rangle
 }
 \newcommand\PairTimes[2]{\langle #1\, {\scriptstyle {{\times}}}\, #2 \rangle}
 \newcommand\Singleton{\bullet}
@@ -243,12 +251,12 @@ $\SortExp$; we give its signature by asserting the following about its
 operators:
 \begin{gather*}
   \IsOperator{\Upsilon}{\lambda}{
-    \MkArity{\MkValence{\cdot}{\SortExp}{\SortExp}}{\SortExp}
+    \MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}
   }\\
   \IsOperator{\Upsilon}{\mathsf{ap}}{
     \MkArity{
-      \MkValence{\cdot}{\cdot}{\SortExp},
-      \MkValence{\cdot}{\cdot}{\SortExp}
+      \MkValence{}{}{\SortExp},
+      \MkValence{}{}{\SortExp}
     }{\SortExp}
   }
 \end{gather*}
@@ -259,22 +267,18 @@ extension of the calculus with assignables (references):
 \begin{gather*}
   \IsOperator{\Upsilon}{\mathsf{decl}}{
     \MkArity{
-      \MkValence{\cdot}{\cdot}{\SortExp},
-      \MkValence{\SortExp}{\cdot}{\SortExp}
+      \MkValence{}{}{\SortExp},
+      \MkValence{\SortExp}{}{\SortExp}
     }{
       \SortExp
     }
   }\\
   \IsOperator{\Upsilon,u:\SortExp}{\mathsf{get}[u]}{
-    \MkArity{
-      \cdot
-    }{
-      \SortExp
-    }
+    \MkArity{}{\SortExp}
   }\\
   \IsOperator{\Upsilon,u:\SortExp}{\mathsf{set}[u]}{
     \MkArity{
-      \MkValence{\cdot}{\cdot}{\SortExp}
+      \MkValence{}{}{\SortExp}
     }{
       \SortExp
     }
@@ -350,7 +354,7 @@ $\IsMetaCtx{\Omega}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and $\IsSort{s}$,
 meaning that $M$ is an abstract binding tree of sort $s$, with metavariables in
 $\Omega$, parameters in $\Upsilon$, and variables in $\Gamma$. Let the judgment
 $\IsBTm{\Omega}{\Upsilon}{\Gamma}{E}{v}$ presuppose $\IsValence{v}$.  Then, the
-syntax of abstract binding trees is inductively defined in four rules:
+syntax of abstract binding trees (abts) is inductively defined in four rules:
 
 \begin{gather*}
   \infer[\textit{var}]{
@@ -406,7 +410,7 @@ syntax of abstract binding trees is inductively defined in four rules:
   }
 \end{gather*}
 
-Abstract binding trees are identified up to $\alpha$-equivalence. Let $\FS{M}$
+Abts are identified up to $\alpha$-equivalence. Let $\FS{M}$
 be the collection of symbols free in $M$, and let $\FV{M}$ be the collection of
 variables free $\pi_\Operators$ to operators in $M$. %% TODO: actually define these
 
@@ -474,7 +478,7 @@ $\IsRenaming{\varrho}{M}{N}$.
 
 \subsection{Substitution of Variables}
 
-Variable substitution in abstract binding trees is defined inductively by a
+Variable substitution in abts is defined inductively by a
 pair of judgments, $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
 
 \begin{gather*}
@@ -613,5 +617,144 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
 
 As usual, we will write $\Subst{E}{\MV{m}}{M}$ for $N$ when
 $\IsSubst{E}{\MV{m}}{M}{N}$.
+
+\section{Case Study: Wellformed Sequents}
+
+The representation of telescopes and sequents in a logical framework is
+notoriously difficult; whilst it is possible to use higher-order abstract
+syntax or abts to encode the binding-structure of telescopes
+and sequents, the encoding is sufficiently laborious and obscure that it is not
+used in practice.
+
+Crary has demonstrated a first-order encoding of contexts in the logical
+framework in bijection with actual LF-contexts, which has been successfully
+used in large-scale mechanization efforts, including that of Standard ML and
+the Edinburgh Logical Framework itself.
+
+%%% TODO: Cite Crary; cite mechaniziation of Standard ML; cite Martens & Crary
+%%% TODO: talk about context encodings in Abella
+
+We will approach the problem of encoding telescopes and sequents from the
+\emph{refinements} perspective, where a conservative approximation of the
+grammar is first given using the abt logical framework, and then the
+correctness of a code is expressed separately in a judgment that refines the
+existing specification.
+
+Because we have not committed to using the built-in binding machinery to
+express the well-scopedness of telescopes and sequents, we are free to use
+\emph{symbols} in order to model the variables in the context. This is actually
+quite sensible if we are trying to actually faithfully represent the syntax of
+telescopes and sequents, rather than replace them with their counterparts on the
+meta-level. It is certainly not intended that we should be able to take a
+context $\Match{\Gamma}{x:A}$ and apply the substitution
+$\IsSubst{M}{x}{\Gamma}{M:A}$, which is nonsensical; on the other hand, if $x$
+had been a \emph{symbol}, all we could do is rename it in the context, since
+substitution is not defined for symbols.
+
+This insight leads the way to a simple abt signature for the theory of telescopes
+and sequents.
+%
+\newcommand\SortCtx{\mathsf{ctx}}
+\newcommand\SortJdg{\mathsf{jdg}}
+\newcommand\SortType{\mathsf{type}}
+\newcommand\SortExpr{\mathsf{exp}}
+\newcommand\OpNil{\mathsf{nil}}
+\newcommand\OpSnoc[1]{\mathsf{snoc}[#1]}
+\newcommand\OpVar[1]{\mathsf{var}[#1]}
+\newcommand\OpSequent{\mathsf{sequent}}
+%
+\[
+  \begin{array}{l}
+    \IsSort{\SortCtx}\\
+    \IsSort{\SortExpr}\\
+    \IsSort{\SortType}\\
+    \IsSort{\SortJdg}\\\\
+    \IsOperator{\Upsilon, u:\SortExpr}{\OpVar{u}}{
+      \MkArity{}{\SortExpr}
+    }\\\\
+    \IsOperator{\Upsilon}{\OpNil}{
+      \MkArity{}{\SortCtx}
+    }\\
+    \IsOperator{\Upsilon, u:\SortExpr}{\OpSnoc{u}}{
+      \MkArity{
+        \MkValence{}{}{\SortCtx},
+        \MkValence{}{}{\SortType}
+      }{\SortCtx}
+    }\\\\
+    \IsOperator{\Upsilon}{\OpSequent}{
+      \MkArity{
+        \MkValence{}{}{\SortCtx},
+        \MkValence{}{}{\SortType}
+      }{\SortJdg}
+    }
+  \end{array}
+\]
+
+\newcommand\OpPi{\mathsf{pi}}
+\newcommand\OpSg{\mathsf{sg}}
+\newcommand\OpBool{\mathsf{bool}}
+\newcommand\OpSo{\mathsf{isTrue}}
+
+Suppose we have defined encoded a fragment of type theory as well:
+\[
+  \begin{array}{l}
+    \IsOperator{\Upsilon}{\top}{
+      \MkArity{}{\SortType}
+    }\\
+    \IsOperator{\Upsilon}{\bot}{
+      \MkArity{}{\SortType}
+    }\\
+    \IsOperator{\Upsilon}{\OpBool}{
+      \MkArity{}{\SortType}
+    }\\
+    \IsOperator{\Upsilon}{\OpSo}{
+      \MkArity{
+        \MkValence{}{}{\SortExp}
+      }{\SortType}
+    }\\
+    \IsOperator{\Upsilon}{\OpPi}{
+      \MkArity{
+        \MkValence{}{}{\SortType},
+        \MkValence{}{\SortExp}{\SortType}
+      }{\SortType}
+    }\\
+    \IsOperator{\Upsilon}{\OpSg}{
+      \MkArity{
+        \MkValence{}{}{\SortType},
+        \MkValence{}{\SortExp}{\SortType}
+      }{\SortType}
+    }\\
+  \end{array}
+\]
+
+Terms written using the abstract syntax will be difficult to read, so let us
+define some notation:
+\begin{align*}
+  \IMode{\diamond} &\triangleq \OMode{\OpNil}\\
+  \IMode{\Gamma, u:P} &\triangleq \OMode{
+    \App{\OpSnoc{u}}{\Gamma, P}
+  }\\
+  \IMode{\Gamma\gg P} &\triangleq \OMode{
+    \App{\OpSequent}{
+      \Gamma, P
+    }
+  }\\
+  \IMode{`u} &\triangleq \OMode{\OpVar{u}}
+\end{align*}
+
+Now, we have the following well-formed sequent:
+\[
+  \IsAbt{\cdot}{
+    u:\SortExp,
+    v:\SortExp
+  }{\cdot}{
+    \diamond,u:\OpBool,v:\App{\OpSo}{`u}%
+    \gg%
+    \App{\OpSo}{`u}
+  }{\SortJdg}
+\]
+
+%% TODO: add \nabla operator to close the context
+%% TODO: implement refinement judgment for wellscopedness
 
 \end{document}
