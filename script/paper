@@ -5,10 +5,7 @@ set -o pipefail
 
 function main {
     pushd script/..
-    lualatex -shell-escape paper.tex
-    bibtex paper
-    lualatex -shell-escape paper.tex
-    lualatex -shell-escape paper.tex
+    latexmk -lualatex -pdf -use-make paper.tex
     popd
     exit 0
 }
