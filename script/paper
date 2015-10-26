@@ -5,7 +5,7 @@ set -o pipefail
 
 function main {
     pushd script/..
-    xelatex -shell-escape paper.tex
+    lualatex -shell-escape paper.tex
     popd
     exit 0
 }
