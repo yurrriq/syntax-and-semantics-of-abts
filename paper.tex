@@ -3,6 +3,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{agda} % this should come after ams*
 \usepackage{catchfilebetweentags}
 \usepackage{fontspec}
 \usepackage{geometry}
@@ -935,6 +936,34 @@ The refinement for telescopes proceeds by induction:
     \end{array}
   }
 \end{gather*}
+
+\section{Code}
+
+\CatchFileBetweenTags\tmp{latex/Code.tex}{agda}
+
+\subsection{Nat}
+
+\ExecuteMetaData[latex/Code.tex]{nat}
+
+\subsection{Fin}
+
+\ExecuteMetaData[latex/Code.tex]{fin}
+
+\subsection{Var}
+
+\ExecuteMetaData[latex/Code.tex]{var}
+
+\subsection{SCtx}
+
+\ExecuteMetaData[latex/Code.tex]{sctx}
+
+\subsection{Signatures}
+
+\ExecuteMetaData[latex/Code.tex]{sign}
+
+\subsection{Trees}
+
+\ExecuteMetaData[latex/Code.tex]{trees}
 
 \nocite{*}
 \bibliographystyle{abbrv}
