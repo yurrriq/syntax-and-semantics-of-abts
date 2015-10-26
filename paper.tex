@@ -3,6 +3,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{catchfilebetweentags}
 \usepackage{fontspec}
 \usepackage{geometry}
 \usepackage{graphicx}
@@ -30,6 +31,31 @@
 ]{microtype}
 \setmainfont{Linux Libertine O}
 \setmathfont{Asana Math}
+
+% make lualatex play nice with agda
+\makeatletter
+\ifluatex
+   \newwrite\CATCHPATCHOUT
+\fi
+\def\CatchFBT@Fin@l#1[#2]{%
+   \begingroup
+      \endlinechar\m@ne \makeatletter #2%
+      \ifluatex
+         \immediate\openout\CATCHPATCHOUT=\jobname.catchpatch
+         \immediate\write\CATCHPATCHOUT {\CatchFBT@tok{\the\CatchFBT@tok}}%
+         \immediate\closeout\CATCHPATCHOUT
+         \@@input \jobname.catchpatch
+      \else
+      \scantokens\expandafter{%
+         \expandafter\CatchFBT@tok\expandafter{\the\CatchFBT@tok}}%
+      \fi
+      \CatchFBT@IsAToken{#1}
+         {\global#1\expandafter{\the\CatchFBT@tok}}
+         {\xdef#1{\the\CatchFBT@tok}}%
+      \ifx\CatchFBT@tok#1\else\global\CatchFBT@tok{}\fi
+   \endgroup
+}% \CatchFBT@Final
+\makeatother
 
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{prop}[thm]{Proposition}
