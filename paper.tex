@@ -1,23 +1,26 @@
 \documentclass[11pt]{article}
 
-\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{agda} % this should come after ams*
+\usepackage{catchfilebetweentags}
 \usepackage{fontspec}
 \usepackage{geometry}
 \usepackage{graphicx}
+\usepackage{hyperref}
 \usepackage{ifthen}
 \usepackage{mathtools}
 \usepackage{proof}
 \usepackage{scalerel}
+\usepackage{setspace}
 \usepackage{stmaryrd}
 \usepackage{supertabular}
 \usepackage{tikz-cd}
 \usepackage{unicode-math}
+\usepackage{url}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
 \usepackage{xunicode}
-
-\usepackage{setspace,url,hyperref}
 
 \definecolor{dark-gray}{gray}{0.20}
 
@@ -29,6 +32,31 @@
 ]{microtype}
 \setmainfont{Linux Libertine O}
 \setmathfont{Asana Math}
+
+% make lualatex play nice with agda
+\makeatletter
+\ifluatex
+   \newwrite\CATCHPATCHOUT
+\fi
+\def\CatchFBT@Fin@l#1[#2]{%
+   \begingroup
+      \endlinechar\m@ne \makeatletter #2%
+      \ifluatex
+         \immediate\openout\CATCHPATCHOUT=\jobname.catchpatch
+         \immediate\write\CATCHPATCHOUT {\CatchFBT@tok{\the\CatchFBT@tok}}%
+         \immediate\closeout\CATCHPATCHOUT
+         \@@input \jobname.catchpatch
+      \else
+      \scantokens\expandafter{%
+         \expandafter\CatchFBT@tok\expandafter{\the\CatchFBT@tok}}%
+      \fi
+      \CatchFBT@IsAToken{#1}
+         {\global#1\expandafter{\the\CatchFBT@tok}}
+         {\xdef#1{\the\CatchFBT@tok}}%
+      \ifx\CatchFBT@tok#1\else\global\CatchFBT@tok{}\fi
+   \endgroup
+}% \CatchFBT@Final
+\makeatother
 
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{prop}[thm]{Proposition}
@@ -97,12 +125,12 @@
 
 \newcommand\Grothendieck[2]{\oint^{#1} #2#1}
 \newcommand\Pair[2]{\langle #1, #2 \rangle}
-\newcommand\Lift[2]{
+\newcommand\FLift[2]{
   \Operators\langle#1%
   \ifthenelse{\equal{#2}{}}{}{, #2}\rangle
 }
 \newcommand\PairTimes[2]{\langle #1\, {\scriptstyle {{\times}}}\, #2 \rangle}
-\newcommand\Singleton{\bullet}
+\newcommand\SSingleton{\bullet}
 \newcommand\Forget[1]{|\, #1\, |}
 
 \newcommand\Comma[2]{#1 \downarrow #2}
@@ -227,10 +255,10 @@ for $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and morphisms
 $\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{a'}}{\vartheta'}}$
 for $\Of{\Pair{\varrho}{f}}{\Pair{\Upsilon}{a}\to\Pair{\Upsilon'}{a'}}$ such
 that
-$\EqMember{\Lift{\varrho}{f}(\vartheta)}{\vartheta'}{\Operators\Pair{\Upsilon'}{a'}}$.
+$\EqMember{\FLift{\varrho}{f}(\vartheta)}{\vartheta'}{\Operators\Pair{\Upsilon'}{a'}}$.
 Equivalently, $\Grothendieck{}{\Operators}$ is the pullback of $\Operators$
 along the universal $\Sets$-bundle where $\pi_{\Operators}$ is a discrete
-Grothendieck opfibration and $\Forget{-}_{\Singleton}$ is the forgetful functor
+Grothendieck opfibration and $\Forget{-}_{\SSingleton}$ is the forgetful functor
 from pointed sets:
 
 \[
@@ -238,8 +266,8 @@ from pointed sets:
   {\Grothendieck{}{\Operators}}
     \arrow[r, "{\pi_{\in}}"]
     \arrow[d, "{\pi_{\Operators}}" left]
-  \& {\Sets_{\Singleton}}
-    \arrow[d, "{\Forget{-}_{\Singleton}}"] \\
+  \& {\Sets_{\SSingleton}}
+    \arrow[d, "{\Forget{-}_{\SSingleton}}"] \\
   {\SCtx\times\Discrete{\Arities}}
      \arrow[r, "{\Operators}" below]
   \& {\Sets} \\
@@ -304,12 +332,12 @@ Declaring a new assignable consists in providing an initial value, and an
 expression binding a symbol (which shall represent the assignable in scope).
 Note that the functoriality of $\Operators$ guarantees for any renaming
 $\Of{\varrho}{\Upsilon\to\Upsilon'}$ and $\Of{f}{a\to a'}$, a lifted map
-$\Of{\Lift{\varrho}{f}}{\Operators\Pair{\Upsilon}{a}\to\Operators\Pair{\Upsilon'}{a'}}$
-such that $\IsOperator{\Upsilon'}{\Lift{\varrho}{f}(\vartheta)}{a'}$ when
+$\Of{\FLift{\varrho}{f}}{\Operators\Pair{\Upsilon}{a}\to\Operators\Pair{\Upsilon'}{a'}}$
+such that $\IsOperator{\Upsilon'}{\FLift{\varrho}{f}(\vartheta)}{a'}$ when
 $\IsOperator{\Upsilon}{\vartheta}{a}$. Because the category
 $\Discrete{\Arities}$ is discrete and has only identity arrows, through an abuse
-of notation we will often write $\Lift{\varrho}{}$ to mean
-$\Lift{\varrho}{\ArrId{}}$. In particular, the renaming
+of notation we will often write $\FLift{\varrho}{}$ to mean
+$\FLift{\varrho}{\ArrId{}}$. In particular, the renaming
 $\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathsf{get}[u]$ to $\mathsf{get}[v]$.
 
 \section{Contexts}
@@ -465,7 +493,7 @@ and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
       \App{\vartheta'}{F_0,\dots,F_n}
     }
   }{
-    \Match{\Lift{\varrho}{}(\vartheta)}{\vartheta'} &
+    \Match{\FLift{\varrho}{}(\vartheta)}{\vartheta'} &
     \HypJ{
       \IsRenaming{\varrho}{E_i}{F_i}
     }{
@@ -908,6 +936,34 @@ The refinement for telescopes proceeds by induction:
     \end{array}
   }
 \end{gather*}
+
+\section{Code}
+
+\CatchFileBetweenTags\tmp{latex/Code.tex}{agda}
+
+\subsection{Nat}
+
+\ExecuteMetaData[latex/Code.tex]{nat}
+
+\subsection{Fin}
+
+\ExecuteMetaData[latex/Code.tex]{fin}
+
+\subsection{Var}
+
+\ExecuteMetaData[latex/Code.tex]{var}
+
+\subsection{SCtx}
+
+\ExecuteMetaData[latex/Code.tex]{sctx}
+
+\subsection{Signatures}
+
+\ExecuteMetaData[latex/Code.tex]{sign}
+
+\subsection{Trees}
+
+\ExecuteMetaData[latex/Code.tex]{trees}
 
 \nocite{*}
 \bibliographystyle{abbrv}

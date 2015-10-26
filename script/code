@@ -5,7 +5,7 @@ set -o pipefail
 
 function main {
     pushd script/..
-    latexmk -lualatex -pdf -use-make paper.tex
+    agda --latex Code.lagda
     popd
     exit 0
 }
