@@ -29,19 +29,19 @@ _×_ : (A : Set) (B : Set) → Set
 A × B = ∐ A (λ _ → B)
 \end{code}
 
-%<*var>
+%<*name>
 \begin{code}
-Var : (n : Nat) → Set
-Var = Fin
+Name : (n : Nat) → Set
+Name = Fin
 \end{code}
-%</var>
+%</name>
 
-%<*sctx>
+%<*ctx>
 \begin{code}
-SCtx : (𝒮 : Set) (n : Nat) → Set
-SCtx 𝒮 n = Var n → 𝒮
+Ctx : (𝒮 : Set) (n : Nat) → Set
+Ctx 𝒮 n = Name n → 𝒮
 \end{code}
-%</sctx>
+%</ctx>
 
 %<*sign>
 \begin{code}
@@ -49,14 +49,14 @@ record Sign : Set₁ where
   field
     𝒮 : Set
     𝒜 : Set
-    𝒪 : ∀ {n} → SCtx 𝒮 n × 𝒜 → Set
+    𝒪 : ∀ {n} → Ctx 𝒮 n × 𝒜 → Set
 open Sign
 \end{code}
 %</sign>
 
 %<*trees>
 \begin{code}
-data _∣_⊢_ (Σ : Sign) {n} (Υ : SCtx (𝒮 Σ) n) : (s : 𝒮 Σ) → Set where
-  v : (x : Fin n) → Σ ∣ Υ ⊢ Υ x
+data _∣_∥_⊢_ (Σ : Sign) {m} {n} (Υ : Ctx (𝒮 Σ) m) (Γ : Ctx (𝒮  Σ) n) : (s : 𝒮 Σ) → Set where
+  v : (x : Name n) → Σ ∣ Υ ∥ Γ ⊢ Γ x
 \end{code}
 %</trees>
