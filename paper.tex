@@ -412,9 +412,9 @@ syntax of abstract binding trees (abts) is inductively defined in four rules:
   }\\[6pt]
   \infer[\textit{abs}]{
     \IsBTm{\Omega}{\Upsilon}{\Gamma}{
-      \left(\MkBTm{\vec{u}}{\vec{x}}{M}\right)
+      \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
-      \left(\MkValence{\vec{p}}{\vec{q}}{s}\right)
+      \MkValence{\vec{p}}{\vec{q}}{s}
     }
   }{
     \IsAbt{\Omega}{\Upsilon, \vec{u}:\vec{p}}{\Gamma,\vec{x}:{\vec{q}}}{
@@ -474,9 +474,9 @@ and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
   }\\[6pt]
   \infer{
     \IsRenaming{\varrho}{
-      \left(\MkBTm{\vec{u}}{\vec{x}}{M}\right)
+      \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
-      \left(\MkBTm{\vec{u}}{\vec{x}}{N}\right)
+      \MkBTm{\vec{u}}{\vec{x}}{N}
     }
   }{
     \IsRenaming{\varrho\setminus\vec{u}}{M}{N}
