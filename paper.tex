@@ -103,8 +103,9 @@
 \newcommand\ArrId[1]{1_{#1}}
 \newcommand\Match[2]{\IMode{#1}\equiv\OMode{#2}}
 
-\newcommand\Symbols{\mathbb{I}}
-\newcommand\Finsets{\mathbb{F}}
+\newcommand\Symbols{\mathbf{I}}
+\newcommand\SymSets{\mathbb{F}_\Symbols}
+\newcommand\FinSets{\mathbb{F}}
 \newcommand\Sorts{\mathcal{S}}
 \newcommand\Valences{\mathcal{V}}
 \newcommand\Arities{\mathcal{A}}
@@ -114,6 +115,10 @@
 \newcommand\Discrete[1]{#1_{\equiv}}
 \newcommand\Sets{\mathbf{Set}}
 \newcommand\SCtx{\mathbf{SCtx}}
+\newcommand\Ctx{\mathbf{Ctx}}
+\newcommand\Seq{\mathbf{Seq}}
+
+\newcommand\OpCat[1]{#1^{op}}
 
 \newcommand\IsOperator[3]{\IMode{#1}\Vdash \IMode{#2} : \OMode{#3}}
 
@@ -125,6 +130,7 @@
 
 \newcommand\Grothendieck[2]{\oint^{#1} #2#1}
 \newcommand\Pair[2]{\langle #1, #2 \rangle}
+\newcommand\Tuple[1]{\langle #1 \rangle}
 \newcommand\FLift[2]{
   \Operators\langle#1%
   \ifthenelse{\equal{#2}{}}{}{, #2}\rangle
@@ -190,6 +196,7 @@
 
 \newcommand\Define[2]{\IMode{#1}\triangleq\OMode{#2}}
 
+\DeclareMathOperator\Yoneda{\mathbf{y}}
 
 \begin{document}
 
@@ -229,9 +236,9 @@ and the set of arities $\Arities$.
 \]
 
 
-Let $\Symbols$ be an infinite set of symbols. Let $\Finsets$ be the category of
+Let $\Symbols$ be an infinite set of symbols. Let $\SymSets$ be the category of
 finite subsets of $\Symbols$ and their injective maps; then the comma
-construction $\Define{\SCtx}{\Comma{\Finsets}{\Discrete{\Sorts}}}$, with
+construction $\Define{\SCtx}{\Comma{\SymSets}{\Discrete{\Sorts}}}$, with
 $\Discrete{\Sorts}$ the discrete category on the set $\mathcal{S}$, is the
 category of contexts of symbols, whose objects are finite sets of symbols $U$
 and sort-assignments $\Of{\mathfrak{s}}{U\to\Sorts}$, and whose morphisms are
@@ -339,6 +346,10 @@ $\Discrete{\Arities}$ is discrete and has only identity arrows, through an abuse
 of notation we will often write $\FLift{\varrho}{}$ to mean
 $\FLift{\varrho}{\ArrId{}}$. In particular, the renaming
 $\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathsf{get}[u]$ to $\mathsf{get}[v]$.
+
+\begin{definition}
+  A \emph{signature} $\Sigma$ is a set of sorts $\Sorts$ together with a copresheaf $\Operators$ of operators.
+\end{definition}
 
 \section{Contexts}
 
@@ -660,6 +671,44 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
 
 As usual, we will write $\Subst{E}{\MV{m}}{M}$ for $N$ when
 $\IsSubst{E}{\MV{m}}{M}{N}$.
+
+\section{Model Theory}
+
+Let $\FinSets$ be the free cocartesian category on a single object (that is,
+the category of finite cardinals and functions between them); then the comma
+construction $\Define{\Ctx}{\Comma{\FinSets}{\Sorts}}$ is the category of
+variable contexts, and $\Define{\Seq}{\SCtx\times\Ctx\times\Sorts}$ is the category of
+sequents $\Upsilon\parallel\Gamma\vdash s$.  Then, we fix the presheaf category $\Sets^\Seq$ as
+our semantic universe.
+
+\subsection{Signatures and substitution monoidal structures}
+
+Any two presheaves $A,B : \Sets^\Seq$ have a tensor $A\bullet B$,
+defined as a coend in the following way:
+\[
+  \Define{(A\bullet B)(\Upsilon\parallel\Gamma\vdash s)}{
+    \int^{\Delta\in\Ctx}
+      A(\Upsilon\parallel\Delta\vdash s)
+        \otimes \prod_{x\in\Dom\Delta} B(\Upsilon\parallel\Gamma\vdash\Delta(x))
+  }
+\]
+
+The presheaf of variables $\Define{V(\Upsilon\parallel\Gamma\vdash s)}{\MkSet{x \in \Dom\Gamma
+\mid \Gamma(x) = s}}$ is the unit to this tensor, and together they comprise a
+substitution monoidal structure. Then, a presheaf $A$ is a monoid if it is
+equipped with the following natural transformations:
+
+\[
+  \begin{tikzcd}[ampersand replacement = \&]
+    {\IMode{V}} \arrow[r, "\IMode\nu"]
+    \& {\IMode{A}}
+    \& {\IMode{A\bullet A}}
+    \arrow[l, "\IMode\varsigma", swap]
+  \end{tikzcd}
+\]
+
+Intuitively, $\nu$ embeds variables into $A$ and $\varsigma$ equips $A$ with an
+operation for simultaneous substitutions of variables.
 
 \section{Case Study: Wellformed Sequents}
 
