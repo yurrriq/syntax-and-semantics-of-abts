@@ -196,6 +196,8 @@
 
 \newcommand\Define[2]{\IMode{#1}\triangleq\OMode{#2}}
 
+\newcommand\SigFun[1]{\mathcal{F}_{#1}}
+
 \begin{document}
 
 \title{Abstract Binding Trees}
@@ -707,6 +709,30 @@ equipped with the following natural transformations:
 
 Intuitively, $\nu$ embeds variables into $A$ and $\varsigma$ equips $A$ with an
 operation for simultaneous substitutions of variables.
+
+\subsection{The signature endofunctor and its initial algebras}
+
+For each signature $\Match{\Sigma}{\Pair{\Sorts}{\Operators}}$, we have an
+endofunctor $\Of{\SigFun{\Sigma}}{\Sets^\Seq\to\Sets^\Seq}$, which is defined
+as follows:
+
+\begin{align*}
+  \IMode{\SigFun{\Sigma}(X)(\Upsilon\parallel\Gamma\vdash s)}
+    &\triangleq
+    \OMode{
+      \coprod_{\vartheta\in\Operators\Pair{\Upsilon}{\MkArity{\vec{v}}{s}}}
+      \prod_{\MkValence{\vec{p}}{\vec{q}}{s'}\in\vec{v}}
+      X(\Upsilon,\vec{p}\parallel\Gamma,\vec{q}\vdash s')
+    }
+\end{align*}
+
+%% TODO: in the above, \vec{q} is a list of sorts, but we need to pick out symbol
+%% names for these before we can extend \Upsilon! Or do we?
+
+Then, a $\Sigma$-model is a monoid $A$ which is equipped with an initial
+algebra $\Of{\alpha}{\SigFun{\Sigma}(A)\to A}$, which shall interpret
+applications of each operator.
+
 
 \section{Case Study: Wellformed Sequents}
 
