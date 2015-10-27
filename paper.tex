@@ -196,8 +196,6 @@
 
 \newcommand\Define[2]{\IMode{#1}\triangleq\OMode{#2}}
 
-\DeclareMathOperator\Yoneda{\mathbf{y}}
-
 \begin{document}
 
 \title{Abstract Binding Trees}
@@ -681,7 +679,7 @@ variable contexts, and $\Define{\Seq}{\SCtx\times\Ctx\times\Sorts}$ is the categ
 sequents $\Upsilon\parallel\Gamma\vdash s$.  Then, we fix the presheaf category $\Sets^\Seq$ as
 our semantic universe.
 
-\subsection{Signatures and substitution monoidal structures}
+\subsection{Substitution monoidal structures}
 
 Any two presheaves $A,B : \Sets^\Seq$ have a tensor $A\bullet B$,
 defined as a coend in the following way:
@@ -695,7 +693,7 @@ defined as a coend in the following way:
 
 The presheaf of variables $\Define{V(\Upsilon\parallel\Gamma\vdash s)}{\MkSet{x \in \Dom\Gamma
 \mid \Gamma(x) = s}}$ is the unit to this tensor, and together they comprise a
-substitution monoidal structure. Then, a presheaf $A$ is a monoid if it is
+\emph{substitution monoidal structure}. Then, a presheaf $A$ is a monoid if it is
 equipped with the following natural transformations:
 
 \[
