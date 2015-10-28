@@ -710,6 +710,14 @@ equipped with the following natural transformations:
 Intuitively, $\nu$ embeds variables into $A$ and $\varsigma$ equips $A$ with an
 operation for simultaneous substitutions of variables.
 
+\begin{remark}
+  A \emph{relative monad} on a functor $\Of{J}{\mathbf{J}\to\mathbf{C}}$ is a
+  monoid in the functor category $\mathbf{C}^\mathbf{J}$
+  \cite{altenkirch-chapman-uustalu:2015}. A presheaf $A$ with a substitution
+  monoidal structure $\Pair{\nu}{\varsigma}$ can be viewed as a relative monad
+  on the presheaf $\Of{V}{\Sets^\Seq}$ of variables.
+\end{remark}
+
 \subsection{The signature endofunctor and its initial algebras}
 
 For each signature $\Match{\Sigma}{\Pair{\Sorts}{\Operators}}$, we have an
