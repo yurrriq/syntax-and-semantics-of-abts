@@ -730,19 +730,19 @@ variables.
 
 \begin{remark}
   A presheaf $P$ with a substitution monoidal structure $\Pair{\nu}{\varsigma}$
-  also forms a \emph{relative monad} on the functor
-  $\Of{V}{\widehat{\HypCat}^\Sorts}$ of variables.\footnote{Relative monads are
-    skew-monoids in the skew-monoidal structure induced by a functor category
+  also forms a \emph{relative monad}\footnote{Relative monads are skew-monoids
+    in the skew-monoidal structure induced by a functor category
     $\mathbf{C}^\mathbf{J}$ \cite{altenkirch-chapman-uustalu:2015}. However,
     relative monads can also be understood without reference to monoids by
     viewing them as a generalization of \emph{extension systems} or
     \emph{Kleisli structures}. This latter presentation of monads, popular in
     computer science and logic, does not involve iteration of the monad
-    functor.} Consequently, the monoid multiplication $\odot$ can be replaced
-  with an extension operation:
+    functor.} on the functor $\Of{V}{\widehat{\HypCat}^\Sorts}$ of variables.
+  Consequently, the monoid multiplication $\odot$ can be replaced with an
+  extension operation:
   \[
-    \begin{tikzcd}[ampersand replacement = \&]
-      {\IMode{P(\,=\,)^{V(\,-\,)}}} \arrow[r, "(\,-\,)^{P}"]
+    \begin{tikzcd}[ampersand replacement = \&, sep = huge]
+      {\IMode{P(\,=\,)^{V(\,-\,)}}} \arrow[r, "(\,-\,)^{\circledast}"]
       \& {\IMode{P(\,=\,)^{P(\,-\,)}}}
     \end{tikzcd}
   \]
