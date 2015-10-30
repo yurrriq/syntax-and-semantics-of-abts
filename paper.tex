@@ -715,7 +715,10 @@ Then, variables object
 $\Define{V_s(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid \Gamma(x)=s}}$
 is the unit to this tensor. We will say that an object
 $\Of{P}{\widehat{\HypCat}^\Sorts}$ is a $\Sigma$-monoid in case it is equipped
-with the following natural transformations:
+with the following natural transformations where $\nu$ embeds variables into $P$
+and $\varsigma$ equips $P$ with an operation for simultaneous substitutions of
+variables.
+
 \[
   \begin{tikzcd}[ampersand replacement = \&]
     {\IMode{V}} \arrow[r, "\IMode\nu"]
@@ -724,20 +727,27 @@ with the following natural transformations:
     \arrow[l, "\IMode\varsigma", swap]
   \end{tikzcd}
 \]
-Intuitively, $\nu$ embeds variables into $P$ and $\varsigma$ equips $P$ with an
-operation for simultaneous substitutions of variables.
 
 \begin{remark}
-  A \emph{relative monad} on a functor $\Of{J}{\mathbf{J}\to\mathbf{C}}$ is a
-  skew-monoid in the skew-monoidal structure induced by the functor category
-  $\mathbf{C}^\mathbf{J}$ \cite{altenkirch-chapman-uustalu:2015}. In contrast to
-  monoids, relative monads can also be understood as a generalization of the
-  \emph{Kleisli structure} or \emph{extension system} presentation of monads. A
-  presheaf $P$ with a substitution monoidal structure $\Pair{\nu}{\varsigma}$
-  can be viewed as a relative monad on the functor
-  $\Of{V}{\widehat{\HypCat}^\Sorts}$ of variables.
+  A presheaf $P$ with a substitution monoidal structure $\Pair{\nu}{\varsigma}$
+  also forms a \emph{relative monad} on the functor
+  $\Of{V}{\widehat{\HypCat}^\Sorts}$ of variables.\footnote{Relative monads are
+    skew-monoids in the skew-monoidal structure induced by a functor category
+    $\mathbf{C}^\mathbf{J}$ \cite{altenkirch-chapman-uustalu:2015}. However,
+    relative monads can also be understood without reference to monoids by
+    viewing them as a generalization of \emph{extension systems} or
+    \emph{Kleisli structures}. This latter presentation of monads, popular in
+    computer science and logic, does not involve iteration of the monad
+    functor.} Consequently, the monoid multiplication $\odot$ can be replaced
+  with an extension operation:
+  \[
+    \begin{tikzcd}[ampersand replacement = \&]
+      {\IMode{P(\,=\,)^{V(\,-\,)}}} \arrow[r, "(\,-\,)^{P}"]
+      \& {\IMode{P(\,=\,)^{P(\,-\,)}}}
+    \end{tikzcd}
+  \]
 \end{remark}
-
+  
 For any context $\Gamma$, we have an induced map
 $\Of{\nu_\Gamma}{\left(\prod_{x\in\Dom\Gamma}V_{\Gamma(x)}\right)\to
 \left(\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}\right)}$.
