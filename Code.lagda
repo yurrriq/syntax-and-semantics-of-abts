@@ -39,6 +39,10 @@ syntax ∫↓ (λ i → P) = ∫↓[ i ] P
 \end{code}
 
 \begin{code}
+infix 1 ∫↑
+infix 1 ∫↓
+\end{code}
+\begin{code}
 record ∫↑ {I : Set} (P : I → Set) : Set where
   constructor s↑
   field
@@ -55,6 +59,9 @@ SET[ A , B ] = A → B
 \end{code}
 
 \begin{code}
+infix 0 _⊗_
+\end{code}
+\begin{code}
 record _⊗_ (A B : Set) : Set where
   constructor _,_
   field
@@ -66,6 +73,9 @@ open _⊗_ public
 \begin{code}
 _⇒_ : (A B : Set) → Set
 A ⇒ B = A → B
+
+id : {A : Set} → A → A
+id x = x
 \end{code}
 
 %<*lan>
@@ -123,7 +133,31 @@ open Sign
 
 %<*trees>
 \begin{code}
-data _∣_∥_⊢_ (Σ : Sign) {m} {n} (Υ : Ctx (𝒮 Σ) m) (Γ : Ctx (𝒮  Σ) n) : (s : 𝒮 Σ) → Set where
+data _∣_∥_⊢_ (Σ : Sign) {m} {n} (Υ : Ctx (𝒮 Σ) m) (Γ : Ctx (𝒮 Σ) n) : (s : 𝒮 Σ) → Set where
   v : (x : Name n) → Σ ∣ Υ ∥ Γ ⊢ Γ x
 \end{code}
 %</trees>
+
+%<*substitution>
+\begin{code}
+module _ (Σ : Sign) where
+  _●_
+    : (A : ∀ {m}{n} (Υ : Ctx (𝒮 Σ) m) (Γ : Ctx (𝒮 Σ) n) → Set)
+    → (P : 𝒮 Σ → ∀ {m}{n} (Υ : Ctx (𝒮 Σ) m) (Γ : Ctx (𝒮 Σ) n) → Set)
+    → ∀ {m}{n}(Υ : Ctx (𝒮 Σ) m) (Γ : Ctx (𝒮 Σ) n) → Set
+  (A ● P) {n = n} Υ Γ = ∫↑[ Δ ] (A {n = n} Υ Δ ⊗ ∫↓[ x ] P (Δ x) Υ Γ)
+
+  -- Lan version
+  _●ᴸ_
+    : (A : ∀ {m}{n} (Υ : Ctx (𝒮 Σ) m) (Γ : Ctx (𝒮 Σ) n) → Set)
+    → (P : 𝒮 Σ → ∀ {m}{n} (Υ : Ctx (𝒮 Σ) m) (Γ : Ctx (𝒮 Σ) n) → Set)
+    → ∀ {m}{n}(Υ : Ctx (𝒮 Σ) m) (Γ : Ctx (𝒮 Σ) n) → Set
+  (A ●ᴸ P) {n = n} Υ Γ = LanG (λ δ γ → ∫↓[ x ] P (δ x) Υ γ) _⊗_ id (A {n = n} Υ) Γ
+
+  _⊙_
+    : (P Q : 𝒮 Σ → ∀ {m}{n} (Υ : Ctx (𝒮 Σ) m) (Γ : Ctx (𝒮 Σ) n) → Set)
+    → (s : 𝒮 Σ)
+    → ∀ {m}{n}(Υ : Ctx (𝒮 Σ) m) (Γ : Ctx (𝒮 Σ) n) → Set
+  (P ⊙ Q) s = P s ● Q
+\end{code}
+%</substitution>
