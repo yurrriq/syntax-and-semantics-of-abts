@@ -729,10 +729,13 @@ operation for simultaneous substitutions of variables.
 
 \begin{remark}
   A \emph{relative monad} on a functor $\Of{J}{\mathbf{J}\to\mathbf{C}}$ is a
-  monoid in the functor category $\mathbf{C}^\mathbf{J}$
-  \cite{altenkirch-chapman-uustalu:2015}. A presheaf $P$ with a substitution
-  monoidal structure $\Pair{\nu}{\varsigma}$ can be viewed as a relative monad
-  on the functor $\Of{V}{\widehat{\HypCat}^\Sorts}$ of variables.
+  skew-monoid in the skew-monoidal structure induced by the functor category
+  $\mathbf{C}^\mathbf{J}$ \cite{altenkirch-chapman-uustalu:2015}. In contrast to
+  monoids, relative monads can also be understood as a generalization of the
+  \emph{Kleisli structure} or \emph{extension system} presentation of monads. A
+  presheaf $P$ with a substitution monoidal structure $\Pair{\nu}{\varsigma}$
+  can be viewed as a relative monad on the functor
+  $\Of{V}{\widehat{\HypCat}^\Sorts}$ of variables.
 \end{remark}
 
 For any context $\Gamma$, we have an induced map
