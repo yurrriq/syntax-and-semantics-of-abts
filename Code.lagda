@@ -5,13 +5,15 @@ module Code where
 \end{code}
 
 \begin{code}
+infix 0 _≡_
 infix 1 ∫↑
 infix 1 ∫↓
+infixl 1 _[_]
 infixr 0 _,_
 infixr 0 _⊗_
-infixr 2 ![_]
 infixr 1 _∘_
 infixr 1 _∘Π_
+infixr 2 ![_]
 \end{code}
 
 \begin{code}
@@ -184,6 +186,20 @@ Ctx 𝒮 = ∐ Nat λ n → Var n → 𝒮
 \end{code}
 %</ctx>
 
+%<*ctxdom>
+\begin{code}
+∣_∣ : ∀ {𝒮} (Γ : Ctx 𝒮) → Nat
+∣_∣ = fst
+\end{code}
+%</ctxdom>
+
+%<*ctxidx>
+\begin{code}
+_[_] : ∀ {𝒮} (Γ : Ctx 𝒮) → (Var ∣ Γ ∣ → 𝒮)
+_[_] = snd
+\end{code}
+%</ctxidx>
+
 %<*sctx>
 \begin{code}
 SCtx : (𝒮 : Set) → Set
@@ -193,8 +209,8 @@ SCtx 𝒮 = ∐ Nat λ n → Sym n → 𝒮
 
 %<*elem>
 \begin{code}
-_∋⟨_,_⟩ : ∀ {𝒮} (Γ : Ctx 𝒮) (x : Var (fst Γ)) (s : 𝒮) → Set
-Γ ∋⟨ x , s ⟩ = snd Γ x ≡ s
+_∋⟨_,_⟩ : ∀ {𝒮} (Γ : Ctx 𝒮) (x : Var ∣ Γ ∣) (s : 𝒮) → Set
+Γ ∋⟨ x , s ⟩ = Γ [ x ] ≡ s
 \end{code}
 %</elem>
 
@@ -253,7 +269,7 @@ module _ (Σ : Sign) where
   _⊚_ : (A : H↑) (P : (s : 𝒮 Σ) → H↑) → H↑
   (A ⊚ P) (Υ , Γ) =
     ∫↑ Ctx (𝒮 Σ) ∋ Δ ⟪ A (Υ , Δ) ⊗
-      ∫↓ Var (fst Δ) ∋ x ⟪ P (snd Δ x) (Υ , Γ) ⟫ ⟫
+      ∫↓ Var ∣ Δ ∣ ∋ x ⟪ P (Δ [ x ]) (Υ , Γ) ⟫ ⟫
 \end{code}
 %</tensor0>
 
