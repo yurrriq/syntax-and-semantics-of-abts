@@ -111,7 +111,7 @@ SET[_,_] : (A B : Set) → Set
 SET[ A , B ] = A → B
 \end{code}
 
-%<*lan>
+%<*lang>
 \begin{code}
 LanG
   : {𝒞 𝒟 𝔙 : Set}
@@ -120,14 +120,16 @@ LanG
   → (𝒟 → Set)
 LanG 𝒟[_,_] _⟦⊗⟧_ J F d = ∫↑ _ ∋ c ⟪ F c ⟦⊗⟧ 𝒟[ J c , d ] ⟫
 \end{code}
+%</lang>
 
+%<*lan>
 \begin{code}
 Lan : {𝒞 : Set} (J F : 𝒞 → Set) (A : Set) → Set
 Lan J F A = LanG SET[_,_] _⊗_ J F A
 \end{code}
 %</lan>
 
-%<*ran>
+%<*rang>
 \begin{code}
 RanG
   : {𝒞 𝒟 𝔙 : Set}
@@ -136,7 +138,9 @@ RanG
   → (𝒟 → Set)
 RanG 𝒟[_,_] _⟦⋔⟧_ J F d = ∫↓ _ ∋ c ⟪ 𝒟[ d , J c ] ⟦⋔⟧ F c ⟫
 \end{code}
+%</rang>
 
+%<*ran>
 \begin{code}
 Ran : {𝒞 : Set} (J F : 𝒞 → Set) (A : Set) → Set
 Ran J F A = RanG SET[_,_] _⇒_ J F A
@@ -159,34 +163,40 @@ data Fin : (n : Nat) → Set where
 \end{code}
 %</fin>
 
-%<*name>
+%<*var>
 \begin{code}
 Var : Nat → Set
 Var = Fin
 \end{code}
+%</var>
 
+%<*sym>
 \begin{code}
 Sym : Nat → Set
 Sym = Fin
 \end{code}
-%</name>
+%</sym>
 
 %<*ctx>
 \begin{code}
 Ctx : (𝒮 : Set) → Set
 Ctx 𝒮 = ∐ Nat λ n → Var n → 𝒮
 \end{code}
+%</ctx>
 
+%<*sctx>
 \begin{code}
 SCtx : (𝒮 : Set) → Set
 SCtx 𝒮 = ∐ Nat λ n → Sym n → 𝒮
 \end{code}
+%</sctx>
 
+%<*elem>
 \begin{code}
 _∋⟨_,_⟩ : ∀ {𝒮} (Γ : Ctx 𝒮) (x : Var (fst Γ)) (s : 𝒮) → Set
 Γ ∋⟨ x , s ⟩ = snd Γ x ≡ s
 \end{code}
-%</ctx>
+%</elem>
 
 %<*sign>
 \begin{code}
@@ -208,42 +218,51 @@ data _∣_∥_⊢_ (Σ : Sign) (Υ : SCtx (𝒮 Σ)) (Γ : Ctx (𝒮 Σ)) : (s :
 \end{code}
 %</trees>
 
-%<*substitution>
 \begin{code}
 module _ (Σ : Sign) where
 \end{code}
 
+%<*H>
 \begin{code}
   H : Set
   H = SCtx (𝒮 Σ) ⊗ Ctx (𝒮 Σ)
 \end{code}
+%</H>
 
+%<*HHat>
 \begin{code}
   H↑ : Set
   H↑ = H → Set
 \end{code}
+%</HHat>
 
+%<*V>
 \begin{code}
   V : (s : 𝒮 Σ) → H↑
   V s (Υ , Γ) = ∐ _ λ x → Γ ∋⟨ x , s ⟩
 \end{code}
+%</V>
 
 \begin{code}
   _⊢_ : (Υ×Γ : H) (s : 𝒮 Σ) → Set
   (Υ , Γ) ⊢ s = Σ ∣ Υ ∥ Γ ⊢ s
 \end{code}
 
+%<*tensor0>
 \begin{code}
   _⊚_ : (A : H↑) (P : (s : 𝒮 Σ) → H↑) → H↑
   (A ⊚ P) (Υ , Γ) =
     ∫↑ Ctx (𝒮 Σ) ∋ Δ ⟪ A (Υ , Δ) ⊗
       ∫↓ Var (fst Δ) ∋ x ⟪ P (snd Δ x) (Υ , Γ) ⟫ ⟫
 \end{code}
+%</tensor0>
 
+%<*tensor1>
 \begin{code}
   _⊙_ : (P Q : (s : 𝒮 Σ) → H↑) (s : 𝒮 Σ) → H↑
   (P ⊙ Q) s = P s ⊚ Q
 \end{code}
+%</tensor1>
 
 \begin{code}
   _~>_ : ∀ {𝒞₀} (F G : 𝒞₀ → Set) → Set
@@ -258,6 +277,7 @@ module _ (Σ : Sign) where
     where
 \end{code}
 
+%<*extension>
 \begin{code}
     _♯
       : ∀ {Υ Δ Γ}
@@ -265,4 +285,4 @@ module _ (Σ : Sign) where
       → (∀ {s} (D : P s (Υ , Δ)) → P s (Υ , Γ))
     f ♯ = ς ∘ s↑ ∘ ⟨ id , ![ f ∘Π (_, refl) ] ⟩
 \end{code}
-%</substitution>
+%</extension>
