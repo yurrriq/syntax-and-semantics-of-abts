@@ -6,8 +6,8 @@ module Code where
 
 \begin{code}
 infix 0 _≡_
-infix 1 ∫↑
-infix 1 ∫↓
+infix 1 ⨛
+infix 1 ⨜
 infixl 1 _[_]
 infixr 0 _,_
 infixr 0 _⊗_
@@ -85,27 +85,27 @@ A ⊗ B = ∐ A λ _ → B
 \end{code}
 
 \begin{code}
-∫↓ : {I : Set} → (I → Set) → Set
-∫↓ {I = I} P = ∀ i → P i
+⨜ : {I : Set} → (I → Set) → Set
+⨜ {I = I} P = ∀ i → P i
 \end{code}
 
 \begin{code}
-syntax ∫↓ {I = I} (λ i → P) = ∫↓ I ∋ i ⟪ P ⟫
+syntax ⨜ {I = I} (λ i → P) = ⨜ I ∋ i ⟪ P ⟫
 \end{code}
 
 \begin{code}
-record ∫↑ {I : Set} (P : I → Set) : Set where
+record ⨛ {I : Set} (P : I → Set) : Set where
   constructor s↑
   field
     {π∫₀} : I
     π∫₁ : P π∫₀
 \end{code}
 \begin{code}
-open ∫↑ public
+open ⨛ public
 \end{code}
 
 \begin{code}
-syntax ∫↑ {I = I} (λ i → P) = ∫↑ I ∋ i ⟪ P ⟫
+syntax ⨛ {I = I} (λ i → P) = ⨛ I ∋ i ⟪ P ⟫
 \end{code}
 
 \begin{code}
@@ -120,7 +120,7 @@ LanG
   → (𝒟[_,_] : 𝒟 → 𝒟 → Set) (_⟦⊗⟧_ : 𝔙 → Set → Set)
   → (J : 𝒞 → 𝒟) (F : 𝒞 → 𝔙)
   → (𝒟 → Set)
-LanG 𝒟[_,_] _⟦⊗⟧_ J F d = ∫↑ _ ∋ c ⟪ F c ⟦⊗⟧ 𝒟[ J c , d ] ⟫
+LanG 𝒟[_,_] _⟦⊗⟧_ J F d = ⨛ _ ∋ c ⟪ F c ⟦⊗⟧ 𝒟[ J c , d ] ⟫
 \end{code}
 %</lang>
 
@@ -138,7 +138,7 @@ RanG
   → (𝒟[_,_] : 𝒟 → 𝒟 → Set) (_⟦⋔⟧_ : Set → 𝔙 → Set)
   → (J : 𝒞 → 𝒟) (F : 𝒞 → 𝔙)
   → (𝒟 → Set)
-RanG 𝒟[_,_] _⟦⋔⟧_ J F d = ∫↓ _ ∋ c ⟪ 𝒟[ d , J c ] ⟦⋔⟧ F c ⟫
+RanG 𝒟[_,_] _⟦⋔⟧_ J F d = ⨜ _ ∋ c ⟪ 𝒟[ d , J c ] ⟦⋔⟧ F c ⟫
 \end{code}
 %</rang>
 
@@ -270,8 +270,8 @@ module _ (Σ : Sign) where
 \begin{code}
   _⊚_ : (A : H↑) (P : (s : 𝒮 Σ) → H↑) → H↑
   (A ⊚ P) (Υ ∥ Γ) =
-    ∫↑ Ctx (𝒮 Σ) ∋ Δ ⟪ A (Υ ∥ Δ) ⊗
-      ∫↓ Var ∣ Δ ∣ ∋ x ⟪ P (Δ [ x ]) (Υ ∥ Γ) ⟫ ⟫
+    ⨛ Ctx (𝒮 Σ) ∋ Δ ⟪ A (Υ ∥ Δ) ⊗
+      ⨜ Var ∣ Δ ∣ ∋ x ⟪ P (Δ [ x ]) (Υ ∥ Γ) ⟫ ⟫
 \end{code}
 %</tensor0>
 
