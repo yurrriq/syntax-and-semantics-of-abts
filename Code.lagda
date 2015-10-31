@@ -5,29 +5,32 @@ module Code where
 \end{code}
 
 \begin{code}
+infixr 0 _⊗_
+infixr 0 _∘_
+infix 1 ∫↑
+infix 1 ∫↓
+\end{code}
+
+\begin{code}
 data _≡_ {A} x : A → Set where
   refl : x ≡ x
 \end{code}
 
-%<*nat>
 \begin{code}
-data Nat : Set where
-  ze : Nat
-  su : (n : Nat) → Nat
+_⇒_ : (A B : Set) → Set
+A ⇒ B = A → B
 \end{code}
-%</nat>
-
-%<*fin>
-\begin{code}
-data Fin : (n : Nat) → Set where
-  ze : ∀ {n} → Fin (su n)
-  su : ∀ {n} → Fin n → Fin (su n)
-\end{code}
-%</fin>
 
 \begin{code}
-infix 0 _⊗_
+id : ∀ {A} → A → A
+id x = x
 \end{code}
+
+\begin{code}
+_∘_ : ∀ {A B C} (g : B → C) (f : A → B) → (A → C)
+(g ∘ f) x = g (f x)
+\end{code}
+
 \begin{code}
 record ∐ (A : Set) (B : A → Set) : Set where
   constructor ⟨_,_⟩
@@ -54,10 +57,6 @@ syntax ∫↓ {I = I} (λ i → P) = ∫↓ I ∋ i [ P ]
 \end{code}
 
 \begin{code}
-infix 1 ∫↑
-infix 1 ∫↓
-\end{code}
-\begin{code}
 record ∫↑ {I : Set} (P : I → Set) : Set where
   constructor s↑
   field
@@ -75,16 +74,6 @@ syntax ∫↑ {I = I} (λ i → P) = ∫↑ I ∋ i [ P ]
 \begin{code}
 SET[_,_] : (A B : Set) → Set
 SET[ A , B ] = A → B
-\end{code}
-
-\begin{code}
-_⇒_ : (A B : Set) → Set
-A ⇒ B = A → B
-\end{code}
-
-\begin{code}
-id : {A : Set} → A → A
-id x = x
 \end{code}
 
 %<*lan>
@@ -118,6 +107,22 @@ Ran : {𝒞 : Set} (J F : 𝒞 → Set) (A : Set) → Set
 Ran J F A = RanG SET[_,_] _⇒_ J F A
 \end{code}
 %</ran>
+
+%<*nat>
+\begin{code}
+data Nat : Set where
+  ze : Nat
+  su : (n : Nat) → Nat
+\end{code}
+%</nat>
+
+%<*fin>
+\begin{code}
+data Fin : (n : Nat) → Set where
+  ze : ∀ {n} → Fin (su n)
+  su : ∀ {n} → Fin n → Fin (su n)
+\end{code}
+%</fin>
 
 %<*name>
 \begin{code}
