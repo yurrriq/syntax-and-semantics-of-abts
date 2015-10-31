@@ -5,10 +5,13 @@ module Code where
 \end{code}
 
 \begin{code}
-infixr 0 _⊗_
-infixr 0 _∘_
 infix 1 ∫↑
 infix 1 ∫↓
+infixr 0 _,_
+infixr 0 _⊗_
+infixr 2 ![_]
+infixr 1 _∘_
+infixr 1 _∘Π_
 \end{code}
 
 \begin{code}
@@ -32,8 +35,22 @@ _∘_ : ∀ {A B C} (g : B → C) (f : A → B) → (A → C)
 \end{code}
 
 \begin{code}
+_∘Π_
+  : ∀ {A}{B : A → Set}{C : ∀ {a} (b : B a) → Set}
+  → (g : ∀ {a} (b : B a) → C b)
+  → (f : (a : A) → B a)
+  → ((a : A) → C (f a))
+(g ∘Π f) x = g (f x)
+\end{code}
+
+\begin{code}
+![_] : ∀ {A B} → A → (B → A)
+![_] a _ = a
+\end{code}
+
+\begin{code}
 record ∐ (A : Set) (B : A → Set) : Set where
-  constructor ⟨_,_⟩
+  constructor _,_
   field
     fst : A
     snd : B fst
@@ -48,19 +65,37 @@ A ⊗ B = ∐ A λ _ → B
 \end{code}
 
 \begin{code}
+⟨_,_⟩
+  : ∀ {X A B}
+  → (f : X → A)
+  → (g : X → B)
+  → ((x : X) → A ⊗ B)
+⟨ f , g ⟩ x = f x , g x
+\end{code}
+
+\begin{code}
+⟨_,Π_⟩
+  : ∀ {X}{A : (x : X) → Set}{B : (x : X) (a : A x) → Set}
+  → (f : (x : X) → A x)
+  → (g : (x : X) → B x (f x))
+  → ((x : X) → A x ⊗ B x (f x))
+⟨ f ,Π g ⟩ x = f x , g x
+\end{code}
+
+\begin{code}
 ∫↓ : {I : Set} → (I → Set) → Set
 ∫↓ {I = I} P = ∀ i → P i
 \end{code}
 
 \begin{code}
-syntax ∫↓ {I = I} (λ i → P) = ∫↓ I ∋ i [ P ]
+syntax ∫↓ {I = I} (λ i → P) = ∫↓ I ∋ i ⟪ P ⟫
 \end{code}
 
 \begin{code}
 record ∫↑ {I : Set} (P : I → Set) : Set where
   constructor s↑
   field
-    π∫₀ : I
+    {π∫₀} : I
     π∫₁ : P π∫₀
 \end{code}
 \begin{code}
@@ -68,7 +103,7 @@ open ∫↑ public
 \end{code}
 
 \begin{code}
-syntax ∫↑ {I = I} (λ i → P) = ∫↑ I ∋ i [ P ]
+syntax ∫↑ {I = I} (λ i → P) = ∫↑ I ∋ i ⟪ P ⟫
 \end{code}
 
 \begin{code}
@@ -83,7 +118,7 @@ LanG
   → (𝒟[_,_] : 𝒟 → 𝒟 → Set) (_⟦⊗⟧_ : 𝔙 → Set → Set)
   → (J : 𝒞 → 𝒟) (F : 𝒞 → 𝔙)
   → (𝒟 → Set)
-LanG 𝒟[_,_] _⟦⊗⟧_ J F d = ∫↑ _ ∋ c [ F c ⟦⊗⟧ 𝒟[ J c , d ] ]
+LanG 𝒟[_,_] _⟦⊗⟧_ J F d = ∫↑ _ ∋ c ⟪ F c ⟦⊗⟧ 𝒟[ J c , d ] ⟫
 \end{code}
 
 \begin{code}
@@ -99,7 +134,7 @@ RanG
   → (𝒟[_,_] : 𝒟 → 𝒟 → Set) (_⟦⋔⟧_ : Set → 𝔙 → Set)
   → (J : 𝒞 → 𝒟) (F : 𝒞 → 𝔙)
   → (𝒟 → Set)
-RanG 𝒟[_,_] _⟦⋔⟧_ J F d = ∫↓ _ ∋ c [ 𝒟[ d , J c ] ⟦⋔⟧ F c ]
+RanG 𝒟[_,_] _⟦⋔⟧_ J F d = ∫↓ _ ∋ c ⟪ 𝒟[ d , J c ] ⟦⋔⟧ F c ⟫
 \end{code}
 
 \begin{code}
@@ -190,19 +225,19 @@ module _ (Σ : Sign) where
 
 \begin{code}
   V : (s : 𝒮 Σ) → H↑
-  V s ⟨ Υ , Γ ⟩ = ∐ _ λ x → Γ ∋⟨ x , s ⟩
+  V s (Υ , Γ) = ∐ _ λ x → Γ ∋⟨ x , s ⟩
 \end{code}
 
 \begin{code}
   _⊢_ : (Υ×Γ : H) (s : 𝒮 Σ) → Set
-  ⟨ Υ , Γ ⟩ ⊢ s = Σ ∣ Υ ∥ Γ ⊢ s
+  (Υ , Γ) ⊢ s = Σ ∣ Υ ∥ Γ ⊢ s
 \end{code}
 
 \begin{code}
   _⊚_ : (A : H↑) (P : (s : 𝒮 Σ) → H↑) → H↑
-  (A ⊚ P) ⟨ Υ , Γ ⟩ =
-    ∫↑ Ctx (𝒮 Σ) ∋ Δ [ A ⟨ Υ , Δ ⟩ ⊗
-      ∫↓ Var (fst Δ) ∋ x [ P (snd Δ x) ⟨ Υ , Γ ⟩ ] ]
+  (A ⊚ P) (Υ , Γ) =
+    ∫↑ Ctx (𝒮 Σ) ∋ Δ ⟪ A (Υ , Δ) ⊗
+      ∫↓ Var (fst Δ) ∋ x ⟪ P (snd Δ x) (Υ , Γ) ⟫ ⟫
 \end{code}
 
 \begin{code}
@@ -224,10 +259,10 @@ module _ (Σ : Sign) where
 \end{code}
 
 \begin{code}
-    _=≪_
+    _♯
       : ∀ {Υ Δ Γ}
-      → (k : ∀ {s} (x : V s ⟨ Υ , Δ ⟩) → P s ⟨ Υ , Γ ⟩)
-      → (∀ {s} (D : P s ⟨ Υ , Δ ⟩) → P s ⟨ Υ , Γ ⟩)
-    k =≪ D = ς (s↑ _ ⟨ D , (λ x → k ⟨ x , refl ⟩) ⟩)
+      → (f : ∀ {s} (x : V s (Υ , Δ)) → P s (Υ , Γ))
+      → (∀ {s} (D : P s (Υ , Δ)) → P s (Υ , Γ))
+    f ♯ = ς ∘ s↑ ∘ ⟨ id , ![ f ∘Π (_, refl) ] ⟩
 \end{code}
 %</substitution>
