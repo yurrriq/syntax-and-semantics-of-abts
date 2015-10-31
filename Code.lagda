@@ -6,11 +6,12 @@ module Code where
 
 \begin{code}
 infix 0 _≡_
-infix 1 ⨛
-infix 1 ⨜
+infix 0 ∐
+infixr 1 ⨛
+infixr 1 ⨜
 infixl 1 _[_]
 infixr 0 _,_
-infixr 0 _⊗_
+infixr 1 _⊗_
 infixr 1 _∘_
 infixr 1 _∘Π_
 infixr 2 ![_]
@@ -57,6 +58,11 @@ record ∐ (A : Set) (B : A → Set) : Set where
     fst : A
     snd : B fst
 \end{code}
+
+\begin{code}
+syntax ∐ A (λ x → B) = ∐[ A ∋ x ] B
+\end{code}
+
 \begin{code}
 open ∐
 \end{code}
@@ -90,7 +96,7 @@ A ⊗ B = ∐ A λ _ → B
 \end{code}
 
 \begin{code}
-syntax ⨜ {I = I} (λ i → P) = ⨜ I ∋ i ⟪ P ⟫
+syntax ⨜ {I = I} (λ i → P) = ⨜[ I ∋ i ] P
 \end{code}
 
 \begin{code}
@@ -105,7 +111,7 @@ open ⨛ public
 \end{code}
 
 \begin{code}
-syntax ⨛ {I = I} (λ i → P) = ⨛ I ∋ i ⟪ P ⟫
+syntax ⨛ {I = I} (λ i → P) = ⨛[ I ∋ i ] P
 \end{code}
 
 \begin{code}
@@ -120,7 +126,7 @@ LanG
   → (𝒟[_,_] : 𝒟 → 𝒟 → Set) (_⟦⊗⟧_ : 𝔙 → Set → Set)
   → (J : 𝒞 → 𝒟) (F : 𝒞 → 𝔙)
   → (𝒟 → Set)
-LanG 𝒟[_,_] _⟦⊗⟧_ J F d = ⨛ _ ∋ c ⟪ F c ⟦⊗⟧ 𝒟[ J c , d ] ⟫
+LanG 𝒟[_,_] _⟦⊗⟧_ J F d = ⨛[ _ ∋ c ] F c ⟦⊗⟧ 𝒟[ J c , d ]
 \end{code}
 %</lang>
 
@@ -138,7 +144,7 @@ RanG
   → (𝒟[_,_] : 𝒟 → 𝒟 → Set) (_⟦⋔⟧_ : Set → 𝔙 → Set)
   → (J : 𝒞 → 𝒟) (F : 𝒞 → 𝔙)
   → (𝒟 → Set)
-RanG 𝒟[_,_] _⟦⋔⟧_ J F d = ⨜ _ ∋ c ⟪ 𝒟[ d , J c ] ⟦⋔⟧ F c ⟫
+RanG 𝒟[_,_] _⟦⋔⟧_ J F d = ⨜[ _ ∋ c ] 𝒟[ d , J c ] ⟦⋔⟧ F c
 \end{code}
 %</rang>
 
@@ -182,7 +188,7 @@ Sym = Fin
 %<*ctx>
 \begin{code}
 Ctx : (𝒮 : Set) → Set
-Ctx 𝒮 = ∐ Nat λ n → Var n → 𝒮
+Ctx 𝒮 = ∐[ Nat ∋ n ] (Var n → 𝒮)
 \end{code}
 %</ctx>
 
@@ -195,7 +201,7 @@ Ctx 𝒮 = ∐ Nat λ n → Var n → 𝒮
 
 %<*ctxidx>
 \begin{code}
-_[_] : ∀ {𝒮} (Γ : Ctx 𝒮) → (Var ∣ Γ ∣ → 𝒮)
+_[_] : ∀ {𝒮} (Γ : Ctx 𝒮) → ((x : Var ∣ Γ ∣) → 𝒮)
 _[_] = snd
 \end{code}
 %</ctxidx>
@@ -203,7 +209,7 @@ _[_] = snd
 %<*sctx>
 \begin{code}
 SCtx : (𝒮 : Set) → Set
-SCtx 𝒮 = ∐ Nat λ n → Sym n → 𝒮
+SCtx 𝒮 = ∐[ Nat ∋ n ] (Sym n → 𝒮)
 \end{code}
 %</sctx>
 
@@ -257,21 +263,19 @@ module _ (Σ : Sign) where
 %<*V>
 \begin{code}
   V : (s : 𝒮 Σ) → H↑
-  V s (Υ ∥ Γ) = ∐ _ λ x → Γ ∋⟨ x , s ⟩
+  V s (Υ ∥ Γ) = ∐[ Var ∣ Γ ∣ ∋ x ] Γ ∋⟨ x , s ⟩
 \end{code}
 %</V>
 
 \begin{code}
-  _⊢_ : (Υ×Γ : H) (s : 𝒮 Σ) → Set
+  _⊢_ : (Υ∥Γ : H) (s : 𝒮 Σ) → Set
   (Υ ∥ Γ) ⊢ s = Σ ∣ Υ ∥ Γ ⊢ s
 \end{code}
 
 %<*tensor0>
 \begin{code}
   _⊚_ : (A : H↑) (P : (s : 𝒮 Σ) → H↑) → H↑
-  (A ⊚ P) (Υ ∥ Γ) =
-    ⨛ Ctx (𝒮 Σ) ∋ Δ ⟪ A (Υ ∥ Δ) ⊗
-      ⨜ Var ∣ Δ ∣ ∋ x ⟪ P (Δ [ x ]) (Υ ∥ Γ) ⟫ ⟫
+  (A ⊚ P) (Υ ∥ Γ) = ⨛[ Ctx (𝒮 Σ) ∋ Δ ] A (Υ ∥ Δ) ⊗ ⨜[ Var ∣ Δ ∣ ∋ x ] P (Δ [ x ]) (Υ ∥ Γ)
 \end{code}
 %</tensor0>
 
