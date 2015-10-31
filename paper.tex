@@ -117,8 +117,9 @@
 \newcommand\SCtx{\mathbf{SCtx}}
 \newcommand\Ctx{\mathbf{Ctx}}
 \newcommand\Seq{\mathbf{Seq}}
+\newcommand\HypCat{\mathbf{H}}
 
-\newcommand\OpCat[1]{#1^{op}}
+\newcommand\OpCat[1]{#1^{\mathsf{op}}}
 
 \newcommand\IsOperator[3]{\IMode{#1}\Vdash \IMode{#2} : \OMode{#3}}
 
@@ -195,8 +196,12 @@
 \newcommand\IsApart[2]{\IMode{#1} \mathrel{\#} \IMode{#2}}
 
 \newcommand\Define[2]{\IMode{#1}\triangleq\OMode{#2}}
+\newcommand\ADefine[2]{\IMode{#1}&\triangleq\OMode{#2}}
 
 \newcommand\SigFun[1]{\mathcal{F}_{#1}}
+
+\newcommand\SemBrackets[1]{\left\llbracket #1\right\rrbracket}
+\newcommand\Yoneda[1]{\boldsymbol{y}(#1)}
 
 \begin{document}
 
@@ -677,60 +682,91 @@ $\IsSubst{E}{\MV{m}}{M}{N}$.
 Let $\FinSets$ be the free cocartesian category on a single object (that is,
 the category of finite cardinals and functions between them); then the comma
 construction $\Define{\Ctx}{\Comma{\FinSets}{\Sorts}}$ is the category of
-variable contexts, and $\Define{\Seq}{\SCtx\times\Ctx\times\Sorts}$ is the category of
-sequents $\Upsilon\parallel\Gamma\vdash s$.  Then, we fix the presheaf category $\Sets^\Seq$ as
-our semantic universe.
+variable contexts. Let $\Define{\HypCat}{\OpCat{(\SCtx\times\Ctx)}}$; then we
+fix the functor category $\widehat{\HypCat}^\Sorts$ as our semantic universe.
 
 \subsection{Substitution monoidal structures}
 
-Any two presheaves $A,B : \Sets^\Seq$ have a tensor $A\bullet B$,
+For a presheaf $A:\widehat{\HypCat}$ and a sort-indexed family of presheaves
+$P:\widehat{\HypCat}^\Sorts$, we have an operation $A\bullet P$,
 defined as a coend in the following way:
 \[
-  \Define{(A\bullet B)(\Upsilon\parallel\Gamma\vdash s)}{
-    \int^{\Delta\in\Ctx}
-      A(\Upsilon\parallel\Delta\vdash s)
-        \otimes \prod_{x\in\Dom\Delta} B(\Upsilon\parallel\Gamma\vdash\Delta(x))
+  \Define{(A\bullet P)(\Upsilon\parallel\Gamma)}{
+    \int^{\Delta\in\OpCat\Ctx}
+      A(\Upsilon\parallel\Delta)
+      \times \prod_{x\in\Dom\Delta} P_{\Delta(x)}(\Upsilon\parallel\Gamma)
   }
 \]
 
-The presheaf of variables $\Define{V(\Upsilon\parallel\Gamma\vdash s)}{\MkSet{x \in \Dom\Gamma
-\mid \Gamma(x) = s}}$ is the unit to this tensor, and together they comprise a
-\emph{substitution monoidal structure}. Then, a presheaf $A$ is a monoid if it is
-equipped with the following natural transformations:
+Using this, we can define a tensor $P\odot Q$ for
+$\Of{P,Q}{\widehat{\HypCat}^\Sorts}$ as follows:
+\[
+  \HypJ{
+    \Define{(P\odot Q)_s}{
+      P_s\bullet Q
+    }
+    \quad
+  }{
+    \Member{s}{\Sorts}
+  }
+\]
+
+Then, variables object
+$\Define{V_s(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid \Gamma(x)=s}}$
+is the unit to this tensor. We will say that an object
+$\Of{P}{\widehat{\HypCat}^\Sorts}$ is a $\Sigma$-monoid in case it is equipped
+with the following natural transformations where $\nu$ embeds variables into $P$
+and $\varsigma$ equips $P$ with an operation for simultaneous substitutions of
+variables.
 
 \[
   \begin{tikzcd}[ampersand replacement = \&]
     {\IMode{V}} \arrow[r, "\IMode\nu"]
-    \& {\IMode{A}}
-    \& {\IMode{A\bullet A}}
+    \& {\IMode{P}}
+    \& {\IMode{P\odot P}}
     \arrow[l, "\IMode\varsigma", swap]
   \end{tikzcd}
 \]
 
-Intuitively, $\nu$ embeds variables into $A$ and $\varsigma$ equips $A$ with an
-operation for simultaneous substitutions of variables.
-
 \begin{remark}
-  A \emph{relative monad} on a functor $\Of{J}{\mathbf{J}\to\mathbf{C}}$ is a
-  monoid in the functor category $\mathbf{C}^\mathbf{J}$
-  \cite{altenkirch-chapman-uustalu:2015}. A presheaf $A$ with a substitution
-  monoidal structure $\Pair{\nu}{\varsigma}$ can be viewed as a relative monad
-  on the presheaf $\Of{V}{\Sets^\Seq}$ of variables.
+  A presheaf $P$ with a substitution monoidal structure $\Pair{\nu}{\varsigma}$
+  also forms a \emph{relative monad}\footnote{Relative monads are skew-monoids
+    in the skew-monoidal structure induced by a functor category
+    $\mathbf{C}^\mathbf{J}$ \cite{altenkirch-chapman-uustalu:2015}. However,
+    relative monads can also be understood without reference to monoids by
+    viewing them as a generalization of \emph{extension systems} or
+    \emph{Kleisli structures}. This latter presentation of monads, popular in
+    computer science and logic, does not involve iteration of the monad
+    functor.} on the functor $\Of{V}{\widehat{\HypCat}^\Sorts}$ of variables.
+  Consequently, the monoid multiplication $\varsigma$ can be replaced with an
+  extension operation:
+  \[
+    \begin{tikzcd}[ampersand replacement = \&, sep = huge]
+      {\IMode{P(\,=\,)^{V(\,-\,)}}} \arrow[r, "(\,-\,)^{\circledast}"]
+      \& {\IMode{P(\,=\,)^{P(\,-\,)}}}
+    \end{tikzcd}
+  \]
 \end{remark}
+  
+For any context $\Gamma$, we have an induced map
+$\Of{\nu_\Gamma}{\left(\prod_{x\in\Dom\Gamma}V_{\Gamma(x)}\right)\to
+\left(\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}\right)}$.
 
 \subsection{The signature endofunctor and its initial algebras}
 
 For each signature $\Match{\Sigma}{\Pair{\Sorts}{\Operators}}$, we have an
-endofunctor $\Of{\SigFun{\Sigma}}{\Sets^\Seq\to\Sets^\Seq}$, which is defined
-as follows:
+endofunctor
+$\Of{\SigFun{\Sigma}}{\widehat{\HypCat}^\Sorts\to\widehat{\HypCat}^\Sorts}$,
+which is defined as follows:
+
 
 \begin{align*}
-  \IMode{\SigFun{\Sigma}(X)(\Upsilon\parallel\Gamma\vdash s)}
+  \IMode{\SigFun{\Sigma}(X)_s(\Upsilon\parallel\Gamma)}
     &\triangleq
     \OMode{
       \coprod_{\vartheta\in\Operators\Pair{\Upsilon}{\MkArity{\vec{v}}{s}}}
       \prod_{\MkValence{\vec{p}}{\vec{q}}{s'}\in\vec{v}}
-      X(\Upsilon,\vec{p}\parallel\Gamma,\vec{q}\vdash s')
+      X_{s'}(\Upsilon,\vec{p}\parallel\Gamma,\vec{q})
     }
 \end{align*}
 
@@ -738,9 +774,41 @@ as follows:
   By $\Upsilon,\vec{p}$ we mean any extension of $\Upsilon$ by fresh symbols $\vec{u}$ of sorts $\vec{p}$.
 \end{remark}
 
-Then, a $\Sigma$-model is a monoid $A$ which is equipped with an initial
-algebra $\Of{\alpha}{\SigFun{\Sigma}(A)\to A}$, which shall interpret
+Then, a $\Sigma$-model is a $\Sigma$-monoid $P$ which is equipped with an initial
+algebra $\Of{\alpha}{\SigFun{\Sigma}(P)\to P}$, which shall interpret
 applications of each operator.
+
+\subsection{Interpretations of terms}
+
+\[
+  \Define{
+    \SemBrackets{
+      \Omega\triangleright\Upsilon\parallel\Gamma
+    }_P
+  }{
+    \left(\prod_{(\MV{m}:\MkValence{\vec{p}}{\vec{q}}{s})\in\Omega}
+    P_{s}^{\Yoneda{\vec{p}\parallel\vec{q}})}\right)
+    \times
+    \prod_{x\in\Dom\Gamma}V_{\Gamma(x)}
+  } %% ???
+\]
+
+Let $\Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash
+M:s}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\to P_s}$ be
+defined as follows:
+\begin{align*}
+  \ADefine{
+    \SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x_j : s}_P
+  }{
+    \begin{tikzcd}[ampersand replacement = \&]
+      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P} \arrow[r, "\pi_2"]
+      \& { \prod_{x\in\Dom\Gamma}V_{\Gamma(x)} } \arrow[r, "\nu_{\Gamma}"]
+      \& {\prod_{x\in\Dom\Gamma} P_{\Gamma(x)}} \arrow[r, "\pi_j"]
+      \& P_s
+    \end{tikzcd}
+  }
+\end{align*}
+
 
 
 \section{Case Study: Wellformed Sequents}
@@ -1023,21 +1091,37 @@ The refinement for telescopes proceeds by induction:
 
 \CatchFileBetweenTags\tmp{latex/Code.tex}{agda}
 
-\subsection{Nat}
+\subsection{Kan Extensions}
 
-\ExecuteMetaData[latex/Code.tex]{nat}
+\subsubsection{Lan}
 
-\subsection{Fin}
+\ExecuteMetaData[latex/Code.tex]{lang}\\
 
-\ExecuteMetaData[latex/Code.tex]{fin}
+\ExecuteMetaData[latex/Code.tex]{lan}
 
-\subsection{Name}
+\subsubsection{Ran}
 
-\ExecuteMetaData[latex/Code.tex]{name}
+\ExecuteMetaData[latex/Code.tex]{rang}\\
 
-\subsection{Ctx}
+\ExecuteMetaData[latex/Code.tex]{ran}
 
-\ExecuteMetaData[latex/Code.tex]{ctx}
+\subsection{Variables and Symbols}
+
+\ExecuteMetaData[latex/Code.tex]{var}\\
+
+\ExecuteMetaData[latex/Code.tex]{sym}
+
+\subsection{Contexts}
+
+\ExecuteMetaData[latex/Code.tex]{ctx}\\
+
+\ExecuteMetaData[latex/Code.tex]{sctx}\\
+
+\ExecuteMetaData[latex/Code.tex]{ctxdom}\\
+
+\ExecuteMetaData[latex/Code.tex]{ctxidx}\\
+
+\ExecuteMetaData[latex/Code.tex]{elem}
 
 \subsection{Signatures}
 
@@ -1046,6 +1130,20 @@ The refinement for telescopes proceeds by induction:
 \subsection{Trees}
 
 \ExecuteMetaData[latex/Code.tex]{trees}
+
+\subsection{Substitution Monoidal Structure}
+
+\ExecuteMetaData[latex/Code.tex]{H}\\
+
+\ExecuteMetaData[latex/Code.tex]{HHat}\\
+
+\ExecuteMetaData[latex/Code.tex]{V}\\
+
+\ExecuteMetaData[latex/Code.tex]{tensor0}\\
+
+\ExecuteMetaData[latex/Code.tex]{tensor1}\\
+
+\ExecuteMetaData[latex/Code.tex]{extension}
 
 \nocite{*}
 \bibliographystyle{abbrv}
