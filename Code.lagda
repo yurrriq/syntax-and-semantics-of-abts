@@ -180,8 +180,8 @@ module _ (Σ : Sign) where
 
     _=≪_
       : ∀ {Υ Δ Γ}
-      → (k : ∀ {x} → (ϕ : V (snd Δ x) ⟨ Υ , Δ ⟩) → P (snd Δ x) ⟨ Υ , Γ ⟩)
-      → (∀ {s} → (D : P s ⟨ Υ , Δ ⟩) → P s ⟨ Υ , Γ ⟩)
+      → (k : ∀ {s} (x : V s ⟨ Υ , Δ ⟩) → P s ⟨ Υ , Γ ⟩)
+      → (∀ {s} (D : P s ⟨ Υ , Δ ⟩) → P s ⟨ Υ , Γ ⟩)
     k =≪ D = ς (s↑ _ ⟨ D , (λ x → k ⟨ x , refl ⟩) ⟩)
 \end{code}
 %</substitution>
