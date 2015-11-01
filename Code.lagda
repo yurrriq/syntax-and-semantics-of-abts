@@ -23,6 +23,9 @@ data _≡_ {A} x : A → Set where
 
 _∘≡_ : {A : Set} {x y z : A} (p : y ≡ z) (q : x ≡ y) → x ≡ z
 refl ∘≡ q = q
+
+≡-sym : {A : Set} {x y : A} → x ≡ y → y ≡ x
+≡-sym refl = refl
 \end{code}
 
 \begin{code}
@@ -289,12 +292,20 @@ MCtx 𝒮 = Ctx (𝒱 𝒮)
 \end{code}
 %</mctx>
 
+%<*renaming>
+\begin{code}
+_↪_ : {A : Set} → Ctx A → Ctx A → Set
+(m , Γ) ↪ (n , Δ) = ∐[ (Fin m → Fin n) ∋ ρ ] (∀ i → Γ i ≡ Δ (ρ i))
+\end{code}
+%</renaming>
+
 %<*sign>
 \begin{code}
 record Sign : Set₁ where
   field
     𝒮 : Set
     𝒪 : SCtx 𝒮 ⊗ 𝒜 𝒮 → Set
+    𝒪-map : ∀ {a Υ Υ′} → Υ ↪ Υ′ → 𝒪 (Υ , a) → 𝒪 (Υ′ , a)
 open Sign
 \end{code}
 %</sign>
@@ -330,9 +341,6 @@ module _ (Σ : Sign) where
 
 %<*yoneda>
 \begin{code}
-  _↪_ : {A : Set} → Ctx A → Ctx A → Set
-  (m , Γ) ↪ (n , Δ) = ∐[ (Fin m → Fin n) ∋ ρ ] (∀ i → Γ i ≡ Δ (ρ i))
-
   yo : H → H↑
   yo (Υ ∥ Γ) = λ { (Υ′ ∥ Δ) → (Υ ↪ Υ′) ⊗ (Γ ↪ Δ) }
 \end{code}
@@ -485,5 +493,16 @@ module _ (Σ : Sign) where
                u′ , u∈Υ ∘≡ u′∈Υ′)
          , (λ i → ⟦ Ms i ⟧ ρ)
          )
-    ⟦ app ϑ Ms ⟧ ρ = {!!}
+    ⟦ app {a} ϑ Ms ⟧ ρ =
+      let
+        ⟦Ω⟧ , ⟦Υ⟧ , _ = ρ
+      in
+        α ( a
+          , refl
+          , 𝒪-map Σ
+             ( fst ∘Π ⟦Υ⟧
+             , ≡-sym ∘Π snd ∘Π ⟦Υ⟧) ϑ
+             , (λ i → ⟦ Ms i ⟧ ({!!} , {!!} , {!!})
+             )
+          )
 \end{code}
