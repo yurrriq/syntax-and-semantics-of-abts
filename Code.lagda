@@ -314,6 +314,31 @@ module _ (Σ : Sign) where
 \end{code}
 %</HHat>
 
+%<*yoneda>
+\begin{code}
+  _↪_ : {A : Set} → Ctx A → Ctx A → Set
+  (m , Γ) ↪ (n , Δ) = ∐[ (Fin m → Fin n) ∋ ρ ] (∀ i → Γ i ≡ Δ (ρ i))
+
+  yo : H → H↑
+  yo (Υ ∥ Γ) = λ { (Υ′ ∥ Δ) → (Υ ↪ Υ′) ⊗ (Γ ↪ Δ) }
+\end{code}
+%</yoneda>
+
+\begin{code}
+  _~>_ : ∀ {𝒞₀} (F G : 𝒞₀ → Set) → Set
+  F ~> G = ∀ {c} → F c → G c
+\end{code}
+
+%<*exponential>
+\begin{code}
+  _⊗↑_ : H↑ → H↑ → H↑
+  (A ⊗↑ B) h = A h ⊗ B h
+
+  _^_ : H↑ → H↑ → H↑
+  (B ^ A) h = (yo h ⊗↑ A) ~> B
+\end{code}
+%</exponential>
+
 %<*V>
 \begin{code}
   V : (s : 𝒮 Σ) → H↑
@@ -351,11 +376,6 @@ module _ (Σ : Sign) where
 \end{code}
 %</tensor1>
 
-\begin{code}
-  _~>_ : ∀ {𝒞₀} (F G : 𝒞₀ → Set) → Set
-  F ~> G = ∀ {c} → F c → G c
-\end{code}
-
 %<*endofunctor>
 \begin{code}
   𝔉 : (X : 𝒮 Σ → H↑) → 𝒮 Σ → H↑
@@ -372,6 +392,7 @@ module _ (Σ : Sign) where
     (P : (s : 𝒮 Σ) → H↑)
     (ν : ∀ {s} → V s ~> P s)
     (ς : ∀ {s} → (P ⊙ P) s ~> P s)
+    (α : ∀ {s} → 𝔉 P s ~> P s)
     where
 \end{code}
 
@@ -391,3 +412,14 @@ module _ (Σ : Sign) where
     ⟨ ρ , f ⟩♯ = ς ∘ s↑ ∘ ⟨ id , ![ ρ ∘Π (_, refl) , f ∘Π (_, refl) ] ⟩
 \end{code}
 %</extension>
+
+%<*interpretation>
+\begin{code}
+    module env where
+      ⟦_▹_∥_⟧ : Ctx (𝒱 (𝒮 Σ)) → SCtx (𝒮 Σ) → Ctx (𝒮 Σ) → H↑
+      ⟦ Ω ▹ Υ ∥ Γ ⟧ h =
+        (⨜[ Fin ∣ Ω ∣ ∋ m ] let psₘ , qsₘ , sₘ = Ω [ m ] in (P sₘ ^ yo (psₘ ∥ qsₘ)) h)
+          ⊗ (⨜[ Sym ∣ Υ ∣ ∋ u ] S (Υ [ u ]) h)
+          ⊗ (⨜[ Var ∣ Γ ∣ ∋ x ] V (Γ [ x ]) h)
+\end{code}
+%</interpretation>
