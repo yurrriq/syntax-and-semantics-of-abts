@@ -687,14 +687,24 @@ fix the functor category $\widehat{\HypCat}^\Sorts$ as our semantic universe.
 
 \subsection{Substitution monoidal structures}
 
+Let $\Define{V_s(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid
+\Gamma(x)=s}}$ be called the presheaf of variables; additionally, we have a
+presheaf of symbols
+$\Define{Y_s(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
+\Upsilon(x)=s}}$. For an object $\Of{P}{\widehat{\HypCat}^\Sorts}$, we will
+use the notation $P^{[\Gamma]}$ to mean $\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}$;
+likewise, $Y^{\{\Upsilon\}}$ shall mean
+$\prod_{u\in\Dom\Upsilon}Y_{\Upsilon(u)}$.
+
 For a presheaf $A:\widehat{\HypCat}$ and a sort-indexed family of presheaves
 $P:\widehat{\HypCat}^\Sorts$, we have an operation $A\bullet P$,
 defined as a coend in the following way:
 \[
   \Define{(A\bullet P)(\Upsilon\parallel\Gamma)}{
-    \int^{\Delta\in\OpCat\Ctx}
-      A(\Upsilon\parallel\Delta)
-      \times \prod_{x\in\Dom\Delta} P_{\Delta(x)}(\Upsilon\parallel\Gamma)
+    \int^{(\Upsilon'\parallel\Delta)\in\HypCat}
+      A(\Upsilon'\parallel\Delta)
+      \times Y^{\{\Upsilon'\}}(\Upsilon\parallel\Gamma)
+      \times P^{[\Delta]}(\Upsilon\parallel\Gamma)
   }
 \]
 
@@ -711,11 +721,7 @@ $\Of{P,Q}{\widehat{\HypCat}^\Sorts}$ as follows:
   }
 \]
 
-Then, the variables object
-$\Define{V_s(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid \Gamma(x)=s}}$
-is the unit to this tensor; additionally, we have a presheaf of symbols
-$\Define{Y_s(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
-\Upsilon(x)=s}}$. We will say that an object
+Then, $V$ is the unit to this tensor. We will say that an object
 $\Of{P}{\widehat{\HypCat}^\Sorts}$ is a $\Sigma$-monoid in case it is equipped
 with the following natural transformations where $\nu$ embeds variables into
 $P$ and $\varsigma$ equips $P$ with an operation for simultaneous substitutions
@@ -730,11 +736,11 @@ of variables.
   \end{tikzcd}
 \]
 
-For an object $\Of{P}{\widehat{\HypCat}^\Sorts}$, we will use the notation
-$P^{[\Gamma]}$ to mean $\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}$; likewise,
-$Y^{\{\Upsilon\}}$ shall mean $\prod_{u\in\Dom\Upsilon}Y_{\Upsilon(u)}$.
-Additionally, we have an induced map $\Of{\nu_\Gamma}{V^{[\Gamma]}\to
-P^{[\Gamma]}}$.
+%%TODO
+We also have an induced maps $\Of{\nu_\Gamma}{V^{[\Gamma]}\to P^{[\Gamma]}}$
+and
+$\Of{\varsigma_{\Upsilon\parallel\Gamma}}{A^{\Yoneda{\Upsilon\parallel\Gamma}} \times
+Y^{\{\Upsilon\}}\times A^{[\Gamma]}}$.
 
 
 \begin{remark}
@@ -785,6 +791,8 @@ applications of each operator.
 
 \subsection{Interpretation of terms}
 
+The metavariable, symbol and variable contexts are interpreted in a model $P$ as an
+environment presheaf in the following way:
 \[
   \Define{
     \SemBrackets{
@@ -800,13 +808,14 @@ applications of each operator.
   }
 \]
 
-We define the interpretation of a term $M$ in the model $P$ as a morphism
+Then, the interpretation of a term in a model $P$ is a map from its environment
+to $P$, that is,
 $\Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash
 M:s}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\to P_s}$.
 The interpretation of a variable
-$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x_j:s}_P$ is
-the following composite:
-
+$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x_j:s}_P$
+simply projects it of the environment and embeds it into the
+model, as follows:
 \[
   \begin{tikzcd}[ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\pi_3}"]
@@ -820,23 +829,28 @@ the following composite:
 The interpretation of metavariable applications
 $\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash
 \MApp{\MV{m}_i}{u_0,\dots,u_m}{M_0,\dots,M_n} : s}_P$, where
-$\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{p}}{\vec{q}}{s}}$, is the following composite
+$\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{p}}{\vec{q}}{s}}$, proceeds by projecting the metavariable's interpretation from the environment and intantiating it via substitution:
 \[
-  \begin{tikzcd}[ampersand replacement = \&, sep=large]
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\Tuple{\pi_i\,\pi_1, \phi}}"]
-    \& {\IMode{P_{s'}^{\Yoneda{\vec{p}\parallel\vec{q}}} \times P^{[\vec{q}]}}} \arrow[r, "\IMode{\varsigma_{\vec{q}}}"]
+  \begin{tikzcd}[ampersand replacement = \&, sep=huge]
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
+          \arrow[r, "\IMode{\Tuple{\pi_i\,\pi_1, \phi\,\pi_2, \psi}}"]
+    \& {\IMode{P_{s'}^{\Yoneda{\vec{p}\parallel\vec{q}}}\times Y^{\{\vec{p}\}} \times P^{[\vec{q}]}}}
+          \arrow[r, "\IMode{\varsigma_{\vec{p}\parallel\vec{q}}}"]
     \& \IMode{P_s}
   \end{tikzcd}
   \tag{metavar}
 \]
 where
-\[
-  \Define{\phi}{
+\begin{align*}
+  \ADefine{\phi}{
+    \Dom{\vec{p}}\mapsto \vec{u}
+  }\\
+  \ADefine{\psi}{
     \Tuple{
       \SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M_j:q_j}_P
     }_{j\leq n}
   }
-\]
+\end{align*}
 
 
 \section{Case Study: Wellformed Sequents}
