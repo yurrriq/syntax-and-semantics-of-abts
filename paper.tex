@@ -685,16 +685,18 @@ construction $\Define{\Ctx}{\Comma{\FinSets}{\Sorts}}$ is the category of
 variable contexts. Let $\Define{\HypCat}{\OpCat{(\SCtx\times\Ctx)}}$; then we
 fix the functor category $\widehat{\HypCat}^\Sorts$ as our semantic universe.
 
-\subsection{Substitution monoidal structures}
-
 Let $\Define{V_s(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid
 \Gamma(x)=s}}$ be called the presheaf of variables; additionally, we have a
 presheaf of symbols
 $\Define{S_s(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
-\Upsilon(x)=s}}$. For an object $\Of{P}{\widehat{\HypCat}^\Sorts}$, we will
-use the notation $P^{[\Gamma]}$ to mean $\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}$;
-likewise, $S^{\{\Upsilon\}}$ shall mean
-$\prod_{u\in\Dom\Upsilon}S_{\Upsilon(u)}$.
+\Upsilon(x)=s}}$. Lastly, we have the presheaf of operators with arity $a$,
+$\Define{\Operators_a(\Upsilon\parallel\Gamma)}{\Operators\Pair{\Upsilon}{a}}$
+
+\subsection{Substitution monoidal structures}
+
+For an object $\Of{P}{\widehat{\HypCat}^\Sorts}$, we will use the notation
+$P^{[\Gamma]}$ to mean $\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}$; likewise,
+$S^{\{\Upsilon\}}$ shall mean $\prod_{u\in\Dom\Upsilon}S_{\Upsilon(u)}$.
 
 For a presheaf $A:\widehat{\HypCat}$ and a sort-indexed family of presheaves
 $P:\widehat{\HypCat}^\Sorts$, we have an operation $A\bullet P$,
@@ -769,21 +771,15 @@ For each signature $\Match{\Sigma}{\Pair{\Sorts}{\Operators}}$, we have an
 endofunctor
 $\Of{\SigFun{\Sigma}}{\widehat{\HypCat}^\Sorts\to\widehat{\HypCat}^\Sorts}$,
 which is defined as follows:
-
-
 \begin{align*}
-  \IMode{\SigFun{\Sigma}(X)_s(\Upsilon\parallel\Gamma)}
+  \IMode{\SigFun{\Sigma}(X)_s}
     &\triangleq
     \OMode{
-      \coprod_{\vartheta\in\Operators\Pair{\Upsilon}{\MkArity{\vec{v}}{s}}}
+      \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{s}}}
       \prod_{\MkValence{\vec{p}}{\vec{q}}{s'}\in\vec{v}}
-      X_{s'}(\Upsilon,\vec{p}\parallel\Gamma,\vec{q})
+      X_{s'}^{\Yoneda{\vec{p}\parallel\vec{q}}}
     }
 \end{align*}
-
-\begin{remark}
-  By $\Upsilon,\vec{p}$ we mean any extension of $\Upsilon$ by fresh symbols $\vec{u}$ of sorts $\vec{p}$.
-\end{remark}
 
 Then, a $\Sigma$-model is a $\Sigma$-monoid $P$ which is equipped with an initial
 algebra $\Of{\alpha}{\SigFun{\Sigma}(P)\to P}$, which shall interpret
