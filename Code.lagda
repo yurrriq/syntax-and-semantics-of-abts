@@ -430,6 +430,28 @@ module _ (Σ : Sign) where
 \end{code}
 %</interpretation>
 
--- We should make a type _▹_∥_⊢_∶_ which contains the derivations in the abt
--- logical framework; then, we will interpret these derivations into the model
--- and call it "soundness".
+\begin{code}
+    data _▹_∥_⊢_ (Ω : MCtx (𝒮 Σ)) (Υ : SCtx (𝒮 Σ)) (Γ : Ctx (𝒮 Σ) ) : 𝒮 Σ → Set where
+      var :
+        (x : Var ∣ Γ ∣)
+          → Ω ▹ Υ ∥ Γ ⊢ (Γ [ x ])
+      metavar :
+        (m : Var ∣ Ω ∣)
+        (let ps , qs , s = Ω [ m ])
+          → (∀ i → ∐[ Sym ∣ Υ ∣ ∋ u ] (Υ [ u ] ≡ ps [ i ]))
+          → (∀ i → Ω ▹ Υ ∥ Γ ⊢ (qs [ i ]))
+          → Ω ▹ Υ ∥ Γ ⊢ s
+      app :
+        {a : 𝒜 (𝒮 Σ)}
+        (let vs , s = a)
+        (ϑ : 𝒪 Σ (Υ , a))
+          → (∀ i → let psᵢ , qsᵢ , sᵢ = vs [ i ] in Ω ▹ Υ ,, psᵢ ∥ Γ ,, qsᵢ ⊢ sᵢ)
+          → Ω ▹ Υ ∥ Γ ⊢ s
+
+--    ⟦_⟧_ : ∀ {Ω Υ Γ s} → Ω ▹ Υ ∥ Γ ⊢ s → ⟦ Ω > Υ ∥ Γ ⟧ ~> P s
+--    ⟦ var x ⟧ (_ , _ , ⟦Γ⟧) = ν (⟦Γ⟧ x)
+--    ⟦ metavar m us Ms ⟧ ρ =
+--      let ⟦Ω⟧ , ⟦Υ⟧ , ⟦Γ⟧ = ρ in
+--        ς (s↑ (⟦Ω⟧ m {!!} , (λ i → let u , _ = us i in {!!} , {!!}) , (λ i → ⟦ Ms i ⟧ ρ)))
+--    ⟦ app ϑ Ms ⟧ ρ = {!!}
+\end{code}
