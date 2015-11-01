@@ -690,11 +690,11 @@ fix the functor category $\widehat{\HypCat}^\Sorts$ as our semantic universe.
 Let $\Define{V_s(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid
 \Gamma(x)=s}}$ be called the presheaf of variables; additionally, we have a
 presheaf of symbols
-$\Define{Y_s(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
+$\Define{S_s(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
 \Upsilon(x)=s}}$. For an object $\Of{P}{\widehat{\HypCat}^\Sorts}$, we will
 use the notation $P^{[\Gamma]}$ to mean $\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}$;
-likewise, $Y^{\{\Upsilon\}}$ shall mean
-$\prod_{u\in\Dom\Upsilon}Y_{\Upsilon(u)}$.
+likewise, $S^{\{\Upsilon\}}$ shall mean
+$\prod_{u\in\Dom\Upsilon}S_{\Upsilon(u)}$.
 
 For a presheaf $A:\widehat{\HypCat}$ and a sort-indexed family of presheaves
 $P:\widehat{\HypCat}^\Sorts$, we have an operation $A\bullet P$,
@@ -703,7 +703,7 @@ defined as a coend in the following way:
   \Define{(A\bullet P)(\Upsilon\parallel\Gamma)}{
     \int^{(\Upsilon'\parallel\Delta)\in\HypCat}
       A(\Upsilon'\parallel\Delta)
-      \times Y^{\{\Upsilon'\}}(\Upsilon\parallel\Gamma)
+      \times S^{\{\Upsilon'\}}(\Upsilon\parallel\Gamma)
       \times P^{[\Delta]}(\Upsilon\parallel\Gamma)
   }
 \]
@@ -740,7 +740,7 @@ of variables.
 We also have an induced maps $\Of{\nu_\Gamma}{V^{[\Gamma]}\to P^{[\Gamma]}}$
 and
 $\Of{\varsigma_{\Upsilon\parallel\Gamma}}{P_s^{\Yoneda{\Upsilon\parallel\Gamma}} \times
-Y^{\{\Upsilon\}}\times P^{[\Gamma]}\to P_s}$.
+S^{\{\Upsilon\}}\times P^{[\Gamma]}\to P_s}$.
 
 
 \begin{remark}
@@ -802,7 +802,7 @@ environment presheaf in the following way:
     \left(\prod_{(\MV{m}:\MkValence{\vec{p}}{\vec{q}}{s})\in\Omega}
     P_{s}^{\Yoneda{\vec{p}\parallel\vec{q}})}\right)
     \times
-    Y^{\{\Upsilon\}}
+    S^{\{\Upsilon\}}
     \times
     V^{[\Gamma]}
   }
@@ -834,7 +834,7 @@ $\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{p}}{\vec{q}}{s}}$, proceeds by projecti
   \begin{tikzcd}[ampersand replacement = \&, sep=huge]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
           \arrow[r, "\IMode{\Tuple{\pi_i\,\pi_1, \phi\,\pi_2, \psi}}"]
-    \& {\IMode{P_{s'}^{\Yoneda{\vec{p}\parallel\vec{q}}}\times Y^{\{\vec{p}\}} \times P^{[\vec{q}]}}}
+    \& {\IMode{P_{s'}^{\Yoneda{\vec{p}\parallel\vec{q}}}\times S^{\{\vec{p}\}} \times P^{[\vec{q}]}}}
           \arrow[r, "\IMode{\varsigma_{\vec{p}\parallel\vec{q}}}"]
     \& \IMode{P_s}
   \end{tikzcd}
