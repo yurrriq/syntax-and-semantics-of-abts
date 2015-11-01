@@ -163,6 +163,14 @@ data Nat : Set where
 \end{code}
 %</nat>
 
+%<*nat>
+\begin{code}
+_+ℕ_ : Nat → Nat → Nat
+ze +ℕ n = n
+su m +ℕ n = su (m +ℕ n)
+\end{code}
+%</nat>
+
 %<*fin>
 \begin{code}
 data Fin : (n : Nat) → Set where
@@ -213,6 +221,39 @@ SCtx 𝒮 = ∐[ Nat ∋ n ] (Sym n → 𝒮)
 \end{code}
 %</sctx>
 
+%<*ctxext>
+\begin{code}
+
+fin+-inl : ∀ {m n} → Fin m → Fin (m +ℕ n)
+fin+-inl {ze} ()
+fin+-inl {su m} ze = ze
+fin+-inl {su m} (su i) = su (fin+-inl i)
+
+fin+-inr : ∀ {m n} → Fin n → Fin (m +ℕ n)
+fin+-inr {ze} i = i
+fin+-inr {su m} i = su (fin+-inr {m} i)
+
+data Fin+Split (m n : Nat) : Fin (m +ℕ n) → Set where
+  fin+-left : (i : Fin m) → Fin+Split m n (fin+-inl {m} {n} i)
+  fin+-right : (j : Fin n) → Fin+Split m n (fin+-inr {m} {n} j)
+
+fin+-split : (m n : Nat) → (i : Fin (m +ℕ n)) → Fin+Split m n i
+fin+-split ze n i = fin+-right i
+fin+-split (su m) n ze = fin+-left ze
+fin+-split (su m) n (su i) with fin+-split m n i
+fin+-split (su m) n (su ._) | fin+-left i = fin+-left (su i)
+fin+-split (su m) n (su ._) | fin+-right j = fin+-right j
+
+_,,_ : ∀ {𝒮 : Set} (Γ Δ : Ctx 𝒮) → Ctx 𝒮
+(m , Γ) ,, (n , Δ) = m +ℕ n , aux
+  where
+    aux : (i : Fin (m +ℕ n)) → _
+    aux i with fin+-split m n i
+    aux .(fin+-inl i) | fin+-left i = Γ i
+    aux .(fin+-inr {m} j) | fin+-right j = Δ j
+\end{code}
+%</ctxext>
+
 %<*elem>
 \begin{code}
 _∋⟨_,_⟩ : ∀ {𝒮} (Γ : Ctx 𝒮) (x : Var ∣ Γ ∣) (s : 𝒮) → Set
@@ -220,13 +261,26 @@ _∋⟨_,_⟩ : ∀ {𝒮} (Γ : Ctx 𝒮) (x : Var ∣ Γ ∣) (s : 𝒮) → S
 \end{code}
 %</elem>
 
+%<*valence>
+\begin{code}
+𝒱 : Set → Set
+𝒱 𝒮 = SCtx 𝒮 ⊗ Ctx 𝒮 ⊗ 𝒮
+\end{code}
+%</valence>
+
+%<*arity>
+\begin{code}
+𝒜 : Set → Set
+𝒜 𝒮 = Ctx (𝒱 𝒮) ⊗ 𝒮
+\end{code}
+%</arity>
+
 %<*sign>
 \begin{code}
 record Sign : Set₁ where
   field
     𝒮 : Set
-    𝒜 : Set
-    𝒪 : SCtx 𝒮 ⊗ 𝒜 → Set
+    𝒪 : SCtx 𝒮 ⊗ 𝒜 𝒮 → Set
 open Sign
 \end{code}
 %</sign>
@@ -297,6 +351,13 @@ module _ (Σ : Sign) where
   _~>_ : ∀ {𝒞₀} (F G : 𝒞₀ → Set) → Set
   F ~> G = ∀ {c} → F c → G c
 \end{code}
+
+%<*endofunctor>
+\begin{code}
+  𝔉 : (X : 𝒮 Σ → H↑) → 𝒮 Σ → H↑
+  𝔉 X s (Υ ∥ Γ) = ∐[ 𝒜 (𝒮 Σ) ∋ a ] let vs , s′ = a in (s′ ≡ s) ⊗ (∐[ 𝒪 Σ (Υ , a) ∋ ϑ ] ⨜[ Fin ∣ vs ∣ ∋ i ] let psᵢ , qsᵢ , sᵢ = vs [ i ] in X sᵢ (Υ ,, psᵢ , Γ ,, qsᵢ))
+\end{code}
+%</endofunctor>
 
 \begin{code}
   module _
