@@ -20,6 +20,9 @@ infixr 2 ![_]
 \begin{code}
 data _≡_ {A} x : A → Set where
   refl : x ≡ x
+
+_∘≡_ : {A : Set} {x y z : A} (p : y ≡ z) (q : x ≡ y) → x ≡ z
+refl ∘≡ q = q
 \end{code}
 
 \begin{code}
@@ -176,6 +179,10 @@ su m +ℕ n = su (m +ℕ n)
 data Fin : (n : Nat) → Set where
   ze : ∀ {n} → Fin (su n)
   su : ∀ {n} → Fin n → Fin (su n)
+
+fin-to-nat : ∀ {n} → Fin n → Nat
+fin-to-nat ze = ze
+fin-to-nat (su x) = su (fin-to-nat x)
 \end{code}
 %</fin>
 
@@ -464,15 +471,22 @@ module _ (Σ : Sign) where
 
     ⟦_⟧_ : ∀ {Ω Υ Γ s} → Ω ▹ Υ ∥ Γ ⊢ s → ⟦ Ω > Υ ∥ Γ ⟧ ~> P s
     ⟦ var x ⟧ (_ , _ , ⟦Γ⟧) = ν (⟦Γ⟧ x)
-    ⟦_⟧_ {Ω = Ω} {Υ = Υ} {Γ = Γ} (metavar m us Ms) ρ =
-      let
-        ⟦Ω⟧ , ⟦Υ⟧ , ⟦Γ⟧ = ρ
-        ps , qs , s = Ω [ m ]
-      in
-        ς⟨ ps , qs ⟩
-          ( ⟦Ω⟧ m
-          , (λ i → {!!} , {!!})
-          , (λ i → ⟦ Ms i ⟧ ρ)
-          )
+    ⟦_⟧_ {Ω = Ω} {Υ = Υ} {Γ = Γ} {s = _} (metavar m us Ms) {Υ′ ∥ Δ} ρ =
+     let
+       ps , qs , s = Ω [ m ]
+       ⟦Ω⟧ , ⟦Υ⟧ , ⟦Γ⟧ = ρ
+       welp : S^[ Υ ] (Υ′ ∥ Δ)
+       welp = ⟦Υ⟧
+     in
+       ς⟨ ps , qs ⟩
+         ( ⟦Ω⟧ m
+         , (λ i →
+             let
+               u , u∈Υ = us i
+               u′ , u′∈Υ′ = ⟦Υ⟧ u
+             in
+               u′ , u∈Υ ∘≡ u′∈Υ′)
+         , (λ i → ⟦ Ms i ⟧ ρ)
+         )
     ⟦ app ϑ Ms ⟧ ρ = {!!}
 \end{code}
