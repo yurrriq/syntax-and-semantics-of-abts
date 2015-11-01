@@ -27,7 +27,7 @@
 % fonts
 \usepackage[
   activate={true,nocompatibility},
-  final,
+  draft,
   tracking=true
 ]{microtype}
 \setmainfont{Linux Libertine O}
@@ -130,8 +130,8 @@
 \newcommand\Lookup[3]{\IMode{#1}\ni\IMode{#2}:\OMode{#3}}
 
 \newcommand\Grothendieck[2]{\oint^{#1} #2#1}
-\newcommand\Pair[2]{\langle #1, #2 \rangle}
-\newcommand\Tuple[1]{\langle #1 \rangle}
+\newcommand\Pair[2]{\left\langle #1, #2 \right\rangle}
+\newcommand\Tuple[1]{\left\langle #1 \right\rangle}
 \newcommand\FLift[2]{
   \Operators\langle#1%
   \ifthenelse{\equal{#2}{}}{}{, #2}\rangle
@@ -711,13 +711,15 @@ $\Of{P,Q}{\widehat{\HypCat}^\Sorts}$ as follows:
   }
 \]
 
-Then, variables object
+Then, the variables object
 $\Define{V_s(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid \Gamma(x)=s}}$
-is the unit to this tensor. We will say that an object
+is the unit to this tensor; additionally, we have a presheaf of symbols
+$\Define{Y_s(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
+\Upsilon(x)=s}}$. We will say that an object
 $\Of{P}{\widehat{\HypCat}^\Sorts}$ is a $\Sigma$-monoid in case it is equipped
-with the following natural transformations where $\nu$ embeds variables into $P$
-and $\varsigma$ equips $P$ with an operation for simultaneous substitutions of
-variables.
+with the following natural transformations where $\nu$ embeds variables into
+$P$ and $\varsigma$ equips $P$ with an operation for simultaneous substitutions
+of variables.
 
 \[
   \begin{tikzcd}[ampersand replacement = \&]
@@ -727,6 +729,13 @@ variables.
     \arrow[l, "\IMode\varsigma", swap]
   \end{tikzcd}
 \]
+
+For an object $\Of{P}{\widehat{\HypCat}^\Sorts}$, we will use the notation
+$P^{[\Gamma]}$ to mean $\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}$; likewise,
+$Y^{\{\Upsilon\}}$ shall mean $\prod_{u\in\Dom\Upsilon}Y_{\Upsilon(u)}$.
+Additionally, we have an induced map $\Of{\nu_\Gamma}{V^{[\Gamma]}\to
+P^{[\Gamma]}}$.
+
 
 \begin{remark}
   A presheaf $P$ with a substitution monoidal structure $\Pair{\nu}{\varsigma}$
@@ -747,10 +756,6 @@ variables.
     \end{tikzcd}
   \]
 \end{remark}
-  
-For any context $\Gamma$, we have an induced map
-$\Of{\nu_\Gamma}{\left(\prod_{x\in\Dom\Gamma}V_{\Gamma(x)}\right)\to
-\left(\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}\right)}$.
 
 \subsection{The signature endofunctor and its initial algebras}
 
@@ -778,7 +783,7 @@ Then, a $\Sigma$-model is a $\Sigma$-monoid $P$ which is equipped with an initia
 algebra $\Of{\alpha}{\SigFun{\Sigma}(P)\to P}$, which shall interpret
 applications of each operator.
 
-\subsection{Interpretations of terms}
+\subsection{Interpretation of terms}
 
 \[
   \Define{
@@ -789,26 +794,49 @@ applications of each operator.
     \left(\prod_{(\MV{m}:\MkValence{\vec{p}}{\vec{q}}{s})\in\Omega}
     P_{s}^{\Yoneda{\vec{p}\parallel\vec{q}})}\right)
     \times
-    \prod_{x\in\Dom\Gamma}V_{\Gamma(x)}
-  } %% ???
+    Y^{\{\Upsilon\}}
+    \times
+    V^{[\Gamma]}
+  }
 \]
 
-Let $\Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash
-M:s}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\to P_s}$ be
-defined as follows:
-\begin{align*}
-  \ADefine{
-    \SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x_j : s}_P
-  }{
-    \begin{tikzcd}[ampersand replacement = \&]
-      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P} \arrow[r, "\pi_2"]
-      \& { \prod_{x\in\Dom\Gamma}V_{\Gamma(x)} } \arrow[r, "\nu_{\Gamma}"]
-      \& {\prod_{x\in\Dom\Gamma} P_{\Gamma(x)}} \arrow[r, "\pi_j"]
-      \& P_s
-    \end{tikzcd}
-  }
-\end{align*}
+We define the interpretation of a term $M$ in the model $P$ as a morphism
+$\Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash
+M:s}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\to P_s}$.
+The interpretation of a variable
+$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x_j:s}_P$ is
+the following composite:
 
+\[
+  \begin{tikzcd}[ampersand replacement = \&]
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\pi_3}"]
+    \& {\IMode{V^{[\Gamma]}}} \arrow[r, "\IMode{\nu_{\Gamma}}"]
+    \& {\IMode{P^{[\Gamma]}}} \arrow[r, "\IMode{\pi_j}"]
+    \& \IMode{P_s}
+  \end{tikzcd}
+  \tag{var}
+\]
+
+The interpretation of metavariable applications
+$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash
+\MApp{\MV{m}_i}{u_0,\dots,u_m}{M_0,\dots,M_n} : s}_P$, where
+$\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{p}}{\vec{q}}{s}}$, is the following composite
+\[
+  \begin{tikzcd}[ampersand replacement = \&, sep=large]
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\Tuple{\pi_i\,\pi_1, \phi}}"]
+    \& {\IMode{P_{s'}^{\Yoneda{\vec{p}\parallel\vec{q}}} \times P^{[\vec{q}]}}} \arrow[r, "\IMode{\varsigma_{\vec{q}}}"]
+    \& \IMode{P_s}
+  \end{tikzcd}
+  \tag{metavar}
+\]
+where
+\[
+  \Define{\phi}{
+    \Tuple{
+      \SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M_j:q_j}_P
+    }_{j\leq n}
+  }
+\]
 
 
 \section{Case Study: Wellformed Sequents}
