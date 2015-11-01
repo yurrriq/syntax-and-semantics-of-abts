@@ -275,6 +275,13 @@ _∋⟨_,_⟩ : ∀ {𝒮} (Γ : Ctx 𝒮) (x : Var ∣ Γ ∣) (s : 𝒮) → S
 \end{code}
 %</arity>
 
+%<*mctx>
+\begin{code}
+MCtx : (𝒮 : Set) → Set
+MCtx 𝒮 = Ctx (𝒱 𝒮)
+\end{code}
+%</mctx>
+
 %<*sign>
 \begin{code}
 record Sign : Set₁ where
@@ -415,11 +422,14 @@ module _ (Σ : Sign) where
 
 %<*interpretation>
 \begin{code}
-    module env where
-      ⟦_▹_∥_⟧ : Ctx (𝒱 (𝒮 Σ)) → SCtx (𝒮 Σ) → Ctx (𝒮 Σ) → H↑
-      ⟦ Ω ▹ Υ ∥ Γ ⟧ h =
-        (⨜[ Fin ∣ Ω ∣ ∋ m ] let psₘ , qsₘ , sₘ = Ω [ m ] in (P sₘ ^ yo (psₘ ∥ qsₘ)) h)
-          ⊗ (⨜[ Sym ∣ Υ ∣ ∋ u ] S (Υ [ u ]) h)
-          ⊗ (⨜[ Var ∣ Γ ∣ ∋ x ] V (Γ [ x ]) h)
+    ⟦_▹_∥_⟧ : MCtx (𝒮 Σ) → SCtx (𝒮 Σ) → Ctx (𝒮 Σ) → H↑
+    ⟦ Ω ▹ Υ ∥ Γ ⟧ h =
+      (⨜[ Fin ∣ Ω ∣ ∋ m ] let psₘ , qsₘ , sₘ = Ω [ m ] in (P sₘ ^ yo (psₘ ∥ qsₘ)) h)
+        ⊗ (⨜[ Sym ∣ Υ ∣ ∋ u ] S (Υ [ u ]) h)
+        ⊗ (⨜[ Var ∣ Γ ∣ ∋ x ] V (Γ [ x ]) h)
 \end{code}
 %</interpretation>
+
+-- We should make a type _▹_∥_⊢_∶_ which contains the derivations in the abt
+-- logical framework; then, we will interpret these derivations into the model
+-- and call it "soundness".
