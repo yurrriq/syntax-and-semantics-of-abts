@@ -2,17 +2,13 @@
 {-# OPTIONS --type-in-type #-}
 
 module Code where
-\end{code}
 
-\begin{code}
 infix 0 ∐
 infixr 1 ⨛
 infixr 1 ⨜
 infixr 0 _,_
 infixr 1 _⊗_
-\end{code}
 
-\begin{code}
 module ≡ where
   infix 0 _t_
   data _t_ {A} x : A → Set where
@@ -32,118 +28,84 @@ module ≡ where
     → (p : x t y)
     → y t x
   sym refl = refl
-\end{code}
 
-\begin{code}
 module Π where
   infixr 1 _∘_
   infixr 1 _∘Π_
   infixr 2 ![_]
-\end{code}
 
-\begin{code}
   _⇒_ : (A B : Set) → Set
   A ⇒ B = A → B
-\end{code}
 
-\begin{code}
   id : ∀ {A} → A → A
   id x = x
-\end{code}
 
-\begin{code}
   _∘_ : ∀ {A B C} (g : B → C) (f : A → B) → (A → C)
   (g ∘ f) x = g (f x)
-\end{code}
 
-\begin{code}
   _∘Π_
     : ∀ {A}{B : A → Set}{C : ∀ {a} (b : B a) → Set}
     → (g : ∀ {a} (b : B a) → C b)
     → (f : (a : A) → B a)
     → ((a : A) → C (f a))
   (g ∘Π f) x = g (f x)
-\end{code}
 
-\begin{code}
   ![_]
     : ∀ {A B}
     → (a : A)
     → (B → A)
   ![_] a _ = a
-\end{code}
 
-\begin{code}
 record ∐ (A : Set) (B : A → Set) : Set where
   no-eta-equality
   constructor _,_
   field
     π₀ : A
     π₁ : B π₀
-\end{code}
 
-\begin{code}
 syntax ∐ A (λ x → B) = ∐[ A ∋ x ] B
-\end{code}
 
-\begin{code}
 record _⊗_ (A : Set) (B : Set) : Set where
   no-eta-equality
   constructor _,_
   field
     π₀ : A
     π₁ : B
-\end{code}
 
-\begin{code}
 ⟨_,_⟩
   : ∀ {X A B}
   → (f : X → A)
   → (g : X → B)
   → ((x : X) → A ⊗ B)
 ⟨ f , g ⟩ x = f x , g x
-\end{code}
 
-\begin{code}
 record ⨜  {I : Set} (P : I → Set) : Set where
   no-eta-equality
   constructor λ↓
   field
     _·_ : ∀ i → P i
-\end{code}
 
-\begin{code}
 syntax ⨜ {I = I} (λ i → P) = ⨜[ I ∋ i ] P
-\end{code}
 
-\begin{code}
 record ⨛ {I : Set} (P : I → Set) : Set where
   no-eta-equality
   constructor s↑
   field
     {π₀} : I
     π₁ : P π₀
-\end{code}
 
-\begin{code}
 syntax ⨛ {I = I} (λ i → P) = ⨛[ I ∋ i ] P
-\end{code}
 
-\begin{code}
 module Nat where
   infix 0 _+_
   data t : Set where
     ze : t
     su : (n : t) → t
-\end{code}
 
-\begin{code}
   _+_ : t → t → t
   ze + n = n
   su m + n = su (m + n)
-\end{code}
 
-\begin{code}
 module Fin where
   data t : (n : Nat.t) → Set where
     ze : ∀ {n} → t (Nat.su n)
@@ -172,25 +134,19 @@ module Fin where
   split (Nat.su m) n (su i) with split m n i
   split (Nat.su m) n (su ._) | split-inl i = split-inl (su i)
   split (Nat.su m) n (su ._) | split-inr j = split-inr j
-\end{code}
 
-\begin{code}
 record Var (n : Nat.t) : Set where
   no-eta-equality
   constructor var
   field
     π : Fin.t n
-\end{code}
 
-\begin{code}
 record Sym (n : Nat.t) : Set where
   no-eta-equality
   constructor sym
   field
     π : Fin.t n
-\end{code}
 
-\begin{code}
 record TCtx (𝒮 : Set) : Set where
   constructor tctx
   no-eta-equality
@@ -204,9 +160,7 @@ record TCtx (𝒮 : Set) : Set where
   syntax tlen Γ = #t Γ
   syntax tidx Γ x = Γ [ x ]t
 open TCtx
-\end{code}
 
-\begin{code}
 _⧺_ : ∀ {𝒮 : Set} (Γ Δ : TCtx 𝒮) → TCtx 𝒮
 _⧺_ {𝒮} Γ Δ = tctx (#t Γ Nat.+ #t Δ) aux
   where
@@ -214,9 +168,7 @@ _⧺_ {𝒮} Γ Δ = tctx (#t Γ Nat.+ #t Δ) aux
     aux (var i) with Fin.split (#t Γ) (#t Δ) i
     aux (var .(Fin.inl        i)) | Fin.split-inl i = Γ [ var i ]t
     aux (var .(Fin.inr {#t Γ} j)) | Fin.split-inr j = Δ [ var j ]t
-\end{code}
 
-\begin{code}
 record SCtx (𝒮 : Set) : Set where
   no-eta-equality
   field
@@ -229,38 +181,28 @@ record SCtx (𝒮 : Set) : Set where
   syntax slen Γ = #t Γ
   syntax sidx Γ x = Γ [ x ]s
 open SCtx
-\end{code}
 
-\begin{code}
 _∋⟨_,_⟩ : ∀ {𝒮} (Γ : TCtx 𝒮) (x : tdom Γ ) (s : 𝒮) → Set
 Γ ∋⟨ x , s ⟩ = Γ [ x ]t ≡.t s
-\end{code}
 
-\begin{code}
 record 𝒱 (𝒮 : Set) : Set where
   no-eta-equality
   constructor 𝓋
   field
     π : SCtx 𝒮 ⊗ TCtx 𝒮 ⊗ 𝒮
-\end{code}
 
-\begin{code}
 record 𝒜 (𝒮 : Set) : Set where
   no-eta-equality
   constructor 𝒶
   field
     π : TCtx (𝒱 𝒮) ⊗ 𝒮
-\end{code}
 
-\begin{code}
 record MCtx (𝒮 : Set) : Set where
   no-eta-equality
   constructor 𝓂
   field
     π : TCtx (𝒱 𝒮)
-\end{code}
 
-\begin{code}
 module TRen where
   record t {A} (Γ Δ : TCtx A) : Set where
     no-eta-equality
@@ -277,11 +219,10 @@ module TRen where
     → (f : t Γ Δ)
     → t Γ Η
   cmp H g f = ρ (map g Π.∘ map f) (coh g ≡.∘ coh f)
+
 _↪t_ : ∀ {A} (Γ Δ : TCtx A) → Set
 Γ ↪t Δ = TRen.t Γ Δ
-\end{code}
 
-\begin{code}
 module SRen where
   record t {A} (Υ Υ′ : SCtx A) : Set where
     no-eta-equality
@@ -300,9 +241,7 @@ module SRen where
   cmp H g f = ρ (map g Π.∘ map f) (coh g ≡.∘ coh f)
 _↪s_ : ∀ {A} (Υ Υ′ : SCtx A) → Set
 Υ ↪s Υ′ = SRen.t Υ Υ′
-\end{code}
 
-\begin{code}
 record Sign : Set₁ where
   no-eta-equality
   constructor sign
@@ -310,9 +249,7 @@ record Sign : Set₁ where
     𝒮 : Set
     𝒪 : SCtx 𝒮 ⊗ 𝒜 𝒮 → Set
     map : ∀ {a Υ Υ′} → Υ ↪s Υ′ → (𝒪 (Υ , a) → 𝒪 (Υ′ , a))
-\end{code}
 
-\begin{code}
 data _∣_∥_⊢_
   (Σ : Sign)
   (Υ : SCtx (Sign.𝒮 Σ))
@@ -321,22 +258,16 @@ data _∣_∥_⊢_
   v : ∀ {x s}
     → (ϕ : Γ ∋⟨ x , s ⟩)
     → Σ ∣ Υ ∥ Γ ⊢ s
-\end{code}
 
-\begin{code}
 module _ (Σ : Sign) where
-\end{code}
 
-\begin{code}
   record H : Set where
     no-eta-equality
     constructor h
     field
       π : SCtx (Sign.𝒮 Σ) ⊗ TCtx (Sign.𝒮 Σ)
   pattern _∥_ Υ Δ = h (Υ , Δ)
-\end{code}
 
-\begin{code}
   record H↑ : Set where
     no-eta-equality
     constructor h↑
