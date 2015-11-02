@@ -536,7 +536,6 @@ module _ (Σ : Sign) where
                ⟦Ω⟧′ :  ⨜[ Fin ∣ Ω ∣ ∋ m ] let psₘ , qsₘ , sₘ = Ω [ m ] in (P sₘ ^ yo (psₘ ∥ qsₘ)) (Υ″ ∥ Δ′)
                ⟦Ω⟧′ m {c} ϱ⁴ =
                  let
-                   psₘ , qsₘ , sₘ = Ω [ m ]
                    (Υ″↪c₀ , Δ′↪c₁) , (psₘ↪c₀ , qsₘ↪c₁) = ϱ⁴
                  in
                    ⟦Ω⟧ m (([ fst c ] Υ″↪c₀ ∘↪ Υ′↪Υ″ , [ snd c ] Δ′↪c₁ ∘↪ Δ↪Δ′) , (psₘ↪c₀ , qsₘ↪c₁))
