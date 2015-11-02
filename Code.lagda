@@ -4,10 +4,10 @@
 module Code where
 
 infix 0 ∐
-infixr 1 ⨛
-infixr 1 ⨜
 infixr 0 _,_
 infixr 1 _⊗_
+infixr 1 ⨛
+infixr 1 ⨜
 
 module ≡ where
   infix 0 _t_
@@ -260,17 +260,57 @@ data _∣_∥_⊢_
     → Σ ∣ Υ ∥ Γ ⊢ s
 
 module _ (Σ : Sign) where
+  infixr 2 _~>_
+  infixr 1 _⊗↑_
 
   record H : Set where
     no-eta-equality
-    constructor h
+    constructor 𝒽
     field
       π : SCtx (Sign.𝒮 Σ) ⊗ TCtx (Sign.𝒮 Σ)
-  pattern _∥_ Υ Δ = h (Υ , Δ)
+  pattern _∥_ Υ Γ = 𝒽 (Υ , Γ)
 
   record H↑ : Set where
     no-eta-equality
-    constructor h↑
+    constructor 𝒽↑
     field
       π : H → Set
+
+  abstract
+    *𝒴 : Set
+    *𝒴 = H → H↑
+
+    𝓎 : *𝒴
+    𝓎 (Υ ∥ Γ) = 𝒽↑ λ { (Υ′ ∥ Δ) → (Υ ↪s Υ′) ⊗ (Γ ↪t Δ) }
+
+    𝓎→ : (H → H↑) → *𝒴
+    𝓎→ x = x
+
+    𝓎← : *𝒴 → (H → H↑)
+    𝓎← x = x
+
+  ⟪𝓎⟫ : H → H↑
+  ⟪𝓎⟫ x = 𝓎← 𝓎 x
+
+  _~>_ : ∀ {𝒞} (F G : 𝒞 → Set) → Set
+  F ~> G = ∀ {c} → F c → G c
+
+  abstract
+    *⊗↑ : Set
+    *⊗↑ = H↑ → H↑ → H↑
+
+    _⊗↑_ : *⊗↑
+    (A ⊗↑ B) = 𝒽↑ λ x → H↑.π A x ⊗ H↑.π B x
+
+    ⊗↑→ : (H↑ → H↑ → H↑) → *⊗↑
+    ⊗↑→ x = x
+
+    ⊗↑← : *⊗↑ → (H↑ → H↑ → H↑)
+    ⊗↑← x = x
+
+  _⟪⊗↑⟫_ : H↑ → H↑ → H↑
+  A ⟪⊗↑⟫ B = ⊗↑← _⊗↑_ A B
+
+  _↗_ : H↑ → H↑ → H↑
+  (B ↗ A) = 𝒽↑ λ x → H↑.π (⟪𝓎⟫ x ⟪⊗↑⟫ A) ~> H↑.π B
 \end{code}
