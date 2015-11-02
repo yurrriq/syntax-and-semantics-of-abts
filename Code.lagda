@@ -205,6 +205,7 @@ _∋⟨_,_⟩s : ∀ {𝒮} (Υ : SCtx.t 𝒮) (x : sdom Υ ) (s : 𝒮) → Set
 _∋⟨_,_⟩t : ∀ {𝒮} (Γ : TCtx.t 𝒮) (x : tdom Γ ) (s : 𝒮) → Set
 Γ ∋⟨ x , s ⟩t = Γ [ x ]t ≡.t s
 
+-- FIXME: named projections
 module 𝒱 where
   record t (𝒮 : Set) : Set where
     no-eta-equality
@@ -213,6 +214,7 @@ module 𝒱 where
       π : SCtx.t 𝒮 ⊗ TCtx.t 𝒮 ⊗ 𝒮
   open t public
 
+-- FIXME: named projections
 module 𝒜 where
   record t (𝒮 : Set) : Set where
     no-eta-equality
