@@ -3,18 +3,12 @@
 
 module Code where
 
-infix 0 ∐
-infixr 0 _,_
-infixr 1 _⊗_
 infixr 2 _~>_
-
-_~>_ : ∀ {𝒞} (F G : 𝒞 → Set) → Set
-F ~> G = ∀ {c} → F c → G c
 
 module ≡ where
   infix 0 _t_
   data _t_ {A} x : A → Set where
-    refl : x t x
+    idn : x t x
 
   _∘_
     : {A : Set}
@@ -22,22 +16,41 @@ module ≡ where
     → (p : y t z)
     → (q : x t y)
     → x t z
-  refl ∘ q = q
+  idn ∘ q = q
 
-  sym
+  inv
     : {A : Set}
     → {x y : A}
     → (p : x t y)
     → y t x
-  sym refl = refl
+  inv idn = idn
 
-module Π where
+  map
+    : ∀ {A}{a b}
+    → (P : A → Set)
+    → (f : a t b)
+    → (P a → P b)
+  map P idn x = x
+
+module ⊗ where
+  record _t_ (A : Set) (B : Set) : Set where
+    no-eta-equality
+    constructor _,_
+    field
+      π₀ : A
+      π₁ : B
+  infixr 1 _t_
+  infixr 0 _,_
+  open _t_ public
+open ⊗ using (_,_)
+
+module ⇒ where
   infixr 1 _∘_
   infixr 1 _∘Π_
   infixr 2 ![_]
 
-  _⇒_ : (A B : Set) → Set
-  A ⇒ B = A → B
+  _t_ : (A B : Set) → Set
+  A t B = A → B
 
   id : ∀ {A} → A → A
   id x = x
@@ -58,31 +71,67 @@ module Π where
     → (B → A)
   ![_] a _ = a
 
-record ∐ (A : Set) (B : A → Set) : Set where
-  no-eta-equality
-  constructor _,_
-  field
-    π₀ : A
-    π₁ : B π₀
-
-syntax ∐ A (λ x → B) = ∐[ A ∋ x ] B
-
-record _⊗_ (A : Set) (B : Set) : Set where
-  no-eta-equality
-  constructor _,_
-  field
-    π₀ : A
-    π₁ : B
+  uncurry : ∀ {A B C} → (A t (B t C)) → ((A ⊗.t B) t C)
+  uncurry f (a , b) = f a b
 
 ⟨_,_⟩
   : ∀ {X A B}
   → (f : X → A)
   → (g : X → B)
-  → ((x : X) → A ⊗ B)
+  → ((x : X) → A ⊗.t B)
 ⟨ f , g ⟩ x = f x , g x
 
+⟨_⊗_⟩
+  : ∀ {X Y A B}
+  → (f : X → A)
+  → (g : Y → B)
+  → (X ⊗.t Y → A ⊗.t B)
+⟨ f ⊗ g ⟩ = ⟨ f ⇒.∘ ⊗.π₀ , g ⇒.∘ ⊗.π₁ ⟩
+
+𝔓 : (X : Set) → Set
+𝔓 X = X → Set
+
+_~>_ : ∀ {𝒞} (F G : 𝔓 𝒞) → Set
+F ~> G = ∀ {c} → F c → G c
+
+module ∐ where
+  record t (A : Set) (B : 𝔓 A) : Set where
+    no-eta-equality
+    constructor _,_
+    field
+      π₀ : A
+      π₁ : B π₀
+
+  infix 0 t
+  syntax t A (λ x → B) = [ A ∋ x ] B
+  open t public
+
+module ∏ where
+  record t (I : Set) (P : 𝔓 I) : Set where
+    no-eta-equality
+    constructor ι
+    field
+      π : ∀ i → P i
+  open t public
+
+  infixr 1 t
+  syntax t I (λ i → P) = [ I ∋ i ] P
+  open t public
+
+module ⨛ where
+  record t {I : Set} (P : 𝔓 I) : Set where
+    no-eta-equality
+    constructor ι
+    field
+      {idx} : I
+      π : P idx
+  open t public
+
+  infixr 1 t
+  syntax t {I = I} (λ i → P) = [ I ∋ i ] P
+
 module ⨜ where
-  record t {I : Set} (P : I → Set) : Set where
+  record t {I : Set} (P : 𝔓 I) : Set where
     no-eta-equality
     constructor ι
     field
@@ -92,17 +141,77 @@ module ⨜ where
   infixr 1 t
   syntax t {I = I} (λ i → P) = [ I ∋ i ] P
 
-module ⨛ where
-  record t {I : Set} (P : I → Set) : Set where
-    no-eta-equality
-    constructor ι
-    field
-      {π₀} : I
-      π₁ : P π₀
-  open t public
+record SET↓ (I : Set) : Set where
+  no-eta-equality
+  constructor ∃_↓_
+  field
+    dom : Set
+    map : dom → I
 
-  infixr 1 t
-  syntax t {I = I} (λ i → P) = [ I ∋ i ] P
+[_]⁻¹ : ∀ {E I} → (E → I) → 𝔓 I
+[ p ]⁻¹ i = ∐.[ _ ∋ e ] (i ≡.t p e)
+
+tot : ∀ {I} → 𝔓 I → Set
+tot = ∐.t _
+
+fib : ∀ {I} (ϕ : 𝔓 I) → (tot ϕ → I)
+fib ϕ = ∐.π₀
+
+fam : ∀ {I} → 𝔓 I → SET↓ I
+fam ϕ = ∃ (tot ϕ) ↓ (fib ϕ)
+
+pow : ∀ {I} → SET↓ I → 𝔓 I
+pow (∃ dom ↓ map) = [ map ]⁻¹
+
+Lan
+  : {𝒞 𝒟 𝔙 : Set}
+  → (𝒟[_,_] : 𝒟 → 𝒟 → Set) (_⟦⊗⟧_ : 𝔙 → Set → Set)
+  → (J : 𝒞 → 𝒟) (F : 𝒞 → 𝔙)
+  → (𝒟 → Set)
+Lan 𝒟[_,_] _⟦⊗⟧_ J F d = ⨛.[ _ ∋ c ] F c ⟦⊗⟧ 𝒟[ J c , d ]
+
+Ran
+  : {𝒞 𝒟 𝔙 : Set}
+  → (𝒟[_,_] : 𝒟 → 𝒟 → Set) (_⟦⋔⟧_ : Set → 𝔙 → Set)
+  → (J : 𝒞 → 𝒟) (F : 𝒞 → 𝔙)
+  → (𝒟 → Set)
+Ran 𝒟[_,_] _⟦⋔⟧_ J F d = ⨜.[ _ ∋ c ] 𝒟[ d , J c ] ⟦⋔⟧ F c
+
+Σ : ∀ {A B} (f : A → B) → (𝔓 A → 𝔓 B)
+Σ f ϕ b = Lan ≡._t_ ⊗._t_ f ϕ b
+
+Δ : ∀ {A B} (f : A → B) → (𝔓 B → 𝔓 A)
+Δ f = ⇒._∘ f
+
+Π : ∀ {A B} (f : A → B) → (𝔓 A → 𝔓 B)
+Π f ϕ b = Ran ≡._t_ ⇒._t_ f ϕ b
+
+𝔓[_,_] : _
+𝔓[_,_] = _~>_
+
+Σ⊣₀Δ
+  : ∀ {A B}(f : A → B)(Φ : 𝔓 A)(Ψ : 𝔓 B)
+  → 𝔓[ Σ f Φ , Ψ ]
+  → 𝔓[ Φ , Δ f Ψ ]
+Σ⊣₀Δ f Φ Ψ k {c} ϕ = k (⨛.ι (ϕ , ≡.idn))
+
+Σ⊣₁Δ
+  : ∀ {A B}(f : A → B)(Φ : 𝔓 A)(Ψ : 𝔓 B)
+  → 𝔓[ Φ , Δ f Ψ ]
+  → 𝔓[ Σ f Φ , Ψ ]
+Σ⊣₁Δ f Φ Ψ k (⨛.ι (ϕ , p)) = ≡.map Ψ p (k ϕ)
+
+Δ⊣₀Π
+  : ∀ {A B}(f : A → B)(Φ : 𝔓 A)(Ψ : 𝔓 B)
+  → 𝔓[ Δ f Ψ , Φ ]
+  → 𝔓[ Ψ , Π f Φ ]
+Δ⊣₀Π f Φ Ψ k {c} ψ = ⨜.ι λ i p → k (≡.map Ψ p ψ)
+
+Δ⊣₁Π
+  : ∀ {A B}(f : A → B)(Φ : 𝔓 A)(Ψ : 𝔓 B)
+  → 𝔓[ Ψ , Π f Φ ]
+  → 𝔓[ Δ f Ψ , Φ ]
+Δ⊣₁Π f Φ Ψ k {c} ψ = ⨜.π (k ψ) c ≡.idn
 
 module Nat where
   infix 0 _+_
@@ -165,23 +274,30 @@ module TCtx where
     constructor ι
     field
       tlen : Nat.t
+      tidx : Var.t tlen → 𝒮
+    π↓t : SET↓ 𝒮
+    π↓t = ∃ (Var.t tlen) ↓ tidx
+
     tdom : Set
-    tdom = Var.t tlen
-    field
-      tidx : tdom → 𝒮
+    tdom = SET↓.dom π↓t
+
+    tpre : 𝔓 𝒮
+    tpre = pow π↓t
+
     infix 1 tlen
     syntax tlen Γ = #t Γ
     syntax tidx Γ x = Γ [ x ]t
+    syntax tpre Γ τ = [ Γ ]t⁻¹ τ
   open t public
 open TCtx hiding (t; ι)
 
-_⧺_ : ∀ {𝒮 : Set} (Γ Δ : TCtx.t 𝒮) → TCtx.t 𝒮
-_⧺_ {𝒮} Γ Δ = TCtx.ι (#t Γ Nat.+ #t Δ) aux
+_⧺_ : ∀ {𝒮 : Set} (Γ Γ′ : TCtx.t 𝒮) → TCtx.t 𝒮
+_⧺_ {𝒮} Γ Γ′ = TCtx.ι (#t Γ Nat.+ #t Γ′) aux
   where
-    aux : (i : Var.t (#t Γ Nat.+ #t Δ)) → 𝒮
-    aux (Var.ι i) with Fin.split (#t Γ) (#t Δ) i
-    aux (Var.ι .(Fin.inl        i)) | Fin.split-inl i = Γ [ Var.ι i ]t
-    aux (Var.ι .(Fin.inr {#t Γ} j)) | Fin.split-inr j = Δ [ Var.ι j ]t
+    aux : (i : Var.t (#t Γ Nat.+ #t Γ′)) → 𝒮
+    aux (Var.ι i) with Fin.split (#t Γ) (#t Γ′) i
+    aux (Var.ι .(Fin.inl        i)) | Fin.split-inl i = Γ  [ Var.ι i ]t
+    aux (Var.ι .(Fin.inr {#t Γ} j)) | Fin.split-inr j = Γ′ [ Var.ι j ]t
 
 module SCtx where
   record t (𝒮 : Set) : Set where
@@ -189,13 +305,20 @@ module SCtx where
     constructor ι
     field
       slen : Nat.t
+      sidx : Sym.t slen → 𝒮
+    π↓s : SET↓ 𝒮
+    π↓s = ∃ (Sym.t slen) ↓ sidx
+
     sdom : Set
-    sdom = Sym.t slen
-    field
-      sidx : sdom → 𝒮
+    sdom = SET↓.dom π↓s
+
+    spre : 𝔓 𝒮
+    spre = pow π↓s
+
     infix 1 slen
-    syntax slen Γ = #t Γ
-    syntax sidx Γ x = Γ [ x ]s
+    syntax slen Υ = #s Υ
+    syntax sidx Υ α = Υ [ α ]s
+    syntax spre Υ τ = [ Υ ]s⁻¹ τ
   open t public
 open SCtx hiding (t; ι)
 
@@ -211,7 +334,7 @@ module 𝒱 where
     no-eta-equality
     constructor ι
     field
-      π : SCtx.t 𝒮 ⊗ TCtx.t 𝒮 ⊗ 𝒮
+      π : SCtx.t 𝒮 ⊗.t TCtx.t 𝒮 ⊗.t 𝒮
   open t public
 
 -- FIXME: named projections
@@ -220,7 +343,7 @@ module 𝒜 where
     no-eta-equality
     constructor ι
     field
-      π : TCtx.t (𝒱.t 𝒮) ⊗ 𝒮
+      π : TCtx.t (𝒱.t 𝒮) ⊗.t 𝒮
   open t public
 
 module MCtx where
@@ -245,27 +368,27 @@ module MCtx where
 open MCtx hiding (t; ι; π)
 
 module TRen where
-  record t {A} (Γ Δ : TCtx.t A) : Set where
+  record t {A} (Γ Γ′ : TCtx.t A) : Set where
     no-eta-equality
     constructor ρ
     field
-      map : tdom Γ → tdom Δ
-      coh : ∀ {i} → Γ [ i ]t ≡.t Δ [ map i ]t
+      map : tdom Γ → tdom Γ′
+      coh : ∀ {i} → Γ [ i ]t ≡.t Γ′ [ map i ]t
   open t public
 
   t↪cmp
-    : {A : Set} {Γ : TCtx.t A} {Δ : TCtx.t A}
+    : {A : Set} {Γ : TCtx.t A} {Γ′ : TCtx.t A}
     → (Η : TCtx.t A)
-    → (g : t Δ Η)
-    → (f : t Γ Δ)
+    → (g : t Γ′ Η)
+    → (f : t Γ Γ′)
     → t Γ Η
-  t↪cmp H g f = ρ (map g Π.∘ map f) (coh g ≡.∘ coh f)
+  t↪cmp H g f = ρ (map g ⇒.∘ map f) (coh g ≡.∘ coh f)
 
   syntax t↪cmp H g f = g ↪∘[ H ]t f
 open TRen using (t↪cmp)
 
-_↪t_ : ∀ {A} (Γ Δ : TCtx.t A) → Set
-Γ ↪t Δ = TRen.t Γ Δ
+_↪t_ : ∀ {A} (Γ Γ′ : TCtx.t A) → Set
+Γ ↪t Γ′ = TRen.t Γ Γ′
 
 module SRen where
   record t {A} (Υ Υ′ : SCtx.t A) : Set where
@@ -282,7 +405,7 @@ module SRen where
     → (g : t Υ′ Η)
     → (f : t Υ Υ′)
     → t Υ Η
-  s↪cmp H g f = ρ (map g Π.∘ map f) (coh g ≡.∘ coh f)
+  s↪cmp H g f = ρ (map g ⇒.∘ map f) (coh g ≡.∘ coh f)
 
   syntax s↪cmp H g f = g ↪∘[ H ]s f
 open SRen using (s↪cmp)
@@ -296,7 +419,7 @@ module Sign where
     constructor ι
     field
       𝒮 : Set
-      𝒪 : SCtx.t 𝒮 ⊗ 𝒜.t 𝒮 → Set
+      𝒪 : 𝔓 (SCtx.t 𝒮 ⊗.t 𝒜.t 𝒮)
       map : ∀ {a Υ Υ′} → Υ ↪s Υ′ → (𝒪 (Υ , a) → 𝒪 (Υ′ , a))
   open t public
 
@@ -308,7 +431,7 @@ module _ (Σ : Sign.t) where
       no-eta-equality
       constructor ι
       field
-        π : SCtx.t (Sign.𝒮 Σ) ⊗ TCtx.t (Sign.𝒮 Σ)
+        π : SCtx.t (Sign.𝒮 Σ) ⊗.t TCtx.t (Sign.𝒮 Σ)
     open t public
   pattern _∥_ Υ Γ = H.ι (Υ , Γ)
 
@@ -317,7 +440,7 @@ module _ (Σ : Sign.t) where
       no-eta-equality
       constructor ι
       field
-        π : H.t → Set
+        π : 𝔓 H.t
     open t public
 
   module *𝒴 where
@@ -326,7 +449,7 @@ module _ (Σ : Sign.t) where
       t = H.t → H↑.t
 
       act : t
-      act (Υ ∥ Γ) = H↑.ι λ { (Υ′ ∥ Δ) → (Υ ↪s Υ′) ⊗ (Γ ↪t Δ) }
+      act (Υ ∥ Γ) = H↑.ι λ { (Υ′ ∥ Γ′) → (Υ ↪s Υ′) ⊗.t (Γ ↪t Γ′) }
 
       ι : (H.t → H↑.t) → t
       ι x = x
@@ -343,7 +466,7 @@ module _ (Σ : Sign.t) where
       t = H↑.t → H↑.t → H↑.t
 
       act : t
-      act A B = H↑.ι λ h → H↑.π A h ⊗ H↑.π B h
+      act A B = H↑.ι λ h → H↑.π A h ⊗.t H↑.π B h
 
       ι : (H↑.t → H↑.t → H↑.t) → t
       ι x = x
@@ -377,7 +500,7 @@ module _ (Σ : Sign.t) where
       t = Sign.𝒮 Σ → H↑.t
 
       act : t
-      act τ = H↑.ι λ { (Υ ∥ Γ) → ∐[ sdom Υ ∋ x ] Υ ∋⟨ x , τ ⟩s }
+      act τ = H↑.ι λ { (Υ ∥ Γ) → [ Υ ]s⁻¹ τ }
 
       ι : (Sign.𝒮 Σ → H↑.t) → t
       ι x = x
@@ -394,7 +517,7 @@ module _ (Σ : Sign.t) where
       t = Sign.𝒮 Σ → H↑.t
 
       act : t
-      act τ = H↑.ι λ { (Υ ∥ Γ) → ∐[ tdom Γ ∋ x ] Γ ∋⟨ x , τ ⟩t }
+      act τ = H↑.ι λ { (Υ ∥ Γ) → [ Γ ]t⁻¹ τ }
 
       ι : (Sign.𝒮 Σ → H↑.t) → t
       ι x = x
@@ -446,10 +569,10 @@ module _ (Σ : Sign.t) where
 
       act : t
       act A P = H↑.ι λ h →
-        ⨛.[ H.t ∋ h′ ] let Υ′ ∥ Δ = h′ in
-          H↑.π A (Υ′ ∥ Δ)
-            ⊗ H↑.π (S ↗[ Υ′ ]s) h
-            ⊗ H↑.π (P ↗[ Δ  ]t) h
+        ⨛.[ H.t ∋ h′ ] let Υ′ ∥ Γ′ = h′ in
+          H↑.π A (Υ′ ∥ Γ′)
+            ⊗.t H↑.π (S ↗[ Υ′ ]s) h
+            ⊗.t H↑.π (P ↗[ Γ′ ]t) h
 
       ι : ((A : H↑.t) (P : (τ : Sign.𝒮 Σ) → H↑.t) → H↑.t) → t
       ι x = x
@@ -488,7 +611,7 @@ module _ (Σ : Sign.t) where
     mvar
       : (m : mdom Ω)
       (let 𝒱.ι (ps , qs , τ) = Ω [ m ]m)
-      → (∀ α → ∐[ sdom Υ ∋ u ] Υ ∋⟨ u , ps [ α ]s ⟩s) -- FIXME: make a special type for this
+      → (∀ α → [ Υ ]s⁻¹ (ps [ α ]s))
       → (∀ x → Ω > Υ ∥ Γ ⊢ (qs [ x ]t))
       → Ω > Υ ∥ Γ ⊢ τ
 \end{code}
