@@ -6,6 +6,10 @@ module Code where
 infix 0 ∐
 infixr 0 _,_
 infixr 1 _⊗_
+infixr 2 _~>_
+
+_~>_ : ∀ {𝒞} (F G : 𝒞 → Set) → Set
+F ~> G = ∀ {c} → F c → G c
 
 module ≡ where
   infix 0 _t_
@@ -291,7 +295,6 @@ data _∣_∥_⊢_
     → Σ ∣ Υ ∥ Γ ⊢ s
 
 module _ (Σ : Sign.t) where
-  -- infixr 2 _~>_
   -- infixr 1 _⊗↑_
 
   module H where
