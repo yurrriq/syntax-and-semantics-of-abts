@@ -296,6 +296,9 @@ MCtx 𝒮 = Ctx (𝒱 𝒮)
 \begin{code}
 _↪_ : {A : Set} → Ctx A → Ctx A → Set
 (m , Γ) ↪ (n , Δ) = ∐[ (Fin m → Fin n) ∋ ρ ] (∀ i → Γ i ≡ Δ (ρ i))
+
+[_]_∘↪_ : {A : Set} {Γ : Ctx A} {Δ : Ctx A} (Η : Ctx A) → Δ ↪ Η → Γ ↪ Δ → Γ ↪ Η
+[ _ ] Δ↪Η ∘↪ Γ↪Δ = fst Δ↪Η ∘Π fst Γ↪Δ , λ i → snd Δ↪Η (fst Γ↪Δ i) ∘≡ snd Γ↪Δ i
 \end{code}
 %</renaming>
 
@@ -506,7 +509,7 @@ module _ (Σ : Sign) where
                u′ , u∈Υ ∘≡ u′∈Υ′)
          , (λ i → ⟦ Ms i ⟧ ρ)
          )
-    ⟦_⟧_ {Υ = Υ} {Γ = Γ} (app {a} ϑ Ms) {Υ′ ∥ Δ} ρ =
+    ⟦_⟧_ {Ω = Ω} {Υ = Υ} {Γ = Γ} (app {a} ϑ Ms) {Υ′ ∥ Δ} ρ =
       let
         ⟦Ω⟧ , ⟦Υ⟧ , ⟦Γ⟧ = ρ
         vs , s = a
@@ -514,27 +517,34 @@ module _ (Σ : Sign) where
         α ( a
           , refl
           , 𝒪-map Σ (fst ∘Π ⟦Υ⟧ , ≡-sym ∘Π snd ∘Π ⟦Υ⟧) ϑ
-          , (λ i → λ { {Υ″ ∥ Δ′} ((Υ′↪Υ″ , Δ↪Δ′) , (ps↪Υ″ , qs↪Δ′)) →
+          , (λ i → λ { {Υ″ ∥ Δ′} ((Υ′↪Υ″ , Δ↪Δ′) , (psᵢ↪Υ″ , qsᵢ↪Δ′)) →
              let
-               ps , qs , s = vs [ i ]
+               psᵢ , qsᵢ , sᵢ = vs [ i ]
 
                ⟦Υ⟧′ : S^[ Υ ] (Υ″ ∥ Δ′)
                ⟦Υ⟧′ j = let u , u∈Υ′ = ⟦Υ⟧ j in fst Υ′↪Υ″ u , u∈Υ′ ∘≡ ≡-sym (snd Υ′↪Υ″ u)
 
-               ⟦ps⟧ : S^[ ps ] (Υ″ ∥ Δ′)
-               ⟦ps⟧ j = fst ps↪Υ″ j , ≡-sym (snd ps↪Υ″ j)
+               ⟦psᵢ⟧ : S^[ psᵢ ] (Υ″ ∥ Δ′)
+               ⟦psᵢ⟧ j = fst psᵢ↪Υ″ j , ≡-sym (snd psᵢ↪Υ″ j)
 
-               ⟦qs⟧ : (V ^[ qs ]) (Υ″ ∥ Δ′)
-               ⟦qs⟧ j = fst qs↪Δ′ j , ≡-sym (snd qs↪Δ′ j)
+               ⟦qsᵢ⟧ : (V ^[ qsᵢ ]) (Υ″ ∥ Δ′)
+               ⟦qsᵢ⟧ j = fst qsᵢ↪Δ′ j , ≡-sym (snd qsᵢ↪Δ′ j)
 
                ⟦Γ⟧′ : (V ^[ Γ ]) (Υ″ ∥ Δ′)
                ⟦Γ⟧′ j = let x , x∈Δ = ⟦Γ⟧ j in fst Δ↪Δ′ x , x∈Δ ∘≡ ≡-sym (snd Δ↪Δ′ x)
 
+               ⟦Ω⟧′ :  ⨜[ Fin ∣ Ω ∣ ∋ m ] let psₘ , qsₘ , sₘ = Ω [ m ] in (P sₘ ^ yo (psₘ ∥ qsₘ)) (Υ″ ∥ Δ′)
+               ⟦Ω⟧′ m {c} ϱ⁴ =
+                 let
+                   psₘ , qsₘ , sₘ = Ω [ m ]
+                   (Υ″↪c₀ , Δ′↪c₁) , (psₘ↪c₀ , qsₘ↪c₁) = ϱ⁴
+                 in
+                   ⟦Ω⟧ m (([ fst c ] Υ″↪c₀ ∘↪ Υ′↪Υ″ , [ snd c ] Δ′↪c₁ ∘↪ Δ↪Δ′) , (psₘ↪c₀ , qsₘ↪c₁))
              in
                ⟦ (Ms i) ⟧
-                 ( {!!}
-                 , S^-concat {c = _ ∥ Δ′} (⟦Υ⟧′ , ⟦ps⟧)
-                 , ^-concat {X = V} {c = Υ″ ∥ Δ′} (⟦Γ⟧′ , ⟦qs⟧)
+                 ( ⟦Ω⟧′
+                 , S^-concat {c = _ ∥ Δ′} (⟦Υ⟧′ , ⟦psᵢ⟧)
+                 , ^-concat {X = V} {c = Υ″ ∥ Δ′} (⟦Γ⟧′ , ⟦qsᵢ⟧)
                  )
              }))
 \end{code}
