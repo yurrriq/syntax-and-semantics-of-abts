@@ -3,6 +3,9 @@
 
 module Code where
 
+infix 2 _[_]m→Γ
+infix 2 _[_]m→Υ
+infix 2 _[_]m→τ
 infixr 2 _~>_
 
 module ≡ where
@@ -158,7 +161,7 @@ fib : ∀ {I} (ϕ : 𝔓 I) → (tot ϕ → I)
 fib ϕ = ∐.π₀
 
 fam : ∀ {I} → 𝔓 I → SET↓ I
-fam ϕ = ∃ (tot ϕ) ↓ (fib ϕ)
+fam ϕ = ∃ tot ϕ ↓ fib ϕ
 
 pow : ∀ {I} → SET↓ I → 𝔓 I
 pow (∃ dom ↓ map) = [ map ]⁻¹
@@ -285,19 +288,21 @@ module TCtx where
     tpre = pow π↓t
 
     infix 1 tlen
-    syntax tlen Γ = #t Γ
+    infix 2 tidx
+    infix 1 tpre
+    syntax tlen Γ = ∣ Γ ∣t
     syntax tidx Γ x = Γ [ x ]t
     syntax tpre Γ τ = [ Γ ]t⁻¹ τ
   open t public
 open TCtx hiding (t; ι)
 
 _⧺_ : ∀ {𝒮 : Set} (Γ Γ′ : TCtx.t 𝒮) → TCtx.t 𝒮
-_⧺_ {𝒮} Γ Γ′ = TCtx.ι (#t Γ Nat.+ #t Γ′) aux
+_⧺_ {𝒮} Γ Γ′ = TCtx.ι (∣ Γ ∣t Nat.+ ∣ Γ′ ∣t) aux
   where
-    aux : (i : Var.t (#t Γ Nat.+ #t Γ′)) → 𝒮
-    aux (Var.ι i) with Fin.split (#t Γ) (#t Γ′) i
-    aux (Var.ι .(Fin.inl        i)) | Fin.split-inl i = Γ  [ Var.ι i ]t
-    aux (Var.ι .(Fin.inr {#t Γ} j)) | Fin.split-inr j = Γ′ [ Var.ι j ]t
+    aux : (i : Var.t (∣ Γ ∣t Nat.+ ∣ Γ′ ∣t)) → 𝒮
+    aux (Var.ι i) with Fin.split (∣ Γ ∣t) (∣ Γ′ ∣t) i
+    aux (Var.ι .(Fin.inl          i)) | Fin.split-inl i = Γ  [ Var.ι i ]t
+    aux (Var.ι .(Fin.inr {∣ Γ ∣t} j)) | Fin.split-inr j = Γ′ [ Var.ι j ]t
 
 module SCtx where
   record t (𝒮 : Set) : Set where
@@ -316,7 +321,9 @@ module SCtx where
     spre = pow π↓s
 
     infix 1 slen
-    syntax slen Υ = #s Υ
+    infix 2 sidx
+    infix 1 spre
+    syntax slen Υ = ∣ Υ ∣s
     syntax sidx Υ α = Υ [ α ]s
     syntax spre Υ τ = [ Υ ]s⁻¹ τ
   open t public
@@ -335,6 +342,12 @@ module 𝒱 where
     constructor ι
     field
       π : SCtx.t 𝒮 ⊗.t TCtx.t 𝒮 ⊗.t 𝒮
+    Υ : _
+    Υ = let (Υ , _) = π in Υ
+    Γ : _
+    Γ = let (_ , Γ , _) = π in Γ
+    τ : _
+    τ = let (_ , _ , τ) = π in τ
   open t public
 
 -- FIXME: named projections
@@ -344,6 +357,10 @@ module 𝒜 where
     constructor ι
     field
       π : TCtx.t (𝒱.t 𝒮) ⊗.t 𝒮
+    Γ : _
+    Γ = let (Γ , _) = π in Γ
+    τ : _
+    τ = let (_ , τ) = π in τ
   open t public
 
 module MCtx where
@@ -366,6 +383,15 @@ module MCtx where
     syntax midx Ω x = Ω [ x ]m
   open t public
 open MCtx hiding (t; ι; π)
+
+_[_]m→Υ : ∀ {𝒮} (Ω : MCtx.t 𝒮) (#x : _) → _
+Ω [ #x ]m→Υ = 𝒱.Υ (Ω [ #x ]m)
+
+_[_]m→Γ : ∀ {𝒮} (Ω : MCtx.t 𝒮) (#x : _) → _
+Ω [ #x ]m→Γ = 𝒱.Γ (Ω [ #x ]m)
+
+_[_]m→τ : ∀ {𝒮} (Ω : MCtx.t 𝒮) (#x : _) → _
+Ω [ #x ]m→τ  = 𝒱.τ (Ω [ #x ]m)
 
 module TRen where
   record t {A} (Γ Γ′ : TCtx.t A) : Set where
@@ -425,6 +451,7 @@ module Sign where
 
 module _ (Σ : Sign.t) where
   -- infixr 1 _⊗↑_
+  infix 0 _>_∥_⊢_
 
   module H where
     record t : Set where
@@ -435,169 +462,161 @@ module _ (Σ : Sign.t) where
     open t public
   pattern _∥_ Υ Γ = H.ι (Υ , Γ)
 
-  module H↑ where
-    record t : Set where
-      no-eta-equality
-      constructor ι
-      field
-        π : 𝔓 H.t
-    open t public
-
   module *𝒴 where
     abstract
       t : Set
-      t = H.t → H↑.t
+      t = H.t → 𝔓 H.t
 
       act : t
-      act (Υ ∥ Γ) = H↑.ι λ { (Υ′ ∥ Γ′) → (Υ ↪s Υ′) ⊗.t (Γ ↪t Γ′) }
+      act (Υ ∥ Γ) = λ { (Υ′ ∥ Γ′) → (Υ ↪s Υ′) ⊗.t (Γ ↪t Γ′) }
 
-      ι : (H.t → H↑.t) → t
+      ι : (H.t → 𝔓 H.t) → t
       ι x = x
 
-      π : t → (H.t → H↑.t)
+      π : t → (H.t → 𝔓 H.t)
       π x = x
 
-  𝓎 : H.t → H↑.t
+  𝓎 : H.t → 𝔓 H.t
   𝓎 x = *𝒴.π *𝒴.act x
 
   module *⊗ where
     abstract
       t : Set
-      t = H↑.t → H↑.t → H↑.t
+      t = 𝔓 H.t → 𝔓 H.t → 𝔓 H.t
 
       act : t
-      act A B = H↑.ι λ h → H↑.π A h ⊗.t H↑.π B h
+      act A B = λ h → A h ⊗.t B h
 
-      ι : (H↑.t → H↑.t → H↑.t) → t
+      ι : (𝔓 H.t → 𝔓 H.t → 𝔓 H.t) → t
       ι x = x
 
-      π : t → (H↑.t → H↑.t → H↑.t)
+      π : t → (𝔓 H.t → 𝔓 H.t → 𝔓 H.t)
       π x = x
 
-  _⊗↑_ : H↑.t → H↑.t → H↑.t
+  _⊗↑_ : 𝔓 H.t → 𝔓 H.t → 𝔓 H.t
   A ⊗↑ B = *⊗.π *⊗.act A B
 
   module *↗ where
     abstract
       t : Set
-      t = H↑.t → H↑.t → H↑.t
+      t = 𝔓 H.t → 𝔓 H.t → 𝔓 H.t
 
       act : t
-      act B A = H↑.ι λ h → H↑.π (𝓎 h ⊗↑ A) ~> H↑.π B
+      act B A = λ h → (𝓎 h ⊗↑ A) ~> B
 
-      ι : (H↑.t → H↑.t → H↑.t) → t
+      ι : (𝔓 H.t → 𝔓 H.t → 𝔓 H.t) → t
       ι x = x
 
-      π : t → (H↑.t → H↑.t → H↑.t)
+      π : t → (𝔓 H.t → 𝔓 H.t → 𝔓 H.t)
       π x = x
 
-  _↗_ : H↑.t → H↑.t → H↑.t
+  _↗_ : 𝔓 H.t → 𝔓 H.t → 𝔓 H.t
   (B ↗ A) = *↗.π *↗.act B A
 
   module *S where
     abstract
       t : Set
-      t = Sign.𝒮 Σ → H↑.t
+      t = Sign.𝒮 Σ → 𝔓 H.t
 
       act : t
-      act τ = H↑.ι λ { (Υ ∥ Γ) → [ Υ ]s⁻¹ τ }
+      act τ = λ { (Υ ∥ Γ) → [ Υ ]s⁻¹ τ }
 
-      ι : (Sign.𝒮 Σ → H↑.t) → t
+      ι : (Sign.𝒮 Σ → 𝔓 H.t) → t
       ι x = x
 
-      π : t → (Sign.𝒮 Σ → H↑.t)
+      π : t → (Sign.𝒮 Σ → 𝔓 H.t)
       π x = x
 
-  S : (τ : Sign.𝒮 Σ) → H↑.t
+  S : (τ : Sign.𝒮 Σ) → 𝔓 H.t
   S τ = *S.π *S.act τ
 
   module *V where
     abstract
       t : Set
-      t = Sign.𝒮 Σ → H↑.t
+      t = Sign.𝒮 Σ → 𝔓 H.t
 
       act : t
-      act τ = H↑.ι λ { (Υ ∥ Γ) → [ Γ ]t⁻¹ τ }
+      act τ = λ { (Υ ∥ Γ) → [ Γ ]t⁻¹ τ }
 
-      ι : (Sign.𝒮 Σ → H↑.t) → t
+      ι : (Sign.𝒮 Σ → 𝔓 H.t) → t
       ι x = x
 
-      π : t → (Sign.𝒮 Σ → H↑.t)
+      π : t → (Sign.𝒮 Σ → 𝔓 H.t)
       π x = x
 
-  V : (τ : Sign.𝒮 Σ) → H↑.t
+  V : (τ : Sign.𝒮 Σ) → 𝔓 H.t
   V τ = *V.π *V.act τ
 
   module *↗[]t where
     abstract
       t : Set
-      t = (X : (τ : Sign.𝒮 Σ) → H↑.t) (Γ : TCtx.t (Sign.𝒮 Σ)) → H↑.t
+      t = (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : TCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t
 
       act : t
-      act X Γ = H↑.ι λ h → ⨜.[ tdom Γ ∋ x ] H↑.π (X (Γ [ x ]t)) h
+      act X Γ = λ h → ⨜.[ tdom Γ ∋ x ] (X (Γ [ x ]t)) h
 
-      ι : ((X : (τ : Sign.𝒮 Σ) → H↑.t) (Γ : TCtx.t (Sign.𝒮 Σ)) → H↑.t) → t
+      ι : ((X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : TCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t) → t
       ι x = x
 
-      π : t → ((X : (τ : Sign.𝒮 Σ) → H↑.t) (Γ : TCtx.t (Sign.𝒮 Σ)) → H↑.t)
+      π : t → ((X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : TCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t)
       π x = x
 
-  _↗[_]t : (X : (τ : Sign.𝒮 Σ) → H↑.t) (Γ : TCtx.t (Sign.𝒮 Σ)) → H↑.t
+  _↗[_]t : (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : TCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t
   X ↗[ Γ ]t = *↗[]t.π *↗[]t.act X Γ
 
   module *↗[]s where
     abstract
       t : Set
-      t = (X : (τ : Sign.𝒮 Σ) → H↑.t) (Γ : SCtx.t (Sign.𝒮 Σ)) → H↑.t
+      t = (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : SCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t
 
       act : t
-      act X Υ = H↑.ι λ h → ⨜.[ sdom Υ ∋ x ] H↑.π (X (Υ [ x ]s)) h
+      act X Υ = λ h → ⨜.[ sdom Υ ∋ x ] (X (Υ [ x ]s)) h
 
-      ι : ((X : (τ : Sign.𝒮 Σ) → H↑.t) (Γ : SCtx.t (Sign.𝒮 Σ)) → H↑.t) → t
+      ι : ((X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : SCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t) → t
       ι x = x
 
-      π : t → ((X : (τ : Sign.𝒮 Σ) → H↑.t) (Γ : SCtx.t (Sign.𝒮 Σ)) → H↑.t)
+      π : t → ((X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : SCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t)
       π x = x
 
-  _↗[_]s : (X : (τ : Sign.𝒮 Σ) → H↑.t) (Γ : SCtx.t (Sign.𝒮 Σ)) → H↑.t
+  _↗[_]s : (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : SCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t
   X ↗[ Υ ]s = *↗[]s.π *↗[]s.act X Υ
 
   module *⊚ where
     abstract
       t : Set
-      t = (A : H↑.t) (P : (τ : Sign.𝒮 Σ) → H↑.t) → H↑.t
+      t = (A : 𝔓 H.t) (P : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → 𝔓 H.t
 
       act : t
-      act A P = H↑.ι λ h →
+      act A P = λ h →
         ⨛.[ H.t ∋ h′ ] let Υ′ ∥ Γ′ = h′ in
-          H↑.π A (Υ′ ∥ Γ′)
-            ⊗.t H↑.π (S ↗[ Υ′ ]s) h
-            ⊗.t H↑.π (P ↗[ Γ′ ]t) h
+          A (Υ′ ∥ Γ′)
+            ⊗.t (S ↗[ Υ′ ]s) h
+            ⊗.t (P ↗[ Γ′ ]t) h
 
-      ι : ((A : H↑.t) (P : (τ : Sign.𝒮 Σ) → H↑.t) → H↑.t) → t
+      ι : ((A : 𝔓 H.t) (P : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → 𝔓 H.t) → t
       ι x = x
 
-      π : t → ((A : H↑.t) (P : (τ : Sign.𝒮 Σ) → H↑.t) → H↑.t)
+      π : t → ((A : 𝔓 H.t) (P : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → 𝔓 H.t)
       π x = x
 
-  _⊚_ : (A : H↑.t) (P : (τ : Sign.𝒮 Σ) → H↑.t) → H↑.t
+  _⊚_ : (A : 𝔓 H.t) (P : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → 𝔓 H.t
   (A ⊚ P) = *⊚.π *⊚.act A P
 
   module *⊙ where
     abstract
       t : Set
-      t = (P Q : (τ : Sign.𝒮 Σ) → H↑.t) → ((τ : Sign.𝒮 Σ) → H↑.t)
+      t = (P Q : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → ((τ : Sign.𝒮 Σ) → 𝔓 H.t)
 
       act : t
       act P Q τ = P τ ⊚ Q
 
-      ι : ((P Q : (τ : Sign.𝒮 Σ) → H↑.t) → ((τ : Sign.𝒮 Σ) → H↑.t)) → t
+      ι : ((P Q : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → ((τ : Sign.𝒮 Σ) → 𝔓 H.t)) → t
       ι x = x
 
-      π : t → ((P Q : (τ : Sign.𝒮 Σ) → H↑.t) → ((τ : Sign.𝒮 Σ) → H↑.t))
+      π : t → ((P Q : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → ((τ : Sign.𝒮 Σ) → 𝔓 H.t))
       π x = x
 
-  _⊙_ : (P Q : (τ : Sign.𝒮 Σ) → H↑.t) → ((τ : Sign.𝒮 Σ) → H↑.t)
+  _⊙_ : (P Q : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → ((τ : Sign.𝒮 Σ) → 𝔓 H.t)
   P ⊙ Q = *⊙.π *⊙.act P Q
 
   data _>_∥_⊢_
@@ -609,9 +628,8 @@ module _ (Σ : Sign.t) where
       : (x : tdom Γ)
       → Ω > Υ ∥ Γ ⊢ (Γ [ x ]t)
     mvar
-      : (m : mdom Ω)
-      (let 𝒱.ι (ps , qs , τ) = Ω [ m ]m)
-      → (∀ α → [ Υ ]s⁻¹ (ps [ α ]s))
-      → (∀ x → Ω > Υ ∥ Γ ⊢ (qs [ x ]t))
-      → Ω > Υ ∥ Γ ⊢ τ
+      : (#m : mdom Ω)
+      → (∀ α → [ Υ ]s⁻¹ Ω [ #m ]m→Υ [ α ]s)
+      → (∀ x → Ω > Υ ∥ Γ ⊢ Ω [ #m ]m→Γ [ x ]t)
+      → Ω > Υ ∥ Γ ⊢ Ω [ #m ]m→τ
 \end{code}
