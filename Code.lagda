@@ -144,6 +144,9 @@ module ⨛ where
   infixr 1 t
   syntax t {I = I} (λ i → P) = [ I ∋ i ] P
 
+  into : {I : Set} {P : 𝔓 I} (i : I) → P i → t P
+  into = λ {I} {P} i → ι
+
 -- end
 module ⨜ where
   record t {I : Set} (P : 𝔓 I) : Set where
@@ -316,7 +319,7 @@ _⧺s_ {𝒮} Υ Υ′ = SCtx.ι (∣ Υ ∣s Nat.+ ∣ Υ′ ∣s) aux
   where
     aux : (i : Sym.t (∣ Υ ∣s Nat.+ ∣ Υ′ ∣s)) → 𝒮
     aux (Sym.ι i) with Fin.split (∣ Υ ∣s) (∣ Υ′ ∣s) i
-    aux (Sym.ι .(Fin.inl          i)) | Fin.split-inl i = Υ  [ Sym.ι i ]s
+    aux (Sym.ι .(Fin.inl         i)) | Fin.split-inl i = Υ  [ Sym.ι i ]s
     aux (Sym.ι .(Fin.inr {∣ Υ ∣s} j)) | Fin.split-inr j = Υ′ [ Sym.ι j ]s
 
 _∋⟨_,_⟩s : ∀ {𝒮} (Υ : SCtx.t 𝒮) (x : sdom Υ ) (s : 𝒮) → Set
@@ -645,8 +648,18 @@ module _ (Σ : Sign.t) where
       out : {X : Sign.𝒮 Σ → 𝔓 H.t} {Γ : TCtx.t (Sign.𝒮 Σ)} {h : H.t} → π act X Γ h →  ⨜.[ tdom Γ ∋ x ] (X (Γ [ x ]t)) h
       out x = x
 
+      concat : ∀ {Γ Γ′ X} → (π act X Γ ⊗↑ π act X Γ′) ~> π act X (Γ ⧺t Γ′)
+      concat {Γ = Γ} {Γ′ = Γ′} [Γ]⊗[Γ′] with *⊗.out [Γ]⊗[Γ′]
+      concat {Γ = Γ} {Γ′ = Γ′} {X = X} {h} [Γ]⊗[Γ′] | [Γ] , [Γ′] = ⨜.ι (λ {i} → aux i)
+        where
+          aux : (x : Var.t ∣ Γ ⧺t Γ′ ∣t) → X ((Γ ⧺t Γ′) [ x ]t) h
+          aux (Var.ι i) with Fin.split (∣ Γ ∣t) (∣ Γ′ ∣t) i
+          aux (Var.ι .(Fin.inl i)) | Fin.split-inl i = ⨜.π [Γ]
+          aux (Var.ι .(Fin.inr {m = ∣ Γ ∣t} j)) | Fin.split-inr j = ⨜.π [Γ′]
+
   _↗[_]t : (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : TCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t
   X ↗[ Γ ]t = *↗[]t.π *↗[]t.act X Γ
+
 
   module *↗[]s where
     abstract
@@ -664,6 +677,15 @@ module _ (Σ : Sign.t) where
 
       out : {X : Sign.𝒮 Σ → 𝔓 H.t} {Υ : SCtx.t (Sign.𝒮 Σ)} {h : H.t} → π act X Υ h →  ⨜.[ sdom Υ ∋ x ] (X (Υ [ x ]s)) h
       out x = x
+
+      concat : ∀ {Υ Υ′ X} → (π act X Υ ⊗↑ π act X Υ′) ~> π act X (Υ ⧺s Υ′)
+      concat {Υ = Υ} {Υ′ = Υ′} [Υ]⊗[Υ′] with *⊗.out [Υ]⊗[Υ′]
+      concat {Υ = Υ} {Υ′ = Υ′} {X = X} {h} [Υ]⊗[Υ′] | [Υ] , [Υ′] = ⨜.ι (λ {i} → aux i)
+        where
+          aux : (x : Sym.t ∣ Υ ⧺s Υ′ ∣s) → X ((Υ ⧺s Υ′) [ x ]s) h
+          aux (Sym.ι i) with Fin.split (∣ Υ ∣s) (∣ Υ′ ∣s) i
+          aux (Sym.ι .(Fin.inl i)) | Fin.split-inl i = ⨜.π [Υ]
+          aux (Sym.ι .(Fin.inr {m = ∣ Υ ∣s} j)) | Fin.split-inr j = ⨜.π [Υ′]
 
   _↗[_]s : (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : SCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t
   X ↗[ Υ ]s = *↗[]s.π *↗[]s.act X Υ
@@ -686,6 +708,9 @@ module _ (Σ : Sign.t) where
       π : t → ((A : 𝔓 H.t) (P : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → 𝔓 H.t)
       π x = x
 
+      into : {A : 𝔓 H.t} {P : Sign.𝒮 Σ → 𝔓 H.t} {h : H.t} → (⨛.[ H.t ∋ h′ ] let Υ′ ∥ Γ′ = h′ in A (Υ′ ∥ Γ′) ⊗.t (S ↗[ Υ′ ]s) h ⊗.t (P ↗[ Γ′ ]t) h) → π act A P h
+      into x = x
+
   _⊚_ : (A : 𝔓 H.t) (P : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → 𝔓 H.t
   (A ⊚ P) = *⊚.π *⊚.act A P
 
@@ -702,6 +727,9 @@ module _ (Σ : Sign.t) where
 
       π : t → ((P Q : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → ((τ : Sign.𝒮 Σ) → 𝔓 H.t))
       π x = x
+
+      into : {P Q : Sign.𝒮 Σ → 𝔓 H.t} {τ : Sign.𝒮 Σ} {h : H.t} → (P τ ⊚ Q) h → π act P Q τ h
+      into x = x
 
   -- substitution tensor
   _⊙_ : (P Q : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → ((τ : Sign.𝒮 Σ) → 𝔓 H.t)
@@ -737,7 +765,28 @@ module _ (Σ : Sign.t) where
     type-of : {A : Set} → A → Set
     type-of {A} _ = A
 
-    ς⟨_,_⟩ : {s : Sign.𝒮 Σ} (Υ : SCtx.t (Sign.𝒮 Σ)) (Γ : TCtx.t (Sign.𝒮 Σ)) → ((P s ↗ 𝓎 (Υ ∥ Γ)) ⊗↑ S ↗[ Υ ]s ⊗↑ P ↗[ Γ ]t) ~> P s
-    ς⟨ Υ , Γ ⟩ {Υ′ ∥ Γ′} 𝔪⊗[Υ]⊗[Γ] with *⊗.out₃ 𝔪⊗[Υ]⊗[Γ]
-    ... | 𝔪 , [Υ] , [Γ] = ?
+
+    -- Fiore & Hur / Second-Order Equational Logics decompose substitution into two auxiliary maps which they don't explicitly define.
+    ς⟨_,_⟩ : {τ : Sign.𝒮 Σ} (Υ : SCtx.t (Sign.𝒮 Σ)) (Γ : TCtx.t (Sign.𝒮 Σ)) → ((P τ ↗ 𝓎 (Υ ∥ Γ)) ⊗↑ S ↗[ Υ ]s ⊗↑ P ↗[ Γ ]t) ~> P τ
+    ς⟨ _ , _ ⟩ = ς ⇒.∘Π *⊙.into ⇒.∘Π aux₂ ⇒.∘Π aux₁
+      where
+        aux₁
+          : {ps : SCtx.t (Sign.𝒮 Σ)} {qs : TCtx.t (Sign.𝒮 Σ)} {h : H.t} {τ : Sign.𝒮 Σ} (let Υ ∥ Γ = h)
+          → ((P τ ↗ 𝓎 (ps ∥ qs)) ⊗↑ S ↗[ ps ]s ⊗↑ P ↗[ qs ]t) h
+          → P τ ((Υ ⧺s ps) ∥ (Γ ⧺t qs)) ⊗.t (S ↗[ Υ ]s) h ⊗.t (S ↗[ ps ]s) h ⊗.t (P ↗[ Γ ]t) h ⊗.t (P ↗[ qs ]t) h
+        aux₁ = {!!}
+
+        aux₂
+          : {ps : SCtx.t (Sign.𝒮 Σ)} {qs : TCtx.t (Sign.𝒮 Σ)} {h : H.t} {τ : Sign.𝒮 Σ} (let Υ ∥ Γ = h)
+          → P τ ((Υ ⧺s ps) ∥ (Γ ⧺t qs)) ⊗.t (S ↗[ Υ ]s) h ⊗.t (S ↗[ ps ]s) h ⊗.t (P ↗[ Γ ]t) h ⊗.t (P ↗[ qs ]t) h
+          → (P τ ⊚ P) h
+        aux₂ {ps} {qs} {h = Υ ∥ Γ} (M , [Υ] , [ps] , [Γ] , [qs]) =
+          *⊚.into
+            ( ⨛.into (_ ∥ _)
+                ( M
+                , *↗[]s.concat (*⊗.into ([Υ] , [ps]))
+                , *↗[]t.concat (*⊗.into ([Γ] , [qs]))
+                )
+            )
+
 \end{code}
