@@ -314,6 +314,7 @@ module SCtx where
   open t public
 open SCtx hiding (t; ι)
 
+-- symbol context concatenation
 _⧺s_ : ∀ {𝒮 : Set} (Υ Υ′ : SCtx.t 𝒮) → SCtx.t 𝒮
 _⧺s_ {𝒮} Υ Υ′ = SCtx.ι (∣ Υ ∣s Nat.+ ∣ Υ′ ∣s) aux
   where
@@ -350,12 +351,13 @@ module TCtx where
   open t public
 open TCtx hiding (t; ι)
 
+-- type context concatenation
 _⧺t_ : ∀ {𝒮 : Set} (Γ Γ′ : TCtx.t 𝒮) → TCtx.t 𝒮
 _⧺t_ {𝒮} Γ Γ′ = TCtx.ι (∣ Γ ∣t Nat.+ ∣ Γ′ ∣t) aux
   where
     aux : (i : Var.t (∣ Γ ∣t Nat.+ ∣ Γ′ ∣t)) → 𝒮
     aux (Var.ι i) with Fin.split (∣ Γ ∣t) (∣ Γ′ ∣t) i
-    aux (Var.ι .(Fin.inl          i)) | Fin.split-inl i = Γ  [ Var.ι i ]t
+    aux (Var.ι .(Fin.inl         i)) | Fin.split-inl i = Γ  [ Var.ι i ]t
     aux (Var.ι .(Fin.inr {∣ Γ ∣t} j)) | Fin.split-inr j = Γ′ [ Var.ι j ]t
 
 _∋⟨_,_⟩t : ∀ {𝒮} (Γ : TCtx.t 𝒮) (x : tdom Γ ) (s : 𝒮) → Set
@@ -460,6 +462,26 @@ module TRen where
     → t Γ Η
   t↪cmp H g f = ρ (map g ⇒.∘ map f) (coh g ≡.∘ coh f)
 
+  t↪-concat-inl
+    : {A : Set} {Γ Γ′ : TCtx.t A}
+    → t Γ (Γ ⧺t Γ′)
+  t↪-concat-inl {Γ = Γ} {Γ′ = Γ′} = ρ ϱ (λ {u} → aux u)
+    where
+      ϱ = Var.ι ⇒.∘ Fin.inl ⇒.∘ Var.π
+
+      aux : (x : Var.t ∣ Γ ∣t) → Γ [ x ]t ≡.t (Γ ⧺t Γ′) [ ϱ x ]t
+      aux (Var.ι i) = {!!}
+
+  t↪-concat-inr
+    : {A : Set} {Γ Γ′ : TCtx.t A}
+    → t Γ′ (Γ ⧺t Γ′)
+  t↪-concat-inr {Γ = Γ} {Γ′ = Γ′} = ρ ϱ (λ {u} → aux u)
+    where
+      ϱ = Var.ι ⇒.∘ Fin.inr {m = ∣ Γ ∣t} ⇒.∘ Var.π
+
+      aux : (x : Var.t ∣ Γ′ ∣t) → Γ′ [ x ]t ≡.t (Γ ⧺t Γ′) [ ϱ x ]t
+      aux (Var.ι i) = {!!}
+
   syntax t↪cmp H g f = g ↪∘[ H ]t f
 open TRen using (t↪cmp)
 
@@ -481,12 +503,32 @@ module SRen where
   s↪id = ρ (λ x → x) ≡.idn
 
   s↪cmp
-    : {A : Set} {Υ : SCtx.t A} {Υ′ : SCtx.t A}
+    : {A : Set} {Υ Υ′ : SCtx.t A}
     → (Η : SCtx.t A)
     → (g : t Υ′ Η)
     → (f : t Υ Υ′)
     → t Υ Η
   s↪cmp H g f = ρ (map g ⇒.∘ map f) (coh g ≡.∘ coh f)
+
+  s↪-concat-inl
+    : {A : Set} {Υ Υ′ : SCtx.t A}
+    → t Υ (Υ ⧺s Υ′)
+  s↪-concat-inl {Υ = Υ} {Υ′ = Υ′} = ρ ϱ (λ {u} → aux u)
+    where
+      ϱ = Sym.ι ⇒.∘ Fin.inl ⇒.∘ Sym.π
+
+      aux : (u : Sym.t ∣ Υ ∣s) → Υ [ u ]s ≡.t (Υ ⧺s Υ′) [ ϱ u ]s
+      aux (Sym.ι i) = {!!}
+
+  s↪-concat-inr
+    : {A : Set} {Υ Υ′ : SCtx.t A}
+    → t Υ′ (Υ ⧺s Υ′)
+  s↪-concat-inr {Υ = Υ} {Υ′ = Υ′} = ρ ϱ (λ {u} → aux u)
+    where
+      ϱ = Sym.ι ⇒.∘ Fin.inr {m = ∣ Υ ∣s} ⇒.∘ Sym.π
+
+      aux : (u : Sym.t ∣ Υ′ ∣s) → Υ′ [ u ]s ≡.t (Υ ⧺s Υ′) [ ϱ u ]s
+      aux (Sym.ι i) = {!!}
 
   syntax s↪cmp H g f = g ↪∘[ H ]s f
 open SRen using (s↪cmp)
@@ -790,8 +832,8 @@ module _ (Σ : Sign.t) where
         aux₁ {h = Υ ∥ Γ} 𝔪⊗[ps]⊗[qs] | 𝔪 , [ps] , [qs] =
           ( *↗.out 𝔪
               (*⊗.into
-                ( *𝒴.into ({!!} , {!!})
-                , *𝒴.into {!!}
+                ( *𝒴.into (SRen.s↪-concat-inl , TRen.t↪-concat-inl)
+                , *𝒴.into (SRen.s↪-concat-inr , TRen.t↪-concat-inr)
                 )
               )
           , *↗[]s.into (⨜.ι (*S.into (_ ∐., ≡.idn)))
