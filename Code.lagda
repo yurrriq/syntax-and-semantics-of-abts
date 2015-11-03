@@ -3,9 +3,14 @@
 
 module Code where
 
+infix 2 _[_]a→Γ
+infix 2 _[_]a→Υ
+infix 2 _[_]a→τ
 infix 2 _[_]m→Γ
 infix 2 _[_]m→Υ
 infix 2 _[_]m→τ
+infixr 0 _⧺s_
+infixr 0 _⧺t_
 infixr 2 _~>_
 
 module ≡ where
@@ -271,6 +276,42 @@ module Sym where
       π : Fin.t n
   open t public
 
+module SCtx where
+  record t (𝒮 : Set) : Set where
+    no-eta-equality
+    constructor ι
+    field
+      slen : Nat.t
+      sidx : Sym.t slen → 𝒮
+    π↓s : SET↓ 𝒮
+    π↓s = ∃ (Sym.t slen) ↓ sidx
+
+    sdom : Set
+    sdom = SET↓.dom π↓s
+
+    spre : 𝔓 𝒮
+    spre = pow π↓s
+
+    infix 1 slen
+    infix 2 sidx
+    infix 1 spre
+    syntax slen Υ = ∣ Υ ∣s
+    syntax sidx Υ 𝓈 = Υ [ 𝓈 ]s
+    syntax spre Υ τ = [ Υ ]s⁻¹ τ
+  open t public
+open SCtx hiding (t; ι)
+
+_⧺s_ : ∀ {𝒮 : Set} (Υ Υ′ : SCtx.t 𝒮) → SCtx.t 𝒮
+_⧺s_ {𝒮} Υ Υ′ = SCtx.ι (∣ Υ ∣s Nat.+ ∣ Υ′ ∣s) aux
+  where
+    aux : (i : Sym.t (∣ Υ ∣s Nat.+ ∣ Υ′ ∣s)) → 𝒮
+    aux (Sym.ι i) with Fin.split (∣ Υ ∣s) (∣ Υ′ ∣s) i
+    aux (Sym.ι .(Fin.inl          i)) | Fin.split-inl i = Υ  [ Sym.ι i ]s
+    aux (Sym.ι .(Fin.inr {∣ Υ ∣s} j)) | Fin.split-inr j = Υ′ [ Sym.ι j ]s
+
+_∋⟨_,_⟩s : ∀ {𝒮} (Υ : SCtx.t 𝒮) (x : sdom Υ ) (s : 𝒮) → Set
+Υ ∋⟨ x , s ⟩s = Υ [ x ]s ≡.t s
+
 module TCtx where
   record t (𝒮 : Set) : Set where
     no-eta-equality
@@ -296,46 +337,17 @@ module TCtx where
   open t public
 open TCtx hiding (t; ι)
 
-_⧺_ : ∀ {𝒮 : Set} (Γ Γ′ : TCtx.t 𝒮) → TCtx.t 𝒮
-_⧺_ {𝒮} Γ Γ′ = TCtx.ι (∣ Γ ∣t Nat.+ ∣ Γ′ ∣t) aux
+_⧺t_ : ∀ {𝒮 : Set} (Γ Γ′ : TCtx.t 𝒮) → TCtx.t 𝒮
+_⧺t_ {𝒮} Γ Γ′ = TCtx.ι (∣ Γ ∣t Nat.+ ∣ Γ′ ∣t) aux
   where
     aux : (i : Var.t (∣ Γ ∣t Nat.+ ∣ Γ′ ∣t)) → 𝒮
     aux (Var.ι i) with Fin.split (∣ Γ ∣t) (∣ Γ′ ∣t) i
     aux (Var.ι .(Fin.inl          i)) | Fin.split-inl i = Γ  [ Var.ι i ]t
     aux (Var.ι .(Fin.inr {∣ Γ ∣t} j)) | Fin.split-inr j = Γ′ [ Var.ι j ]t
 
-module SCtx where
-  record t (𝒮 : Set) : Set where
-    no-eta-equality
-    constructor ι
-    field
-      slen : Nat.t
-      sidx : Sym.t slen → 𝒮
-    π↓s : SET↓ 𝒮
-    π↓s = ∃ (Sym.t slen) ↓ sidx
-
-    sdom : Set
-    sdom = SET↓.dom π↓s
-
-    spre : 𝔓 𝒮
-    spre = pow π↓s
-
-    infix 1 slen
-    infix 2 sidx
-    infix 1 spre
-    syntax slen Υ = ∣ Υ ∣s
-    syntax sidx Υ α = Υ [ α ]s
-    syntax spre Υ τ = [ Υ ]s⁻¹ τ
-  open t public
-open SCtx hiding (t; ι)
-
-_∋⟨_,_⟩s : ∀ {𝒮} (Υ : SCtx.t 𝒮) (x : sdom Υ ) (s : 𝒮) → Set
-Υ ∋⟨ x , s ⟩s = Υ [ x ]s ≡.t s
-
 _∋⟨_,_⟩t : ∀ {𝒮} (Γ : TCtx.t 𝒮) (x : tdom Γ ) (s : 𝒮) → Set
 Γ ∋⟨ x , s ⟩t = Γ [ x ]t ≡.t s
 
--- FIXME: named projections
 module 𝒱 where
   record t (𝒮 : Set) : Set where
     no-eta-equality
@@ -344,13 +356,14 @@ module 𝒱 where
       π : SCtx.t 𝒮 ⊗.t TCtx.t 𝒮 ⊗.t 𝒮
     Υ : _
     Υ = let (Υ , _) = π in Υ
+
     Γ : _
     Γ = let (_ , Γ , _) = π in Γ
+
     τ : _
     τ = let (_ , _ , τ) = π in τ
   open t public
 
--- FIXME: named projections
 module 𝒜 where
   record t (𝒮 : Set) : Set where
     no-eta-equality
@@ -359,9 +372,28 @@ module 𝒜 where
       π : TCtx.t (𝒱.t 𝒮) ⊗.t 𝒮
     Γ : _
     Γ = let (Γ , _) = π in Γ
+
     τ : _
     τ = let (_ , τ) = π in τ
+
+    adom : _
+    adom = tdom Γ
+
+    aidx : tdom Γ → _
+    aidx x = Γ [ x ]t
+
+    syntax aidx α x = α [ x ]a
   open t public
+open 𝒜 using (aidx; adom)
+
+_[_]a→Υ : ∀ {𝒮} (α : 𝒜.t 𝒮) (x : adom α) → _
+α [ x ]a→Υ = 𝒱.Υ (α [ x ]a)
+
+_[_]a→Γ : ∀ {𝒮} (α : 𝒜.t 𝒮) (x : adom α) → _
+α [ x ]a→Γ = 𝒱.Γ (α [ x ]a)
+
+_[_]a→τ : ∀ {𝒮} (α : 𝒜.t 𝒮) (x : adom α) → _
+α [ x ]a→τ = 𝒱.τ (α [ x ]a)
 
 module MCtx where
   record t (𝒮 : Set) : Set where
@@ -626,10 +658,15 @@ module _ (Σ : Sign.t) where
       : (τ : Sign.𝒮 Σ) → Set where
     tvar
       : (x : tdom Γ)
-      → Ω > Υ ∥ Γ ⊢ (Γ [ x ]t)
+      → Ω > Υ ∥ Γ ⊢ Γ [ x ]t
     mvar
       : (#m : mdom Ω)
-      → (∀ α → [ Υ ]s⁻¹ Ω [ #m ]m→Υ [ α ]s)
+      → (∀ 𝓈 → [ Υ ]s⁻¹ Ω [ #m ]m→Υ [ 𝓈 ]s)
       → (∀ x → Ω > Υ ∥ Γ ⊢ Ω [ #m ]m→Γ [ x ]t)
       → Ω > Υ ∥ Γ ⊢ Ω [ #m ]m→τ
+    app
+      : ∀ {α}
+      → (ϑ : Sign.𝒪 Σ (Υ , α))
+      → (∀ x → Ω > (Υ ⧺s α [ x ]a→Υ) ∥ (Γ ⧺t α [ x ]a→Γ) ⊢ α [ x ]a→τ)
+      → Ω > Υ ∥ Γ ⊢ 𝒜.τ α
 \end{code}
