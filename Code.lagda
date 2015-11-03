@@ -607,6 +607,9 @@ module _ (Σ : Sign.t) where
       π : t → (Sign.𝒮 Σ → 𝔓 H.t)
       π x = x
 
+      into : {τ : Sign.𝒮 Σ} {Υ : SCtx.t (Sign.𝒮 Σ)} {Γ : TCtx.t (Sign.𝒮 Σ)} → [ Υ ]s⁻¹ τ → π act τ (Υ ∥ Γ)
+      into x = x
+
       out : {τ : Sign.𝒮 Σ} {Υ : SCtx.t (Sign.𝒮 Σ)} {Γ : TCtx.t (Sign.𝒮 Σ)} → π act τ (Υ ∥ Γ) → [ Υ ]s⁻¹ τ
       out x = x
 
@@ -628,6 +631,9 @@ module _ (Σ : Sign.t) where
       π : t → (Sign.𝒮 Σ → 𝔓 H.t)
       π x = x
 
+      into : {τ : Sign.𝒮 Σ} {Υ : SCtx.t (Sign.𝒮 Σ)} {Γ : TCtx.t (Sign.𝒮 Σ)} → [ Γ ]t⁻¹ τ → π act τ (Υ ∥ Γ)
+      into x = x
+
   V : (τ : Sign.𝒮 Σ) → 𝔓 H.t
   V τ = *V.π *V.act τ
 
@@ -644,6 +650,9 @@ module _ (Σ : Sign.t) where
 
       π : t → ((X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : TCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t)
       π x = x
+
+      into : {X : Sign.𝒮 Σ → 𝔓 H.t} {Γ : TCtx.t (Sign.𝒮 Σ)} {h : H.t} → ⨜.[ tdom Γ ∋ x ] (X (Γ [ x ]t)) h → π act X Γ h
+      into x = x
 
       out : {X : Sign.𝒮 Σ → 𝔓 H.t} {Γ : TCtx.t (Sign.𝒮 Σ)} {h : H.t} → π act X Γ h →  ⨜.[ tdom Γ ∋ x ] (X (Γ [ x ]t)) h
       out x = x
@@ -675,7 +684,10 @@ module _ (Σ : Sign.t) where
       π : t → ((X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : SCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t)
       π x = x
 
-      out : {X : Sign.𝒮 Σ → 𝔓 H.t} {Υ : SCtx.t (Sign.𝒮 Σ)} {h : H.t} → π act X Υ h →  ⨜.[ sdom Υ ∋ x ] (X (Υ [ x ]s)) h
+      into : {X : Sign.𝒮 Σ → 𝔓 H.t} {Υ : SCtx.t (Sign.𝒮 Σ)} {h : H.t} → ⨜.[ sdom Υ ∋ x ] (X (Υ [ x ]s)) h → π act X Υ h
+      into x = x
+
+      out : {X : Sign.𝒮 Σ → 𝔓 H.t} {Υ : SCtx.t (Sign.𝒮 Σ)} {h : H.t} → π act X Υ h → ⨜.[ sdom Υ ∋ x ] (X (Υ [ x ]s)) h
       out x = x
 
       concat : ∀ {Υ Υ′ X} → (π act X Υ ⊗↑ π act X Υ′) ~> π act X (Υ ⧺s Υ′)
@@ -774,13 +786,25 @@ module _ (Σ : Sign.t) where
           : {ps : SCtx.t (Sign.𝒮 Σ)} {qs : TCtx.t (Sign.𝒮 Σ)} {h : H.t} {τ : Sign.𝒮 Σ} (let Υ ∥ Γ = h)
           → ((P τ ↗ 𝓎 (ps ∥ qs)) ⊗↑ S ↗[ ps ]s ⊗↑ P ↗[ qs ]t) h
           → P τ ((Υ ⧺s ps) ∥ (Γ ⧺t qs)) ⊗.t (S ↗[ Υ ]s) h ⊗.t (S ↗[ ps ]s) h ⊗.t (P ↗[ Γ ]t) h ⊗.t (P ↗[ qs ]t) h
-        aux₁ = {!!}
+        aux₁ 𝔪⊗[ps]⊗[qs] with *⊗.out₃ 𝔪⊗[ps]⊗[qs]
+        aux₁ {h = Υ ∥ Γ} 𝔪⊗[ps]⊗[qs] | 𝔪 , [ps] , [qs] =
+          ( *↗.out 𝔪
+              (*⊗.into
+                ( *𝒴.into ({!!} , {!!})
+                , *𝒴.into {!!}
+                )
+              )
+          , *↗[]s.into (⨜.ι (*S.into (_ ∐., ≡.idn)))
+          , *↗[]s.into (⨜.ι (⨜.π (*↗[]s.out [ps])))
+          , *↗[]t.into (⨜.ι (ν (*V.into (_ ∐., ≡.idn))))
+          , *↗[]t.into (⨜.ι (⨜.π (*↗[]t.out [qs])))
+          )
 
         aux₂
           : {ps : SCtx.t (Sign.𝒮 Σ)} {qs : TCtx.t (Sign.𝒮 Σ)} {h : H.t} {τ : Sign.𝒮 Σ} (let Υ ∥ Γ = h)
           → P τ ((Υ ⧺s ps) ∥ (Γ ⧺t qs)) ⊗.t (S ↗[ Υ ]s) h ⊗.t (S ↗[ ps ]s) h ⊗.t (P ↗[ Γ ]t) h ⊗.t (P ↗[ qs ]t) h
           → (P τ ⊚ P) h
-        aux₂ {ps} {qs} {h = Υ ∥ Γ} (M , [Υ] , [ps] , [Γ] , [qs]) =
+        aux₂ (M , [Υ] , [ps] , [Γ] , [qs]) =
           *⊚.into
             ( ⨛.into (_ ∥ _)
                 ( M
