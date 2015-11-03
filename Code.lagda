@@ -814,12 +814,6 @@ module _ (Σ : Sign.t) where
     (ς : {τ : Sign.𝒮 Σ} → (P ⊙ P) τ ~> P τ)
     where
 
-    -- useful when you want to know what something's type "really" is, regardless of 'abstract'.
-    -- To learn the type of X, open a hole and put {{type-of X}} and type C-u C-c C-n.
-    type-of : {A : Set} → A → Set
-    type-of {A} _ = A
-
-
     -- Fiore & Hur / Second-Order Equational Logics decompose substitution into two auxiliary maps which they don't explicitly define.
     ς⟨_,_⟩ : {τ : Sign.𝒮 Σ} (Υ : SCtx.t (Sign.𝒮 Σ)) (Γ : TCtx.t (Sign.𝒮 Σ)) → ((P τ ↗ 𝓎 (Υ ∥ Γ)) ⊗↑ S ↗[ Υ ]s ⊗↑ P ↗[ Γ ]t) ~> P τ
     ς⟨ _ , _ ⟩ = ς ⇒.∘Π *⊙.into ⇒.∘Π aux₂ ⇒.∘Π aux₁
