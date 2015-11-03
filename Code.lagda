@@ -13,6 +13,7 @@ infixr 0 _⧺s_
 infixr 0 _⧺t_
 infixr 2 _~>_
 
+-- equality
 module ≡ where
   infix 0 _t_
   data _t_ {A} x : A → Set where
@@ -40,6 +41,7 @@ module ≡ where
     → (P a → P b)
   map P idn x = x
 
+-- products
 module ⊗ where
   record _t_ (A : Set) (B : Set) : Set where
     no-eta-equality
@@ -52,6 +54,7 @@ module ⊗ where
   open _t_ public
 open ⊗ using (_,_)
 
+-- functions
 module ⇒ where
   infixr 1 _∘_
   infixr 1 _∘Π_
@@ -102,6 +105,7 @@ module ⇒ where
 _~>_ : ∀ {𝒞} (F G : 𝔓 𝒞) → Set
 F ~> G = ∀ {c} → F c → G c
 
+-- dependent coproduct
 module ∐ where
   record t (A : Set) (B : 𝔓 A) : Set where
     no-eta-equality
@@ -114,6 +118,7 @@ module ∐ where
   syntax t A (λ x → B) = [ A ∋ x ] B
   open t public
 
+-- dependent product
 module ∏ where
   record t (I : Set) (P : 𝔓 I) : Set where
     no-eta-equality
@@ -126,6 +131,7 @@ module ∏ where
   syntax t I (λ i → P) = [ I ∋ i ] P
   open t public
 
+-- coend
 module ⨛ where
   record t {I : Set} (P : 𝔓 I) : Set where
     no-eta-equality
@@ -138,6 +144,7 @@ module ⨛ where
   infixr 1 t
   syntax t {I = I} (λ i → P) = [ I ∋ i ] P
 
+-- end
 module ⨜ where
   record t {I : Set} (P : 𝔓 I) : Set where
     no-eta-equality
@@ -148,6 +155,9 @@ module ⨜ where
 
   infixr 1 t
   syntax t {I = I} (λ i → P) = [ I ∋ i ] P
+
+  π[_] : {I : Set} (i : I) {P : I → Set} → t P → P i
+  π[ i ] = λ z → π z
 
 record SET↓ (I : Set) : Set where
   no-eta-equality
@@ -434,6 +444,11 @@ module TRen where
       coh : ∀ {i} → Γ [ i ]t ≡.t Γ′ [ map i ]t
   open t public
 
+  t↪id
+    : {A : Set} {Γ : TCtx.t A}
+    → t Γ Γ
+  t↪id = ρ (λ x → x) ≡.idn
+
   t↪cmp
     : {A : Set} {Γ : TCtx.t A} {Γ′ : TCtx.t A}
     → (Η : TCtx.t A)
@@ -456,6 +471,11 @@ module SRen where
       map : sdom Υ → sdom Υ′
       coh : ∀ {i} → Υ [ i ]s ≡.t Υ′ [ map i ]s
   open t public
+
+  s↪id
+    : {A : Set} {Υ : SCtx.t A}
+    → t Υ Υ
+  s↪id = ρ (λ x → x) ≡.idn
 
   s↪cmp
     : {A : Set} {Υ : SCtx.t A} {Υ′ : SCtx.t A}
@@ -482,7 +502,7 @@ module Sign where
   open t public
 
 module _ (Σ : Sign.t) where
-  -- infixr 1 _⊗↑_
+  infixr 1 _⊗↑_
   infix 0 _>_∥_⊢_
 
   module H where
@@ -494,6 +514,7 @@ module _ (Σ : Sign.t) where
     open t public
   pattern _∥_ Υ Γ = H.ι (Υ , Γ)
 
+  -- yoneda embedding
   module *𝒴 where
     abstract
       t : Set
@@ -508,9 +529,16 @@ module _ (Σ : Sign.t) where
       π : t → (H.t → 𝔓 H.t)
       π x = x
 
+      into : {Υ Υ′ : SCtx.t (Sign.𝒮 Σ)} {Γ Γ′ : TCtx.t (Sign.𝒮 Σ)} → (Υ ↪s Υ′) ⊗.t (Γ ↪t Γ′) → π act (Υ ∥ Γ) (Υ′ ∥ Γ′)
+      into x = x
+
+      out : {Υ Υ′ : SCtx.t (Sign.𝒮 Σ)} {Γ Γ′ : TCtx.t (Sign.𝒮 Σ)} → π act (Υ ∥ Γ) (Υ′ ∥ Γ′) → (Υ ↪s Υ′) ⊗.t (Γ ↪t Γ′)
+      out x = x
+
   𝓎 : H.t → 𝔓 H.t
   𝓎 x = *𝒴.π *𝒴.act x
 
+  -- product of presheaves
   module *⊗ where
     abstract
       t : Set
@@ -525,9 +553,22 @@ module _ (Σ : Sign.t) where
       π : t → (𝔓 H.t → 𝔓 H.t → 𝔓 H.t)
       π x = x
 
+      out : {A B : 𝔓 H.t} {h : H.t} → π act A B h → A h ⊗.t B h
+      out x = x
+
+      into : {A B : 𝔓 H.t} {h : H.t} → A h ⊗.t B h → π act A B h
+      into x = x
+
+      out₃ : {A B C : 𝔓 H.t} {h : H.t} → π act A (π act B C) h → A h ⊗.t B h ⊗.t C h
+      out₃ x = x
+
+      into₃ : {A B C : 𝔓 H.t} {h : H.t} → A h ⊗.t B h ⊗.t C h → π act A (π act B C) h
+      into₃ x = x
+
   _⊗↑_ : 𝔓 H.t → 𝔓 H.t → 𝔓 H.t
   A ⊗↑ B = *⊗.π *⊗.act A B
 
+  -- exponential of presheaves
   module *↗ where
     abstract
       t : Set
@@ -542,9 +583,13 @@ module _ (Σ : Sign.t) where
       π : t → (𝔓 H.t → 𝔓 H.t → 𝔓 H.t)
       π x = x
 
+      out : {A B : 𝔓 H.t} {h : H.t} → π act B A h → (𝓎 h ⊗↑ A) ~> B
+      out x = x
+
   _↗_ : 𝔓 H.t → 𝔓 H.t → 𝔓 H.t
   (B ↗ A) = *↗.π *↗.act B A
 
+  -- symbols presheaf
   module *S where
     abstract
       t : Set
@@ -559,9 +604,13 @@ module _ (Σ : Sign.t) where
       π : t → (Sign.𝒮 Σ → 𝔓 H.t)
       π x = x
 
+      out : {τ : Sign.𝒮 Σ} {Υ : SCtx.t (Sign.𝒮 Σ)} {Γ : TCtx.t (Sign.𝒮 Σ)} → π act τ (Υ ∥ Γ) → [ Υ ]s⁻¹ τ
+      out x = x
+
   S : (τ : Sign.𝒮 Σ) → 𝔓 H.t
   S τ = *S.π *S.act τ
 
+  -- variables presheaf
   module *V where
     abstract
       t : Set
@@ -593,6 +642,9 @@ module _ (Σ : Sign.t) where
       π : t → ((X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : TCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t)
       π x = x
 
+      out : {X : Sign.𝒮 Σ → 𝔓 H.t} {Γ : TCtx.t (Sign.𝒮 Σ)} {h : H.t} → π act X Γ h →  ⨜.[ tdom Γ ∋ x ] (X (Γ [ x ]t)) h
+      out x = x
+
   _↗[_]t : (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : TCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t
   X ↗[ Γ ]t = *↗[]t.π *↗[]t.act X Γ
 
@@ -609,6 +661,9 @@ module _ (Σ : Sign.t) where
 
       π : t → ((X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : SCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t)
       π x = x
+
+      out : {X : Sign.𝒮 Σ → 𝔓 H.t} {Υ : SCtx.t (Sign.𝒮 Σ)} {h : H.t} → π act X Υ h →  ⨜.[ sdom Υ ∋ x ] (X (Υ [ x ]s)) h
+      out x = x
 
   _↗[_]s : (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t) (Γ : SCtx.t (Sign.𝒮 Σ)) → 𝔓 H.t
   X ↗[ Υ ]s = *↗[]s.π *↗[]s.act X Υ
@@ -648,6 +703,7 @@ module _ (Σ : Sign.t) where
       π : t → ((P Q : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → ((τ : Sign.𝒮 Σ) → 𝔓 H.t))
       π x = x
 
+  -- substitution tensor
   _⊙_ : (P Q : (τ : Sign.𝒮 Σ) → 𝔓 H.t) → ((τ : Sign.𝒮 Σ) → 𝔓 H.t)
   P ⊙ Q = *⊙.π *⊙.act P Q
 
@@ -669,4 +725,28 @@ module _ (Σ : Sign.t) where
       → (ϑ : Sign.𝒪 Σ (Υ , α))
       → (∀ x → Ω > (Υ ⧺s α [ x ]a→Υ) ∥ (Γ ⧺t α [ x ]a→Γ) ⊢ α [ x ]a→τ)
       → Ω > Υ ∥ Γ ⊢ 𝒜.τ α
+
+  module Model
+    (P : Sign.𝒮 Σ → 𝔓 H.t)
+    (ν : {τ : Sign.𝒮 Σ} → V τ ~> P τ)
+    (ς : {τ : Sign.𝒮 Σ} → (P ⊙ P) τ ~> P τ)
+    where
+
+    -- useful when you want to know what something's type "really" is, regardless of 'abstract'.
+    -- To learn the type of X, open a hole and put {{type-of X}} and type C-u C-c C-n.
+    type-of : {A : Set} → A → Set
+    type-of {A} _ = A
+
+    ς⟨_,_⟩ : {s : Sign.𝒮 Σ} (Υ : SCtx.t (Sign.𝒮 Σ)) (Γ : TCtx.t (Sign.𝒮 Σ)) → (P s ↗ 𝓎 (Υ ∥ Γ) ⊗↑ S ↗[ Υ ]s ⊗↑ P ↗[ Γ ]t) ~> P s
+    ς⟨ Υ , Γ ⟩ {Υ′ ∥ Γ′} 𝔪⊗[Υ]⊗[Γ] with *⊗.out₃ 𝔪⊗[Υ]⊗[Γ]
+    ... | 𝔪 , [Υ] , [Γ] =
+      let
+        ϱ i = *S.out (⨜.π[ i ] (*↗[]s.out [Υ]))
+      in
+        *↗.out 𝔪
+          ( *⊗.into
+            ( *𝒴.into (SRen.s↪id , TRen.t↪id)
+            , *𝒴.into (SRen.ρ (∐.π₀ ⇒.∘Π ϱ) (∐.π₁ (ϱ _)) , TRen.ρ {!!} {!!})
+            )
+          )
 \end{code}
