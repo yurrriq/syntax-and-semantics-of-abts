@@ -795,7 +795,7 @@ module _ (Σ : Sign.t) where
       : (τ : Sign.𝒮 Σ) → Set where
     tvar
       : (x : tdom Γ)
-      → Ω > Υ ∥ Γ ⊢ Γ [ x ]t -- Γ [ x ]t
+      → Ω > Υ ∥ Γ ⊢ Γ [ x ]t
     mvar
       : (𝔪 : mdom Ω)
       → □.t (spre Υ) (sctx (Ω [ 𝔪 ]m→Υ))
