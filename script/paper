@@ -45,16 +45,19 @@ exit 0\
 """)
     else:
         opts_class = ''
-        args_latex = ''
+        args_latexmk = ''
 
         if args.watch:
-            args_latex = "%s" % '-pvc '
+            args_latexmk = "%s" % '-pvc '
+            args_pdflatex = '--interaction=nonstopmode'
         if args.mode == 'final':
             opts_class = "%s" % 'final'
 
         opts_class = "\PassOptionsToClass{%s}{article}" % opts_class
         cmds_latex =\
 """\
-latexmk %s-pdflatex='internal custom_latex lualatex %%O \"%s\input{%%S}\"' paper\
-""" % (args_latex, opts_class)
+pushd script/.. 1>&-
+latexmk %s-pdflatex='internal custom_latex lualatex %s %%O \"%s\input{%%S}\"' paper
+exit 0\
+""" % (args_latexmk, args_pdflatex, opts_class)
         os.system(cmds_latex)
