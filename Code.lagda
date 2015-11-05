@@ -273,6 +273,49 @@ module Fin where
   split (Nat.su m) n (su ._) | split-inl i = split-inl (su i)
   split (Nat.su m) n (su ._) | split-inr j = split-inr j
 
+module Vec where
+  data t (A : Set) : Nat.t → Set where
+    [] : t A Nat.ze
+    _∷_ : {n : Nat.t} → A → t A n → t A (Nat.su n)
+
+  _⧺_ : {A : Set} {m n : Nat.t} → t A m → t A n → t A (m Nat.+ n)
+  [] ⧺ ys = ys
+  (x ∷ xs) ⧺ ys = x ∷ (xs ⧺ ys)
+
+  lookup : {A : Set} {n : Nat.t} → Fin.t n → t A n → A
+  lookup Fin.ze (x ∷ _) = x
+  lookup (Fin.su i) (_ ∷ xs) = lookup i xs
+
+  concat-coh-l : {A : Set} {m n : Nat.t} (i : Fin.t m) (xs : t A m) (ys : t A n) → lookup i xs ≡.t lookup (Fin.inl i) (xs ⧺ ys)
+  concat-coh-l () [] ys
+  concat-coh-l Fin.ze (x ∷ xs) ys = ≡.idn
+  concat-coh-l (Fin.su i) (x ∷ xs) ys = concat-coh-l i xs ys
+
+  concat-coh-r : {A : Set} {m n : Nat.t} (i : Fin.t n) (xs : t A m) (ys : t A n) → lookup i ys ≡.t lookup (Fin.inr {m = m} i) (xs ⧺ ys)
+  concat-coh-r i [] ys = ≡.idn
+  concat-coh-r i (x ∷ xs) ys = concat-coh-r i xs ys
+
+module □ where
+  data t {A : Set} (P : 𝔓 A) : {n : Nat.t} → Vec.t A n → Set where
+    [] : t P Vec.[]
+    _∷_ : {n : Nat.t} {x : A} {xs : Vec.t A n} → P x → t P xs → t P (x Vec.∷ xs)
+
+  _⧺_
+    : {A : Set} {P : 𝔓 A} {m n : Nat.t} {xs : Vec.t A m} {ys : Vec.t A n}
+    → t P xs
+    → t P ys
+    → t P (xs Vec.⧺ ys)
+  [] ⧺ ys = ys
+  (x ∷ xs) ⧺ ys = x ∷ (xs ⧺ ys)
+
+  transform
+    : {A : Set} {P Q : 𝔓 A} {n : Nat.t} {xs : Vec.t A n}
+    → (P ~> Q)
+    → t P xs
+    → t Q xs
+  transform η [] = []
+  transform η (x ∷ xs) = η x ∷ transform η xs
+
 module Var where
   record t (n : Nat.t) : Set where
     no-eta-equality
@@ -294,8 +337,12 @@ module SCtx where
     no-eta-equality
     constructor ι
     field
-      slen : Nat.t
-      sidx : Sym.t slen → 𝒮
+      {slen} : Nat.t
+      sctx : Vec.t 𝒮 slen
+
+    sidx : Sym.t slen → 𝒮
+    sidx s = Vec.lookup (Sym.π s) sctx
+
     π↓s : SET↓ 𝒮
     π↓s = ∃ (Sym.t slen) ↓ sidx
 
@@ -311,17 +358,12 @@ module SCtx where
     syntax slen Υ = ∣ Υ ∣s
     syntax sidx Υ 𝓈 = Υ [ 𝓈 ]s
     syntax spre Υ τ = [ Υ ]s⁻¹ τ
+
   open t public
 open SCtx hiding (t; ι)
 
-⧺s-aux : ∀ {𝒮 : Set} (Υ Υ′ : SCtx.t 𝒮) (i : Sym.t (∣ Υ ∣s Nat.+ ∣ Υ′ ∣s)) → 𝒮
-⧺s-aux Υ Υ′ (Sym.ι i) with Fin.split (∣ Υ ∣s) (∣ Υ′ ∣s) i
-⧺s-aux Υ Υ′ (Sym.ι .(Fin.inl i)) | Fin.split-inl i = Υ [ Sym.ι i ]s
-⧺s-aux Υ Υ′ (Sym.ι .(Fin.inr {∣ Υ ∣s} j)) | Fin.split-inr j = Υ′ [ Sym.ι j ]s
-
--- symbol context concatenation
 _⧺s_ : ∀ {𝒮 : Set} (Υ Υ′ : SCtx.t 𝒮) → SCtx.t 𝒮
-_⧺s_ {𝒮} Υ Υ′ = SCtx.ι (∣ Υ ∣s Nat.+ ∣ Υ′ ∣s) (⧺s-aux {𝒮} Υ Υ′)
+Υ ⧺s Υ′ = SCtx.ι (sctx Υ Vec.⧺ sctx Υ′)
 
 _∋⟨_,_⟩s : ∀ {𝒮} (Υ : SCtx.t 𝒮) (x : sdom Υ ) (s : 𝒮) → Set
 Υ ∋⟨ x , s ⟩s = Υ [ x ]s ≡.t s
@@ -331,8 +373,12 @@ module TCtx where
     no-eta-equality
     constructor ι
     field
-      tlen : Nat.t
-      tidx : Var.t tlen → 𝒮
+      {tlen} : Nat.t
+      tctx : Vec.t 𝒮 tlen
+
+    tidx : Var.t tlen → 𝒮
+    tidx x = Vec.lookup (Var.π x) tctx
+
     π↓t : SET↓ 𝒮
     π↓t = ∃ (Var.t tlen) ↓ tidx
 
@@ -349,16 +395,12 @@ module TCtx where
     syntax tidx Γ x = Γ [ x ]t
     syntax tpre Γ τ = [ Γ ]t⁻¹ τ
   open t public
-open TCtx hiding (t; ι)
 
-⧺t-aux : ∀ {𝒮 : Set} (Γ Γ′ : TCtx.t 𝒮) (i : Var.t (∣ Γ ∣t Nat.+ ∣ Γ′ ∣t)) → 𝒮
-⧺t-aux Γ Γ′ (Var.ι i) with Fin.split (∣ Γ ∣t) (∣ Γ′ ∣t) i
-⧺t-aux Γ Γ′ (Var.ι .(Fin.inl i)) | Fin.split-inl i = Γ [ Var.ι i ]t
-⧺t-aux Γ Γ′ (Var.ι .(Fin.inr {∣ Γ ∣t} j)) | Fin.split-inr j = Γ′ [ Var.ι j ]t
+open TCtx hiding (t; ι)
 
 -- type context concatenation
 _⧺t_ : ∀ {𝒮 : Set} (Γ Γ′ : TCtx.t 𝒮) → TCtx.t 𝒮
-_⧺t_ {𝒮} Γ Γ′ = TCtx.ι (∣ Γ ∣t Nat.+ ∣ Γ′ ∣t) (⧺t-aux {𝒮} Γ Γ′)
+Γ ⧺t Γ′ = TCtx.ι (tctx Γ Vec.⧺ tctx Γ′)
 
 _∋⟨_,_⟩t : ∀ {𝒮} (Γ : TCtx.t 𝒮) (x : tdom Γ ) (s : 𝒮) → Set
 Γ ∋⟨ x , s ⟩t = Γ [ x ]t ≡.t s
@@ -462,27 +504,22 @@ module TRen where
     → t Γ Η
   t↪cmp H g f = ρ (map g ⇒.∘ map f) (coh g ≡.∘ coh f)
 
-  t↪-concat-inl
-    : {A : Set} {Γ Γ′ : TCtx.t A}
-    → t Γ (Γ ⧺t Γ′)
-  t↪-concat-inl {Γ = Γ} {Γ′ = Γ′} = ρ ϱ (λ {u} → aux u)
-    where
-      ϱ = Var.ι ⇒.∘ Fin.inl ⇒.∘ Var.π
+  syntax t↪cmp H g f = g ↪∘[ H ]t f
 
-      aux : (x : Var.t ∣ Γ ∣t) → Γ [ x ]t ≡.t (Γ ⧺t Γ′) [ ϱ x ]t
-      aux (Var.ι i) = {!!}
+  t↪-concat-inl
+    : {A : Set} {Γ : TCtx.t A} (Γ′ : TCtx.t A)
+    → t Γ (Γ ⧺t Γ′)
+  t↪-concat-inl {Γ = TCtx.ι Γ} (TCtx.ι Γ′) =
+    ρ (Var.ι ⇒.∘ Fin.inl ⇒.∘ Var.π)
+      (Vec.concat-coh-l _ Γ Γ′)
 
   t↪-concat-inr
-    : {A : Set} {Γ Γ′ : TCtx.t A}
+    : {A : Set} (Γ : TCtx.t A) {Γ′ : TCtx.t A}
     → t Γ′ (Γ ⧺t Γ′)
-  t↪-concat-inr {Γ = Γ} {Γ′ = Γ′} = ρ ϱ (λ {u} → aux u)
-    where
-      ϱ = Var.ι ⇒.∘ Fin.inr {m = ∣ Γ ∣t} ⇒.∘ Var.π
+  t↪-concat-inr (TCtx.ι {m} Γ) {TCtx.ι Γ′} =
+    ρ (Var.ι ⇒.∘ Fin.inr {m = m} ⇒.∘ Var.π)
+      (Vec.concat-coh-r _ Γ Γ′)
 
-      aux : (x : Var.t ∣ Γ′ ∣t) → Γ′ [ x ]t ≡.t (Γ ⧺t Γ′) [ ϱ x ]t
-      aux (Var.ι i) = {!!}
-
-  syntax t↪cmp H g f = g ↪∘[ H ]t f
 open TRen using (t↪cmp)
 
 _↪t_ : ∀ {A} (Γ Γ′ : TCtx.t A) → Set
@@ -509,28 +546,22 @@ module SRen where
     → (f : t Υ Υ′)
     → t Υ Η
   s↪cmp H g f = ρ (map g ⇒.∘ map f) (coh g ≡.∘ coh f)
+  syntax s↪cmp H g f = g ↪∘[ H ]s f
 
   s↪-concat-inl
-    : {A : Set} {Υ Υ′ : SCtx.t A}
+    : {A : Set} {Υ : SCtx.t A} (Υ′ : SCtx.t A)
     → t Υ (Υ ⧺s Υ′)
-  s↪-concat-inl {Υ = Υ} {Υ′ = Υ′} = ρ ϱ (λ {u} → aux u)
-    where
-      ϱ = Sym.ι ⇒.∘ Fin.inl ⇒.∘ Sym.π
-
-      aux : (u : Sym.t ∣ Υ ∣s) → Υ [ u ]s ≡.t (Υ ⧺s Υ′) [ ϱ u ]s
-      aux (Sym.ι i) = {!!}
+  s↪-concat-inl {Υ = SCtx.ι Υ} (SCtx.ι Υ′) =
+    ρ (Sym.ι ⇒.∘ Fin.inl ⇒.∘ Sym.π)
+      (Vec.concat-coh-l _ Υ Υ′)
 
   s↪-concat-inr
-    : {A : Set} {Υ Υ′ : SCtx.t A}
+    : {A : Set} (Υ : SCtx.t A) {Υ′ : SCtx.t A}
     → t Υ′ (Υ ⧺s Υ′)
-  s↪-concat-inr {Υ = Υ} {Υ′ = Υ′} = ρ ϱ (λ {u} → aux u)
-    where
-      ϱ = Sym.ι ⇒.∘ Fin.inr {m = ∣ Υ ∣s} ⇒.∘ Sym.π
+  s↪-concat-inr (SCtx.ι {m} Υ) {SCtx.ι Υ′} =
+    ρ (Sym.ι ⇒.∘ Fin.inr {m = m} ⇒.∘ Sym.π)
+      (Vec.concat-coh-r _ Υ Υ′)
 
-      aux : (u : Sym.t ∣ Υ′ ∣s) → Υ′ [ u ]s ≡.t (Υ ⧺s Υ′) [ ϱ u ]s
-      aux (Sym.ι i) = {!!}
-
-  syntax s↪cmp H g f = g ↪∘[ H ]s f
 open SRen using (s↪cmp)
 
 _↪s_ : ∀ {A} (Υ Υ′ : SCtx.t A) → Set
@@ -598,17 +629,12 @@ module _ (Σ : Sign.t) where
       no-eta-equality
       constructor ι
       field
-        π : ⨜.[ sdom Υ ∋ 𝓈 ] (X (Υ [ 𝓈 ]s)) h
+        π : □.t (λ x → X x h) (sctx Υ)
 
     ⧺
       : ∀ {Υ Υ′ X}
       → (X [ Υ ] ⊗↑.t X [ Υ′ ]) ~> X [ Υ ⧺s Υ′ ]
-    ⧺ {Υ}{Υ′}{X}{h} (⊗↑.ι (ι X↗Υ , ι X↗Υ′)) = ι (⨜.ι λ {i} → aux i)
-      where
-        aux : (x : Sym.t ∣ Υ ⧺s Υ′ ∣s) → X ((Υ ⧺s Υ′) [ x ]s) h
-        aux (Sym.ι i) with Fin.split (∣ Υ ∣s) (∣ Υ′ ∣s) i
-        aux (Sym.ι .(Fin.inl i)) | Fin.split-inl i = ⨜.π X↗Υ
-        aux (Sym.ι .(Fin.inr {m = ∣ Υ ∣s} j)) | Fin.split-inr j = ⨜.π X↗Υ′
+    ⧺ (⊗↑.ι (ι X↗Υ , ι X↗Υ′)) = ι (X↗Υ □.⧺ X↗Υ′)
 
   module ↗t where
     record _[_]
@@ -619,17 +645,12 @@ module _ (Σ : Sign.t) where
       no-eta-equality
       constructor ι
       field
-        π : ⨜.[ tdom Γ ∋ x ] (X (Γ [ x ]t)) h
+        π : □.t (λ x → X x h) (tctx Γ)
 
     ⧺
       : ∀ {Γ Γ′ X}
       → (X [ Γ ] ⊗↑.t X [ Γ′ ]) ~> X [ Γ ⧺t Γ′ ]
-    ⧺ {Γ}{Γ′}{X}{h} (⊗↑.ι (ι X↗Γ , ι X↗Γ′)) = ι (⨜.ι λ {i} → aux i)
-      where
-        aux : (x : Var.t ∣ Γ ⧺t Γ′ ∣t) → X ((Γ ⧺t Γ′) [ x ]t) h
-        aux (Var.ι i) with Fin.split (∣ Γ ∣t) (∣ Γ′ ∣t) i
-        aux (Var.ι .(Fin.inl i)) | Fin.split-inl i = ⨜.π X↗Γ
-        aux (Var.ι .(Fin.inr {m = ∣ Γ ∣t} j)) | Fin.split-inr j = ⨜.π X↗Γ′
+    ⧺ (⊗↑.ι (ι X↗Γ , ι X↗Γ′)) = ι (X↗Γ □.⧺ X↗Γ′)
 
   module S where
     record t (τ : Sign.𝒮 Σ) (h : H.t) : Set where
@@ -678,7 +699,7 @@ module _ (Σ : Sign.t) where
       : (τ : Sign.𝒮 Σ) → Set where
     tvar
       : (x : tdom Γ)
-      → Ω > Υ ∥ Γ ⊢ Γ [ x ]t
+      → Ω > Υ ∥ Γ ⊢ Γ [ x ]t -- Γ [ x ]t
     mvar
       : (#m : mdom Ω)
       → (∀ 𝓈 → [ Υ ]s⁻¹ Ω [ #m ]m→Υ [ 𝓈 ]s)
@@ -702,7 +723,7 @@ module _ (Σ : Sign.t) where
       → (Υ : SCtx.t (Sign.𝒮 Σ))
       → (Γ : TCtx.t (Sign.𝒮 Σ))
       → ((P τ ↗.t 𝓎.t (Υ ∥ Γ)) ⊗↑.t S.t ↗s.[ Υ ] ⊗↑.t P ↗t.[ Γ ]) ~> P τ
-    ς⟨ _ , _ ⟩ = ς ⇒.∘ ⊙.ι ⇒.∘ aux₂ ⇒.∘ aux₁
+    ς⟨ Υ , Γ ⟩ = ς ⇒.∘ ⊙.ι ⇒.∘ aux₂ ⇒.∘ aux₁
       where
         aux₁
           : {Υ′ : SCtx.t (Sign.𝒮 Σ)}
@@ -717,18 +738,31 @@ module _ (Σ : Sign.t) where
               ⊗.t (S.t ↗s.[ Υ′ ]) h
               ⊗.t (P ↗t.[ Γ  ]) h
               ⊗.t (P ↗t.[ Γ′ ]) h
-        aux₁ (⊗↑.ι (↗.ι m , ⊗↑.ι (↗s.ι Υ′ , ↗t.ι Γ′))) =
+        aux₁ {Υ′ = Υ′} {Γ′ = Γ′} {h = Υ ∥ Γ} (⊗↑.ι (↗.ι m , ⊗↑.ι (↗s.ι □Υ′ , ↗t.ι □Γ′))) =
           ( m
              (⊗↑.ι
-               ( 𝓎.ι (SRen.s↪-concat-inl , TRen.t↪-concat-inl)
-               , 𝓎.ι (SRen.s↪-concat-inr , TRen.t↪-concat-inr)
+               ( 𝓎.ι (SRen.s↪-concat-inl Υ′ , TRen.t↪-concat-inl Γ′)
+               , 𝓎.ι (SRen.s↪-concat-inr Υ , TRen.t↪-concat-inr Γ)
                )
              )
-          , ↗s.ι (⨜.ι (S.ι (_ ∐., ≡.idn)))
-          , ↗s.ι Υ′
-          , ↗t.ι (⨜.ι (ν (V.ι (_ ∐., ≡.idn))))
-          , ↗t.ι Γ′
+          , ↗s.ι (□-id-s Υ)
+          , ↗s.ι □Υ′
+          , ↗t.ι (□-ν-t Γ)
+          , ↗t.ι □Γ′
           )
+
+          where
+            □-id-s : (Υ : SCtx.t (Sign.𝒮 Σ)) → □.t (λ τ → S.t τ (Υ ∥ Γ)) (sctx Υ)
+            □-id-s (SCtx.ι Vec.[]) = □.[]
+            □-id-s (SCtx.ι (_ Vec.∷ τs)) = S.ι ((Sym.ι Fin.ze) ∐., ≡.idn) □.∷ □.transform (λ { (S.ι (Sym.ι i ∐., p)) → S.ι ((Sym.ι (Fin.su i)) ∐., p) }) (□-id-s (SCtx.ι τs))
+
+            □-id-t : (Γ : TCtx.t (Sign.𝒮 Σ)) → □.t (λ τ → V.t τ (Υ ∥ Γ)) (tctx Γ)
+            □-id-t (TCtx.ι Vec.[]) = □.[]
+            □-id-t (TCtx.ι (_ Vec.∷ τs)) = V.ι ((Var.ι Fin.ze) ∐., ≡.idn) □.∷ □.transform (λ { (V.ι (Var.ι i ∐., p)) → V.ι ((Var.ι (Fin.su i)) ∐., p) }) (□-id-t (TCtx.ι τs))
+
+            □-ν-t : (Γ : TCtx.t (Sign.𝒮 Σ)) → □.t (λ τ → P τ (Υ ∥ Γ)) (tctx Γ)
+            □-ν-t = □.transform ν ⇒.∘Π □-id-t
+
 
         aux₂
           : {Υ′ : SCtx.t (Sign.𝒮 Σ)}
