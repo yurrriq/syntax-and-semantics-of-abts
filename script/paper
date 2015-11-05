@@ -1,13 +1,60 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-set -eu
-set -o pipefail
+import argparse
+import os
 
-function main {
-    pushd script/..
-    latexmk -lualatex -pdf -use-make paper.tex
-    popd
-    exit 0
-}
+if __name__ == "__main__":
+    # check invocation dir
+    if os.path.basename(os.getcwd()) != "nominal-binding-algebras":
+        print "Invoke this script from the project root; exiting…"
+        exit(1)
 
-main
+    # parse args
+    parser = argparse.ArgumentParser(
+        description = 'generate code and render document'
+    )
+    parser.add_argument(
+        '--mode',
+        choices = ['draft', 'final'],
+        default = 'draft',
+        help = 'set rendering mode'
+    )
+    parser.add_argument(
+        '--watch',
+        action = 'store_true',
+        help = 'watch dependencies and re-render document on changes'
+    )
+    parser.add_argument(
+        '--clean',
+        action='store_true',
+        help = 'remove generated files'
+    )
+    args = parser.parse_args()
+
+    # dispatch
+
+    if args.clean:
+        os.system(\
+"""\
+pushd script/.. 1>&-
+latexmk -c 2>&-
+rm -f Code.tex
+popd 1>&-
+exit 0\
+""")
+    else:
+        opts_class = ''
+        args_latex = ''
+
+        if args.watch:
+            args_latex = "%s" % '-pvc '
+        if args.mode == 'final':
+            opts_class = "%s" % 'final'
+
+        opts_class = "\PassOptionsToClass{%s}{article}" % opts_class
+        cmds_latex =\
+"""\
+latexmk %s-pdflatex='internal custom_latex lualatex %%O \"%s\input{%%S}\"' paper\
+""" % (args_latex, opts_class)
+        os.system(cmds_latex)

@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+\documentclass[draft,11pt]{article}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -27,7 +27,6 @@
 % fonts
 \usepackage[
   activate={true,nocompatibility},
-  final,
   tracking=true
 ]{microtype}
 \setmainfont{Linux Libertine O}
@@ -39,22 +38,22 @@
    \newwrite\CATCHPATCHOUT
 \fi
 \def\CatchFBT@Fin@l#1[#2]{%
-   \begingroup
+   \begingroup%
       \endlinechar\m@ne \makeatletter #2%
-      \ifluatex
-         \immediate\openout\CATCHPATCHOUT=\jobname.catchpatch
+      \ifluatex%
+         \immediate\openout\CATCHPATCHOUT=\jobname.catchpatch%
          \immediate\write\CATCHPATCHOUT {\CatchFBT@tok{\the\CatchFBT@tok}}%
-         \immediate\closeout\CATCHPATCHOUT
-         \@@input \jobname.catchpatch
-      \else
+         \immediate\closeout\CATCHPATCHOUT%
+         \@@input \jobname.catchpatch%
+      \else%
       \scantokens\expandafter{%
          \expandafter\CatchFBT@tok\expandafter{\the\CatchFBT@tok}}%
-      \fi
-      \CatchFBT@IsAToken{#1}
-         {\global#1\expandafter{\the\CatchFBT@tok}}
+      \fi%
+      \CatchFBT@IsAToken{#1}%
+         {\global#1\expandafter{\the\CatchFBT@tok}}%
          {\xdef#1{\the\CatchFBT@tok}}%
-      \ifx\CatchFBT@tok#1\else\global\CatchFBT@tok{}\fi
-   \endgroup
+      \ifx\CatchFBT@tok#1\else\global\CatchFBT@tok{}\fi%
+   \endgroup%
 }% \CatchFBT@Final
 \makeatother
 
@@ -91,7 +90,7 @@
   }%
   \ifthenelse{\equal{#2}{}}{}{%
     [#2]%
-  }.\, #3
+  }.\, #3%
 }
 \newcommand\MkBTm[3]{\{#1\}[#2].\, #3}
 \newcommand\MkArity[2]{(#1)\, #2}
@@ -134,7 +133,7 @@
 \newcommand\Tuple[1]{\left\langle #1 \right\rangle}
 \newcommand\FLift[2]{
   \Operators\langle#1%
-  \ifthenelse{\equal{#2}{}}{}{, #2}\rangle
+  \ifthenelse{\equal{#2}{}}{}{, #2}\rangle%
 }
 \newcommand\PairTimes[2]{\langle #1\, {\scriptstyle {{\times}}}\, #2 \rangle}
 \newcommand\SSingleton{\bullet}
@@ -174,15 +173,15 @@
 
 \newcommand\Hom[3]{#1\left[#2,#3\right]}
 
-\newcommand\Rename[2]{
-  #2\upharpoonright #1
+\newcommand\Rename[2]{%
+  #2\upharpoonright #1%
 }
-\newcommand\IsRenaming[3]{
+\newcommand\IsRenaming[3]{%
   \Rename{\IMode{#1}}{\IMode{#2}}%
   \leadsto\OMode{#3}%
 }
 
-\newcommand\Subst[3]{
+\newcommand\Subst[3]{%
   \left[#1\, /\, #2\right]#3%
 }
 
@@ -1127,71 +1126,61 @@ The refinement for telescopes proceeds by induction:
 
 \section{Code}
 
-\CatchFileBetweenTags\tmp{latex/Code.tex}{agda}
+\CatchFileBetweenTags\tmp{Code.tex}{agda}
 
 \subsection{Kan Extensions}
 
 \subsubsection{Lan}
 
-\ExecuteMetaData[latex/Code.tex]{lang}\\
+\ExecuteMetaData[Code.tex]{lang}\\
 
-\ExecuteMetaData[latex/Code.tex]{lan}
+\ExecuteMetaData[Code.tex]{lan}
 
 \subsubsection{Ran}
 
-\ExecuteMetaData[latex/Code.tex]{rang}\\
+\ExecuteMetaData[Code.tex]{rang}\\
 
-\ExecuteMetaData[latex/Code.tex]{ran}
+\ExecuteMetaData[Code.tex]{ran}
 
 \subsection{Variables and Symbols}
 
-\ExecuteMetaData[latex/Code.tex]{var}\\
+\ExecuteMetaData[Code.tex]{var}\\
 
-\ExecuteMetaData[latex/Code.tex]{sym}
+\ExecuteMetaData[Code.tex]{sym}
 
 \subsection{Contexts}
 
-\ExecuteMetaData[latex/Code.tex]{ctx}\\
+\ExecuteMetaData[Code.tex]{ctx}\\
 
-\ExecuteMetaData[latex/Code.tex]{sctx}\\
+\ExecuteMetaData[Code.tex]{sctx}\\
 
-\ExecuteMetaData[latex/Code.tex]{ctxdom}\\
+\ExecuteMetaData[Code.tex]{ctxdom}\\
 
-\ExecuteMetaData[latex/Code.tex]{ctxidx}\\
+\ExecuteMetaData[Code.tex]{ctxidx}\\
 
-\ExecuteMetaData[latex/Code.tex]{elem}
+\ExecuteMetaData[Code.tex]{elem}
 
 \subsection{Signatures}
 
-\ExecuteMetaData[latex/Code.tex]{sign}
+\ExecuteMetaData[Code.tex]{sign}
 
 \subsection{Trees}
 
-\ExecuteMetaData[latex/Code.tex]{trees}
+\ExecuteMetaData[Code.tex]{trees}
 
 \subsection{Substitution Monoidal Structure}
 
-\ExecuteMetaData[latex/Code.tex]{H}\\
+\ExecuteMetaData[Code.tex]{H}\\
 
-\ExecuteMetaData[latex/Code.tex]{HHat}\\
+\ExecuteMetaData[Code.tex]{HHat}\\
 
-\ExecuteMetaData[latex/Code.tex]{V}\\
+\ExecuteMetaData[Code.tex]{V}\\
 
-\ExecuteMetaData[latex/Code.tex]{S}\\
+\ExecuteMetaData[Code.tex]{tensor0}\\
 
-\ExecuteMetaData[latex/Code.tex]{tensor0}\\
+\ExecuteMetaData[Code.tex]{tensor1}\\
 
-\ExecuteMetaData[latex/Code.tex]{tensor1}\\
-
-\ExecuteMetaData[latex/Code.tex]{extension}
-
-\subsection{Signature Endofunctor}
-
-\ExecuteMetaData[latex/Code.tex]{endofunctor}
-
-\subsection{Interpretation}
-
-\ExecuteMetaData[latex/Code.tex]{interpretation}
+\ExecuteMetaData[Code.tex]{extension}
 
 \nocite{*}
 \bibliographystyle{abbrv}
