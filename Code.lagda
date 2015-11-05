@@ -11,7 +11,7 @@ infix 2 _[_]m→Υ
 infix 2 _[_]m→τ
 infixr 1 _⧺s_
 infixr 1 _⧺t_
-infixr 2 _~>_
+infixr 2 _⊆_
 
 -- equality
 module ≡ where
@@ -102,8 +102,13 @@ module ⇒ where
 𝔓 : (X : Set) → Set
 𝔓 X = X → Set
 
-_~>_ : ∀ {𝒞} (F G : 𝔓 𝒞) → Set
-F ~> G = ∀ {c} → F c → G c
+Sub : ∀ {𝒞} (F G : 𝔓 𝒞) → Set
+Sub F G = ∀ {c} → F c → G c
+
+syntax Sub {𝒞} F G = F ⊆[ 𝒞 ] G
+
+_⊆_ : ∀ {𝒞} (F G : 𝔓 𝒞) → Set
+F ⊆ G = ∀ {c} → F c → G c
 
 -- dependent coproduct
 module ∐ where
@@ -207,7 +212,7 @@ Ran 𝒟[_,_] _⟦⋔⟧_ J F d = ⨜.[ _ ∋ c ] 𝒟[ d , J c ] ⟦⋔⟧ F c
 Π f = Ran ≡._t_ ⇒._t_ f
 
 𝔓[_,_] : _
-𝔓[_,_] = _~>_
+𝔓[_,_] = _⊆_
 
 Σ⊣₀Δ
   : ∀ {A B}(f : A → B)(Φ : 𝔓 A)(Ψ : 𝔓 B)
@@ -319,10 +324,9 @@ module □ where
   π (Fin.su i) (_ ∷ xs) = π i xs
 
   transform
-    : {A : Set} {P Q : 𝔓 A} {n : Nat.t} {xs : Vec.t A n}
-    → (P ~> Q)
-    → t P xs
-    → t Q xs
+    : {A : Set} {P Q : 𝔓 A} {n : Nat.t}
+    → (P ⊆ Q)
+    → t P ⊆[ Vec.t A n ] t Q
   transform η [] = []
   transform η (x ∷ xs) = η x ∷ transform η xs
 
@@ -640,7 +644,7 @@ module _ (Σ : Sign.t) where
       no-eta-equality
       constructor ι
       field
-        π : (𝓎.t h ⊗↑.t A) ~> B
+        π : (𝓎.t h ⊗↑.t A) ⊆ B
 
   module ↗m where
     record _[_]
@@ -660,7 +664,7 @@ module _ (Σ : Sign.t) where
 
     lookup
       : {X : Sign.𝒮 Σ → 𝔓 H.t} {Ω : MCtx.t (Sign.𝒮 Σ)} (𝔪 : mdom Ω) (let 𝒱.ι (psₘ , qsₘ , τₘ) = midx Ω 𝔪)
-      → X [ Ω ] ~> (X τₘ ↗.t 𝓎.t (psₘ ∥ qsₘ))
+      → X [ Ω ] ⊆ (X τₘ ↗.t 𝓎.t (psₘ ∥ qsₘ))
     lookup 𝔪 (ι □Ω) = □.π (Var.π 𝔪) □Ω
 
   module ↗s where
@@ -678,12 +682,12 @@ module _ (Σ : Sign.t) where
 
     ⧺
       : ∀ {Υ Υ′ X}
-      → (X [ Υ ] ⊗↑.t X [ Υ′ ]) ~> X [ Υ ⧺s Υ′ ]
+      → (X [ Υ ] ⊗↑.t X [ Υ′ ]) ⊆ X [ Υ ⧺s Υ′ ]
     ⧺ (⊗↑.ι (ι X↗Υ , ι X↗Υ′)) = ι (X↗Υ □.⧺ X↗Υ′)
 
     lookup
       : {X : Sign.𝒮 Σ → 𝔓 H.t} {Υ : SCtx.t (Sign.𝒮 Σ)} (s : Sym.t ∣ Υ ∣s)
-      → X [ Υ ] ~> X (sidx Υ s)
+      → X [ Υ ] ⊆ X (Υ [ s ]s)
     lookup x (ι □Υ) = □.π (Sym.π x) □Υ
 
   module ↗t where
@@ -700,12 +704,12 @@ module _ (Σ : Sign.t) where
 
     ⧺
       : ∀ {Γ Γ′ X}
-      → (X [ Γ ] ⊗↑.t X [ Γ′ ]) ~> X [ Γ ⧺t Γ′ ]
+      → (X [ Γ ] ⊗↑.t X [ Γ′ ]) ⊆ X [ Γ ⧺t Γ′ ]
     ⧺ (⊗↑.ι (ι X↗Γ , ι X↗Γ′)) = ι (X↗Γ □.⧺ X↗Γ′)
 
     lookup
       : {X : Sign.𝒮 Σ → 𝔓 H.t} {Γ : TCtx.t (Sign.𝒮 Σ)} (x : Var.t ∣ Γ ∣t)
-      → X [ Γ ] ~> X (tidx Γ x)
+      → X [ Γ ] ⊆ X (tidx Γ x)
     lookup x (ι □Γ) = □.π (Var.π x) □Γ
 
   module S where
@@ -784,9 +788,9 @@ module _ (Σ : Sign.t) where
 
   module Model
     (P : Sign.𝒮 Σ → 𝔓 H.t)
-    (ν : {τ : Sign.𝒮 Σ} → V.t τ ~> P τ)
-    (ς : {τ : Sign.𝒮 Σ} → (P ⊙.t P) τ ~> P τ)
-    (α : {τ : Sign.𝒮 Σ} → 𝔉.t P τ ~> P τ)
+    (ν : {τ : Sign.𝒮 Σ} → V.t τ ⊆ P τ)
+    (ς : {τ : Sign.𝒮 Σ} → (P ⊙.t P) τ ⊆ P τ)
+    (α : {τ : Sign.𝒮 Σ} → 𝔉.t P τ ⊆ P τ)
     where
 
     -- Fiore & Hur / Second-Order Equational Logics decompose substitution into two auxiliary maps which they don't explicitly define.
@@ -794,7 +798,7 @@ module _ (Σ : Sign.t) where
       : {τ : Sign.𝒮 Σ}
       → (Υ : SCtx.t (Sign.𝒮 Σ))
       → (Γ : TCtx.t (Sign.𝒮 Σ))
-      → ((P τ ↗.t 𝓎.t (Υ ∥ Γ)) ⊗↑.t S.t ↗s.[ Υ ] ⊗↑.t P ↗t.[ Γ ]) ~> P τ
+      → ((P τ ↗.t 𝓎.t (Υ ∥ Γ)) ⊗↑.t S.t ↗s.[ Υ ] ⊗↑.t P ↗t.[ Γ ]) ⊆ P τ
     ς⟨ Υ , Γ ⟩ = ς ⇒.∘ ⊙.ι ⇒.∘ aux₂ ⇒.∘ aux₁
       where
         aux₁
@@ -878,7 +882,7 @@ module _ (Σ : Sign.t) where
 
     -- interpretation of terms
     {-# TERMINATING #-}
-    ⟦_⟧_ : ∀ {Ω Υ Γ s} → Ω > Υ ∥ Γ ⊢ s → ⟦ Ω > Υ ∥ Γ ⟧ ~> P s
+    ⟦_⟧_ : ∀ {Ω Υ Γ s} → Ω > Υ ∥ Γ ⊢ s → ⟦ Ω > Υ ∥ Γ ⟧ ⊆ P s
     ⟦ tvar x ⟧ ⊗↑.ι (_ , ⊗↑.ι (_ , ⟦Γ⟧)) = ν (↗t.lookup x ⟦Γ⟧)
     ⟦ mvar 𝔪 us Ms ⟧ ρ =
       let
@@ -914,5 +918,4 @@ module _ (Σ : Sign.t) where
               )
             )
           )
-
 \end{code}
