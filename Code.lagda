@@ -288,16 +288,16 @@ module Vec where
   map f [] = []
   map f (x ∷ xs) = f x ∷ map f xs
 
-  lookup : {A : Set} {n : Nat.t} → Fin.t n → t A n → A
-  lookup Fin.ze (x ∷ _) = x
-  lookup (Fin.su i) (_ ∷ xs) = lookup i xs
+  π : {A : Set} {n : Nat.t} → Fin.t n → t A n → A
+  π Fin.ze (x ∷ _) = x
+  π (Fin.su i) (_ ∷ xs) = π i xs
 
-  concat-coh-l : {A : Set} {m n : Nat.t} (i : Fin.t m) (xs : t A m) (ys : t A n) → lookup i xs ≡.t lookup (Fin.inl i) (xs ⧺ ys)
+  concat-coh-l : {A : Set} {m n : Nat.t} (i : Fin.t m) (xs : t A m) (ys : t A n) → π i xs ≡.t π (Fin.inl i) (xs ⧺ ys)
   concat-coh-l () [] ys
   concat-coh-l Fin.ze (x ∷ xs) ys = ≡.idn
   concat-coh-l (Fin.su i) (x ∷ xs) ys = concat-coh-l i xs ys
 
-  concat-coh-r : {A : Set} {m n : Nat.t} (i : Fin.t n) (xs : t A m) (ys : t A n) → lookup i ys ≡.t lookup (Fin.inr {m = m} i) (xs ⧺ ys)
+  concat-coh-r : {A : Set} {m n : Nat.t} (i : Fin.t n) (xs : t A m) (ys : t A n) → π i ys ≡.t π (Fin.inr {m = m} i) (xs ⧺ ys)
   concat-coh-r i [] ys = ≡.idn
   concat-coh-r i (x ∷ xs) ys = concat-coh-r i xs ys
 
@@ -314,9 +314,9 @@ module □ where
   [] ⧺ ys = ys
   (x ∷ xs) ⧺ ys = x ∷ (xs ⧺ ys)
 
-  lookup : {A : Set} {P : 𝔓 A} {n : Nat.t} {xs : Vec.t A n} (i : Fin.t n) → t P xs → P (Vec.lookup i xs)
-  lookup Fin.ze (x ∷ _) = x
-  lookup (Fin.su i) (_ ∷ xs) = lookup i xs
+  π : {A : Set} {P : 𝔓 A} {n : Nat.t} {xs : Vec.t A n} (i : Fin.t n) → t P xs → P (Vec.π i xs)
+  π Fin.ze (x ∷ _) = x
+  π (Fin.su i) (_ ∷ xs) = π i xs
 
   transform
     : {A : Set} {P Q : 𝔓 A} {n : Nat.t} {xs : Vec.t A n}
@@ -358,7 +358,7 @@ module SCtx where
       sctx : Vec.t 𝒮 slen
 
     sidx : Sym.t slen → 𝒮
-    sidx s = Vec.lookup (Sym.π s) sctx
+    sidx s = Vec.π (Sym.π s) sctx
 
     π↓s : SET↓ 𝒮
     π↓s = ∃ (Sym.t slen) ↓ sidx
@@ -394,7 +394,7 @@ module TCtx where
       tctx : Vec.t 𝒮 tlen
 
     tidx : Var.t tlen → 𝒮
-    tidx x = Vec.lookup (Var.π x) tctx
+    tidx x = Vec.π (Var.π x) tctx
 
     π↓t : SET↓ 𝒮
     π↓t = ∃ (Var.t tlen) ↓ tidx
@@ -661,7 +661,7 @@ module _ (Σ : Sign.t) where
     lookup
       : {X : Sign.𝒮 Σ → 𝔓 H.t} {Ω : MCtx.t (Sign.𝒮 Σ)} (𝔪 : mdom Ω) (let 𝒱.ι (psₘ , qsₘ , τₘ) = midx Ω 𝔪)
       → X [ Ω ] ~> (X τₘ ↗.t 𝓎.t (psₘ ∥ qsₘ))
-    lookup 𝔪 (ι □Ω) = □.lookup (Var.π 𝔪) □Ω
+    lookup 𝔪 (ι □Ω) = □.π (Var.π 𝔪) □Ω
 
   module ↗s where
     record _[_]
@@ -684,7 +684,7 @@ module _ (Σ : Sign.t) where
     lookup
       : {X : Sign.𝒮 Σ → 𝔓 H.t} {Υ : SCtx.t (Sign.𝒮 Σ)} (s : Sym.t ∣ Υ ∣s)
       → X [ Υ ] ~> X (sidx Υ s)
-    lookup x (ι □Υ) = □.lookup (Sym.π x) □Υ
+    lookup x (ι □Υ) = □.π (Sym.π x) □Υ
 
   module ↗t where
     record _[_]
@@ -706,7 +706,7 @@ module _ (Σ : Sign.t) where
     lookup
       : {X : Sign.𝒮 Σ → 𝔓 H.t} {Γ : TCtx.t (Sign.𝒮 Σ)} (x : Var.t ∣ Γ ∣t)
       → X [ Γ ] ~> X (tidx Γ x)
-    lookup x (ι □Γ) = □.lookup (Var.π x) □Γ
+    lookup x (ι □Γ) = □.π (Var.π x) □Γ
 
   module S where
     record t (τ : Sign.𝒮 Σ) (h : H.t) : Set where
@@ -714,6 +714,7 @@ module _ (Σ : Sign.t) where
       constructor ι
       field
         π : [ H.Υ h ]s⁻¹ τ
+    open t public
 
   module V where
     record t (τ : Sign.𝒮 Σ) (h : H.t) : Set where
@@ -889,11 +890,11 @@ module _ (Σ : Sign.t) where
             , ⊗↑.ι
                 ( ↗s.ι
                     (□.transform
-                      (λ { (Sym.ι x ∐., x≡) →
+                      (λ { (Sym.ι x ∐., p) →
                              ≡.map
                                (λ c → S.t c _)
-                               (≡.inv x≡)
-                               (□.lookup x (↗s.π ⟦Υ⟧))
+                               (≡.inv p)
+                               (□.π x (↗s.π ⟦Υ⟧))
                          }
                       )
                       us
@@ -902,10 +903,16 @@ module _ (Σ : Sign.t) where
                 )
             )
           )
-    ⟦ app {a} ϑ Ms ⟧ ρ =
+    ⟦_⟧_ {Ω = Ω} {Υ = Υ} {Γ = Γ} (app {𝒶} ϑ Ms) {Υ′ ∥ Δ} ρ =
       let
         ⊗↑.ι (⟦Ω⟧ , ⊗↑.ι (⟦Υ⟧ , ⟦Γ⟧)) = ρ
       in
-        {!!}
+        α ( 𝒶
+        ∐., ( ≡.idn
+            , ( Sign.map Σ (SRen.ρ (λ s → ∐.π₀ (S.π (↗s.lookup s ⟦Υ⟧))) (∐.π₁ (S.π (↗s.lookup _ ⟦Υ⟧)))) ϑ
+            ∐., {!!}
+              )
+            )
+          )
 
 \end{code}
