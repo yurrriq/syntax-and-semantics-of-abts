@@ -1,16 +1,19 @@
 #!/usr/bin/env python
+
 # -*- coding: utf-8 -*-
 
 import argparse
 import os
 
 if __name__ == "__main__":
-    # check invocation dir
+    ### check invocation dir
+
     if os.path.basename(os.getcwd()) != "nominal-binding-algebras":
         print "Invoke this script from the project root; exiting…"
         exit(1)
 
-    # parse args
+    ### parse args
+
     parser = argparse.ArgumentParser(
         description = 'generate code and render document'
     )
@@ -32,7 +35,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    # dispatch
+    ### dispatch
 
     if args.clean:
         os.system(\
@@ -48,8 +51,11 @@ exit 0\
         args_latexmk = ''
 
         if args.watch:
+            # enable continuous preview
             args_latexmk = "%s" % '-pvc '
+            # don't halt on errors
             args_pdflatex = '--interaction=nonstopmode'
+
         if args.mode == 'final':
             opts_class = "%s" % 'final'
 
@@ -58,6 +64,7 @@ exit 0\
 """\
 pushd script/.. 1>&-
 latexmk %s-pdflatex='internal custom_latex lualatex %s %%O \"%s\input{%%S}\"' paper
+popd 1>&-
 exit 0\
 """ % (args_latexmk, args_pdflatex, opts_class)
         os.system(cmds_latex)
