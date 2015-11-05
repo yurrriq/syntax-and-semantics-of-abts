@@ -102,6 +102,11 @@ module ⇒ where
 𝔓 : (X : Set) → Set
 𝔓 X = X → Set
 
+Sub : ∀ {𝒞} (F G : 𝔓 𝒞) → Set
+Sub F G = ∀ {c} → F c → G c
+
+syntax Sub {𝒞} F G = F ⊆[ 𝒞 ] G
+
 _⊆_ : ∀ {𝒞} (F G : 𝔓 𝒞) → Set
 F ⊆ G = ∀ {c} → F c → G c
 
