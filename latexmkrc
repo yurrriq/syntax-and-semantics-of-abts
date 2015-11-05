@@ -1,3 +1,5 @@
+# -*- mode: perl -*-
+
 # $pdflatex = 'internal custom_latex lualatex %O %S';
 $pdf_mode = 1;
 $postscript_mode = 0;
