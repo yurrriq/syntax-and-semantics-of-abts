@@ -292,14 +292,26 @@ module Vec where
   π Fin.ze (x ∷ _) = x
   π (Fin.su i) (_ ∷ xs) = π i xs
 
-  concat-coh-l : {A : Set} {m n : Nat.t} (i : Fin.t m) (xs : t A m) (ys : t A n) → π i xs ≡.t π (Fin.inl i) (xs ⧺ ys)
+  concat-coh-l
+    : {A : Set} {m n : Nat.t} (i : Fin.t m) (xs : t A m) (ys : t A n)
+    → π i xs ≡.t π (Fin.inl i) (xs ⧺ ys)
   concat-coh-l () [] ys
   concat-coh-l Fin.ze (x ∷ xs) ys = ≡.idn
   concat-coh-l (Fin.su i) (x ∷ xs) ys = concat-coh-l i xs ys
 
-  concat-coh-r : {A : Set} {m n : Nat.t} (i : Fin.t n) (xs : t A m) (ys : t A n) → π i ys ≡.t π (Fin.inr {m = m} i) (xs ⧺ ys)
+  concat-coh-r
+    : {A : Set} {m n : Nat.t} (i : Fin.t n) (xs : t A m) (ys : t A n)
+    → π i ys ≡.t π (Fin.inr {m = m} i) (xs ⧺ ys)
   concat-coh-r i [] ys = ≡.idn
   concat-coh-r i (x ∷ xs) ys = concat-coh-r i xs ys
+
+  tabulate
+    : {A : Set} {n : Nat.t}
+    → (Fin.t n → A)
+    → t A n
+  tabulate {n = Nat.ze} φ = []
+  tabulate {n = Nat.su n} φ = φ Fin.ze ∷ tabulate (φ ⇒.∘ Fin.su)
+
 
 module □ where
   data t {A : Set} (P : 𝔓 A) : {n : Nat.t} → Vec.t A n → Set where
@@ -325,6 +337,13 @@ module □ where
     → t Q xs
   transform η [] = []
   transform η (x ∷ xs) = η x ∷ transform η xs
+
+  tabulate
+    : {A : Set} {P : 𝔓 A} {n : Nat.t} {xs : Vec.t A n}
+    → ((i : Fin.t n) → P (Vec.π i xs))
+    → t P xs
+  tabulate {xs = Vec.[]} φ = []
+  tabulate {xs = x Vec.∷ xs} φ = φ Fin.ze ∷ tabulate (φ ⇒.∘Π Fin.su)
 
 module Var where
   record t (n : Nat.t) : Set where
@@ -518,13 +537,13 @@ module TRen where
 
   t↪cmp
     : {A : Set} {Γ : TCtx.t A} {Γ′ : TCtx.t A}
-    → (Η : TCtx.t A)
+    → {Η : TCtx.t A}
     → (g : t Γ′ Η)
     → (f : t Γ Γ′)
     → t Γ Η
-  t↪cmp H g f = ρ (map g ⇒.∘ map f) (coh g ≡.∘ coh f)
+  t↪cmp g f = ρ (map g ⇒.∘ map f) (coh g ≡.∘ coh f)
 
-  syntax t↪cmp H g f = g ↪∘[ H ]t f
+  syntax t↪cmp {H = H} g f = g ↪∘[ H ]t f
 
   module weakening where
     inl
@@ -562,12 +581,12 @@ module SRen where
 
   s↪cmp
     : {A : Set} {Υ Υ′ : SCtx.t A}
-    → (Η : SCtx.t A)
+    → {Η : SCtx.t A}
     → (g : t Υ′ Η)
     → (f : t Υ Υ′)
     → t Υ Η
-  s↪cmp H g f = ρ (map g ⇒.∘ map f) (coh g ≡.∘ coh f)
-  syntax s↪cmp H g f = g ↪∘[ H ]s f
+  s↪cmp g f = ρ (map g ⇒.∘ map f) (coh g ≡.∘ coh f)
+  syntax s↪cmp {H = H} g f = g ↪∘[ H ]s f
 
   module weakening where
     inl
@@ -641,6 +660,7 @@ module _ (Σ : Sign.t) where
       constructor ι
       field
         π : (𝓎.t h ⊗↑.t A) ~> B
+    open _t_ public
 
   module ↗m where
     record _[_]
@@ -903,14 +923,88 @@ module _ (Σ : Sign.t) where
                 )
             )
           )
-    ⟦_⟧_ {Ω = Ω} {Υ = Υ} {Γ = Γ} (app {𝒶} ϑ Ms) {Υ′ ∥ Δ} ρ =
+    ⟦_⟧_ {Ω = Ω} {Υ = Υ} {Γ = Γ} (app {𝒶} ϑ Ms) {Υ′ ∥ Δ} (⊗↑.ι (⟦Ω⟧ , ⊗↑.ι (⟦Υ⟧ , ⟦Γ⟧))) =
       let
-        ⊗↑.ι (⟦Ω⟧ , ⊗↑.ι (⟦Υ⟧ , ⟦Γ⟧)) = ρ
+        welp = Ω
       in
         α ( 𝒶
         ∐., ( ≡.idn
-            , ( Sign.map Σ (SRen.ρ (λ s → ∐.π₀ (S.π (↗s.lookup s ⟦Υ⟧))) (∐.π₁ (S.π (↗s.lookup _ ⟦Υ⟧)))) ϑ
-            ∐., {!!}
+            , ( Sign.map
+                 Σ
+                 (SRen.ρ
+                   (λ s → ∐.π₀ (S.π (↗s.lookup s ⟦Υ⟧)))
+                   (∐.π₁ (S.π (↗s.lookup _ ⟦Υ⟧)))
+                 )
+                 ϑ
+            ∐., □.transform
+                  (λ {𝓋} M →
+                    ↗.ι
+                      (λ { {c = h} (⊗↑.ι (𝓎.ι (Υ′↪Υ″ , Δ↪Δ′) , 𝓎.ι (Υ𝓋↪Υ″ , Γ𝓋↪Δ′))) →
+                           let
+                             ⟦Υ⟧′ : ⟦ Υ ⟧s h
+                             ⟦Υ⟧′ =
+                               ↗s.ι
+                                 (□.tabulate λ i →
+                                   let
+                                     S.ι (s ∐., [s]) = ↗s.lookup (Sym.ι i) ⟦Υ⟧
+                                   in
+                                     S.ι (SRen.map Υ′↪Υ″ s ∐., (SRen.coh Υ′↪Υ″ ≡.∘ [s]))
+                                 )
+
+                             ⟦Υ𝓋⟧ : ⟦ 𝒱.Υ 𝓋 ⟧s h
+                             ⟦Υ𝓋⟧ = ↗s.ι (□.tabulate λ i → S.ι (SRen.map Υ𝓋↪Υ″ (Sym.ι i) ∐., SRen.coh Υ𝓋↪Υ″))
+
+                             ⟦Γ⟧′ : ⟦ Γ ⟧t h
+                             ⟦Γ⟧′ =
+                               ↗t.ι
+                                 (□.tabulate λ i →
+                                   let
+                                     V.ι (x ∐., [x]) = ↗t.lookup (Var.ι i) ⟦Γ⟧
+                                   in
+                                     V.ι ((TRen.map Δ↪Δ′ x) ∐., (TRen.coh Δ↪Δ′ ≡.∘ [x]))
+                                 )
+
+                             ⟦Γ𝓋⟧ : ⟦ 𝒱.Γ 𝓋 ⟧t h
+                             ⟦Γ𝓋⟧ = ↗t.ι (□.tabulate λ i → V.ι (TRen.map Γ𝓋↪Δ′ (Var.ι i) ∐., TRen.coh Γ𝓋↪Δ′))
+
+                             ⟦Ω⟧′ : ⟦ Ω ⟧m h
+                             ⟦Ω⟧′ =
+                               ↗m.ι
+                                 (□.tabulate λ i →
+                                   ↗.ι
+                                     λ { (⊗↑.ι (𝓎.ι (Υ″↪c₀ , Δ′↪c₁) , 𝓎.ι (Υ𝓋↪c₀ , Γ𝓋↪c₁))) →
+                                          let
+                                            ↗.ι η = ↗m.lookup (Var.ι i) ⟦Ω⟧
+                                          in
+                                            ↗.π
+                                              (↗m.lookup (Var.ι i) ⟦Ω⟧)
+                                              (⊗↑.ι
+                                                ( 𝓎.ι
+                                                    ( s↪cmp Υ″↪c₀ Υ′↪Υ″
+                                                    , t↪cmp Δ′↪c₁ Δ↪Δ′
+                                                    )
+                                                , 𝓎.ι
+                                                    ( Υ𝓋↪c₀
+                                                    , Γ𝓋↪c₁
+                                                    )
+                                                )
+                                              )
+                                       }
+                                 )
+
+                           in
+                             ⟦ M ⟧
+                               ⊗↑.ι
+                                 ( ⟦Ω⟧′
+                                 , ⊗↑.ι
+                                     ( ↗s.⧺ (⊗↑.ι (⟦Υ⟧′ , ⟦Υ𝓋⟧))
+                                     , ↗t.⧺ (⊗↑.ι (⟦Γ⟧′ , ⟦Γ𝓋⟧))
+                                     )
+                                 )
+                         }
+                      )
+                  )
+                  Ms
               )
             )
           )
