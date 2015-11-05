@@ -513,19 +513,20 @@ module TRen where
 
   syntax t↪cmp H g f = g ↪∘[ H ]t f
 
-  t↪-concat-inl
-    : {A : Set} {Γ : TCtx.t A} (Γ′ : TCtx.t A)
-    → t Γ (Γ ⧺t Γ′)
-  t↪-concat-inl {Γ = TCtx.ι Γ} (TCtx.ι Γ′) =
-    ρ (Var.ι ⇒.∘ Fin.inl ⇒.∘ Var.π)
-      (Vec.concat-coh-l _ Γ Γ′)
+  module weakening where
+    inl
+      : {A : Set} {Γ : TCtx.t A} (Γ′ : TCtx.t A)
+      → t Γ (Γ ⧺t Γ′)
+    inl {Γ = TCtx.ι Γ} (TCtx.ι Γ′) =
+      ρ (Var.ι ⇒.∘ Fin.inl ⇒.∘ Var.π)
+        (Vec.concat-coh-l _ Γ Γ′)
 
-  t↪-concat-inr
-    : {A : Set} (Γ : TCtx.t A) {Γ′ : TCtx.t A}
-    → t Γ′ (Γ ⧺t Γ′)
-  t↪-concat-inr (TCtx.ι {m} Γ) {TCtx.ι Γ′} =
-    ρ (Var.ι ⇒.∘ Fin.inr {m = m} ⇒.∘ Var.π)
-      (Vec.concat-coh-r _ Γ Γ′)
+    inr
+      : {A : Set} (Γ : TCtx.t A) {Γ′ : TCtx.t A}
+      → t Γ′ (Γ ⧺t Γ′)
+    inr (TCtx.ι {m} Γ) {TCtx.ι Γ′} =
+      ρ (Var.ι ⇒.∘ Fin.inr {m = m} ⇒.∘ Var.π)
+        (Vec.concat-coh-r _ Γ Γ′)
 
 open TRen using (t↪cmp)
 
@@ -555,19 +556,20 @@ module SRen where
   s↪cmp H g f = ρ (map g ⇒.∘ map f) (coh g ≡.∘ coh f)
   syntax s↪cmp H g f = g ↪∘[ H ]s f
 
-  s↪-concat-inl
-    : {A : Set} {Υ : SCtx.t A} (Υ′ : SCtx.t A)
-    → t Υ (Υ ⧺s Υ′)
-  s↪-concat-inl {Υ = SCtx.ι Υ} (SCtx.ι Υ′) =
-    ρ (Sym.ι ⇒.∘ Fin.inl ⇒.∘ Sym.π)
-      (Vec.concat-coh-l _ Υ Υ′)
+  module weakening where
+    inl
+      : {A : Set} {Υ : SCtx.t A} (Υ′ : SCtx.t A)
+      → t Υ (Υ ⧺s Υ′)
+    inl {Υ = SCtx.ι Υ} (SCtx.ι Υ′) =
+      ρ (Sym.ι ⇒.∘ Fin.inl ⇒.∘ Sym.π)
+        (Vec.concat-coh-l _ Υ Υ′)
 
-  s↪-concat-inr
-    : {A : Set} (Υ : SCtx.t A) {Υ′ : SCtx.t A}
-    → t Υ′ (Υ ⧺s Υ′)
-  s↪-concat-inr (SCtx.ι {m} Υ) {SCtx.ι Υ′} =
-    ρ (Sym.ι ⇒.∘ Fin.inr {m = m} ⇒.∘ Sym.π)
-      (Vec.concat-coh-r _ Υ Υ′)
+    inr
+      : {A : Set} (Υ : SCtx.t A) {Υ′ : SCtx.t A}
+      → t Υ′ (Υ ⧺s Υ′)
+    inr (SCtx.ι {m} Υ) {SCtx.ι Υ′} =
+      ρ (Sym.ι ⇒.∘ Fin.inr {m = m} ⇒.∘ Sym.π)
+        (Vec.concat-coh-r _ Υ Υ′)
 
 open SRen using (s↪cmp)
 
@@ -748,8 +750,8 @@ module _ (Σ : Sign.t) where
         aux₁ {Υ′ = Υ′} {Γ′ = Γ′} {h = Υ ∥ Γ} (⊗↑.ι (↗.ι m , ⊗↑.ι (↗s.ι □Υ′ , ↗t.ι □Γ′))) =
           ( m
              (⊗↑.ι
-               ( 𝓎.ι (SRen.s↪-concat-inl Υ′ , TRen.t↪-concat-inl Γ′)
-               , 𝓎.ι (SRen.s↪-concat-inr Υ , TRen.t↪-concat-inr Γ)
+               ( 𝓎.ι (SRen.weakening.inl Υ′ , TRen.weakening.inl Γ′)
+               , 𝓎.ι (SRen.weakening.inr Υ , TRen.weakening.inr Γ)
                )
              )
           , ↗s.ι (□-id-s Υ)
