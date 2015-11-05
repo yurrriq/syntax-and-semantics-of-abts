@@ -322,7 +322,11 @@ module Var where
     constructor ι
     field
       π : Fin.t n
+
   open t public
+
+  su : {n : Nat.t} → t n → t (Nat.su n)
+  su = ι ⇒.∘ Fin.su ⇒.∘ π
 
 module Sym where
   record t (n : Nat.t) : Set where
@@ -331,6 +335,9 @@ module Sym where
     field
       π : Fin.t n
   open t public
+
+  su : {n : Nat.t} → t n → t (Nat.su n)
+  su = ι ⇒.∘ Fin.su ⇒.∘ π
 
 module SCtx where
   record t (𝒮 : Set) : Set where
@@ -754,15 +761,22 @@ module _ (Σ : Sign.t) where
           where
             □-id-s : (Υ : SCtx.t (Sign.𝒮 Σ)) → □.t (λ τ → S.t τ (Υ ∥ Γ)) (sctx Υ)
             □-id-s (SCtx.ι Vec.[]) = □.[]
-            □-id-s (SCtx.ι (_ Vec.∷ τs)) = S.ι ((Sym.ι Fin.ze) ∐., ≡.idn) □.∷ □.transform (λ { (S.ι (Sym.ι i ∐., p)) → S.ι ((Sym.ι (Fin.su i)) ∐., p) }) (□-id-s (SCtx.ι τs))
+            □-id-s (SCtx.ι (_ Vec.∷ τs)) =
+              S.ι ((Sym.ι Fin.ze) ∐., ≡.idn) □.∷
+                □.transform
+                  (λ { (S.ι (s ∐., p)) → S.ι (Sym.su s ∐., p) })
+                  (□-id-s (SCtx.ι τs))
 
             □-id-t : (Γ : TCtx.t (Sign.𝒮 Σ)) → □.t (λ τ → V.t τ (Υ ∥ Γ)) (tctx Γ)
             □-id-t (TCtx.ι Vec.[]) = □.[]
-            □-id-t (TCtx.ι (_ Vec.∷ τs)) = V.ι ((Var.ι Fin.ze) ∐., ≡.idn) □.∷ □.transform (λ { (V.ι (Var.ι i ∐., p)) → V.ι ((Var.ι (Fin.su i)) ∐., p) }) (□-id-t (TCtx.ι τs))
+            □-id-t (TCtx.ι (_ Vec.∷ τs)) =
+              V.ι ((Var.ι Fin.ze) ∐., ≡.idn) □.∷
+                □.transform
+                  (λ { (V.ι (x ∐., p)) → V.ι (Var.su x ∐., p) })
+                  (□-id-t (TCtx.ι τs))
 
             □-ν-t : (Γ : TCtx.t (Sign.𝒮 Σ)) → □.t (λ τ → P τ (Υ ∥ Γ)) (tctx Γ)
             □-ν-t = □.transform ν ⇒.∘Π □-id-t
-
 
         aux₂
           : {Υ′ : SCtx.t (Sign.𝒮 Σ)}
