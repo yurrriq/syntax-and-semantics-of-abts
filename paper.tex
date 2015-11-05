@@ -34,17 +34,17 @@
 
 % make lualatex play nice with agda
 \makeatletter
-\ifluatex
-   \newwrite\CATCHPATCHOUT
+\ifluatex%
+   \newwrite\CATCHPATCHOUT%
 \fi
 \def\CatchFBT@Fin@l#1[#2]{%
    \begingroup%
-      \endlinechar\m@ne \makeatletter #2%
+      \endlinechar\m@ne\makeatletter #2%
       \ifluatex%
          \immediate\openout\CATCHPATCHOUT=\jobname.catchpatch%
-         \immediate\write\CATCHPATCHOUT {\CatchFBT@tok{\the\CatchFBT@tok}}%
+         \immediate\write\CATCHPATCHOUT{\CatchFBT@tok{\the\CatchFBT@tok}}%
          \immediate\closeout\CATCHPATCHOUT%
-         \@@input \jobname.catchpatch%
+         \@@input\jobname.catchpatch%
       \else%
       \scantokens\expandafter{%
          \expandafter\CatchFBT@tok\expandafter{\the\CatchFBT@tok}}%
@@ -82,7 +82,7 @@
 \newcommand\MkSet[1]{\left\{#1\right\}}
 \newcommand\Member[2]{\IMode{#1}\in\IMode{#2}}
 \newcommand\EqMember[3]{\IMode{#1}=\IMode{#2}\in\IMode{#3}}
-\newcommand\Of[2]{\IMode{#1} : \IMode{#2}}
+\newcommand\Of[2]{\IMode{#1}: \IMode{#2}}
 
 \newcommand\MkValence[3]{%
   \ifthenelse{\equal{#1}{}}{}{%
@@ -120,7 +120,7 @@
 
 \newcommand\OpCat[1]{#1^{\mathsf{op}}}
 
-\newcommand\IsOperator[3]{\IMode{#1}\Vdash \IMode{#2} : \OMode{#3}}
+\newcommand\IsOperator[3]{\IMode{#1}\Vdash\IMode{#2}: \OMode{#3}}
 
 \newcommand\IsMetaCtx[1]{\IMode{#1}\ \textit{mctx}}
 \newcommand\IsVarCtx[1]{\IMode{#1}\ \textit{vctx}}
@@ -129,17 +129,17 @@
 \newcommand\Lookup[3]{\IMode{#1}\ni\IMode{#2}:\OMode{#3}}
 
 \newcommand\Grothendieck[2]{\oint^{#1} #2#1}
-\newcommand\Pair[2]{\langle #1, #2 \rangle}
-\newcommand\Tuple[1]{\langle #1 \rangle}
+\newcommand\Pair[2]{\left\langle#1, #2 \right\rangle}
+\newcommand\Tuple[1]{\left\langle#1 \right\rangle}
 \newcommand\FLift[2]{
   \Operators\langle#1%
   \ifthenelse{\equal{#2}{}}{}{, #2}\rangle%
 }
-\newcommand\PairTimes[2]{\langle #1\, {\scriptstyle {{\times}}}\, #2 \rangle}
+\newcommand\PairTimes[2]{\langle#1\, {\scriptstyle{{\times}}}\, #2 \rangle}
 \newcommand\SSingleton{\bullet}
 \newcommand\Forget[1]{|\, #1\, |}
 
-\newcommand\Comma[2]{#1 \downarrow #2}
+\newcommand\Comma[2]{#1 \downarrow#2}
 \newcommand\Coslice[2]{#1\, /\, #2}
 
 \newcommand\IsAbt[5]{%
@@ -165,7 +165,7 @@
 \newcommand\MV[1]{\textsc{#1}}
 \newcommand\MApp[3]{#1\{#2\}(#3)}
 \newcommand\App[2]{#1(#2)}
-\newcommand\Dom[1]{\left\vert #1\right\vert}
+\newcommand\Dom[1]{\left\vert#1\right\vert}
 \newcommand\FV[1]{\mathbf{FV}\left(#1\right)}
 \newcommand\FS[1]{\mathbf{FS}\left(#1\right)}
 \newcommand\NotIn[2]{\IMode{#1}\notin\IMode{#2}}
@@ -174,8 +174,9 @@
 \newcommand\Hom[3]{#1\left[#2,#3\right]}
 
 \newcommand\Rename[2]{%
-  #2\upharpoonright #1%
+  #2\upharpoonright#1%
 }
+
 \newcommand\IsRenaming[3]{%
   \Rename{\IMode{#1}}{\IMode{#2}}%
   \leadsto\OMode{#3}%
@@ -190,7 +191,6 @@
   \leadsto\OMode{#4}%
 }
 
-
 \newcommand\IsEq[2]{\IMode{#1} = \IMode{#2}}
 \newcommand\IsApart[2]{\IMode{#1} \mathrel{\#} \IMode{#2}}
 
@@ -199,8 +199,8 @@
 
 \newcommand\SigFun[1]{\mathcal{F}_{#1}}
 
-\newcommand\SemBrackets[1]{\left\llbracket #1\right\rrbracket}
-\newcommand\Yoneda[1]{\boldsymbol{y}(#1)}
+\newcommand\SemBrackets[1]{\left\llbracket#1\right\rrbracket}
+\newcommand\Yoneda[1]{\boldsymbol{y} (#1)}
 
 \begin{document}
 
@@ -232,7 +232,7 @@ and the set of arities $\Arities$.
 
 \[
   \infer{
-    \IsArity{\MkArity{v_0,...,v_n}{s}}
+    \IsArity{\MkArity{v_0,\ldots,v_n}{s}}
   }{
     \IsSort{s} &
     \HypJ{\IsValence{v_i}}{\Leq{i}{n}}
@@ -684,16 +684,28 @@ construction $\Define{\Ctx}{\Comma{\FinSets}{\Sorts}}$ is the category of
 variable contexts. Let $\Define{\HypCat}{\OpCat{(\SCtx\times\Ctx)}}$; then we
 fix the functor category $\widehat{\HypCat}^\Sorts$ as our semantic universe.
 
+Let $\Define{V_s(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid
+\Gamma(x)=s}}$ be called the presheaf of variables; additionally, we have a
+presheaf of symbols
+$\Define{S_s(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
+\Upsilon(x)=s}}$. Lastly, we have the presheaf of operators with arity $a$,
+$\Define{\Operators_a(\Upsilon\parallel\Gamma)}{\Operators\Pair{\Upsilon}{a}}$
+
 \subsection{Substitution monoidal structures}
+
+For an object $\Of{P}{\widehat{\HypCat}^\Sorts}$, we will use the notation
+$P^{[\Gamma]}$ to mean $\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}$; likewise,
+$S^{\{\Upsilon\}}$ shall mean $\prod_{u\in\Dom\Upsilon}S_{\Upsilon(u)}$.
 
 For a presheaf $A:\widehat{\HypCat}$ and a sort-indexed family of presheaves
 $P:\widehat{\HypCat}^\Sorts$, we have an operation $A\bullet P$,
 defined as a coend in the following way:
 \[
   \Define{(A\bullet P)(\Upsilon\parallel\Gamma)}{
-    \int^{\Delta\in\OpCat\Ctx}
-      A(\Upsilon\parallel\Delta)
-      \times \prod_{x\in\Dom\Delta} P_{\Delta(x)}(\Upsilon\parallel\Gamma)
+    \int^{(\Upsilon'\parallel\Delta)\in\HypCat}
+      A(\Upsilon'\parallel\Delta)
+      \times S^{\{\Upsilon'\}}(\Upsilon\parallel\Gamma)
+      \times P^{[\Delta]}(\Upsilon\parallel\Gamma)
   }
 \]
 
@@ -701,7 +713,7 @@ Using this, we can define a tensor $P\odot Q$ for
 $\Of{P,Q}{\widehat{\HypCat}^\Sorts}$ as follows:
 \[
   \HypJ{
-    \Define{(P\odot Q)_s}{
+    \Define{{(P\odot Q)}_{s}}{
       P_s\bullet Q
     }
     \quad
@@ -710,13 +722,11 @@ $\Of{P,Q}{\widehat{\HypCat}^\Sorts}$ as follows:
   }
 \]
 
-Then, variables object
-$\Define{V_s(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid \Gamma(x)=s}}$
-is the unit to this tensor. We will say that an object
+Then, $V$ is the unit to this tensor. We will say that an object
 $\Of{P}{\widehat{\HypCat}^\Sorts}$ is a $\Sigma$-monoid in case it is equipped
-with the following natural transformations where $\nu$ embeds variables into $P$
-and $\varsigma$ equips $P$ with an operation for simultaneous substitutions of
-variables.
+with the following natural transformations where $\nu$ embeds variables into
+$P$ and $\varsigma$ equips $P$ with an operation for simultaneous substitutions
+of variables.
 
 \[
   \begin{tikzcd}[ampersand replacement = \&]
@@ -727,11 +737,18 @@ variables.
   \end{tikzcd}
 \]
 
+%%TODO
+We also have an induced maps $\Of{\nu_\Gamma}{V^{[\Gamma]}\to P^{[\Gamma]}}$
+and
+$\Of{\varsigma_{\Upsilon\parallel\Gamma}}{P_s^{\Yoneda{\Upsilon\parallel\Gamma}} \times
+S^{\{\Upsilon\}}\times P^{[\Gamma]}\to P_s}$.
+
+
 \begin{remark}
   A presheaf $P$ with a substitution monoidal structure $\Pair{\nu}{\varsigma}$
   also forms a \emph{relative monad}\footnote{Relative monads are skew-monoids
     in the skew-monoidal structure induced by a functor category
-    $\mathbf{C}^\mathbf{J}$ \cite{altenkirch-chapman-uustalu:2015}. However,
+    $\mathbf{C}^\mathbf{J}$~\cite{altenkirch-chapman-uustalu:2015}. However,
     relative monads can also be understood without reference to monoids by
     viewing them as a generalization of \emph{extension systems} or
     \emph{Kleisli structures}. This latter presentation of monads, popular in
@@ -741,15 +758,11 @@ variables.
   extension operation:
   \[
     \begin{tikzcd}[ampersand replacement = \&, sep = huge]
-      {\IMode{P(\,=\,)^{V(\,-\,)}}} \arrow[r, "(\,-\,)^{\circledast}"]
-      \& {\IMode{P(\,=\,)^{P(\,-\,)}}}
+      {\IMode{{P(\,=\,)}^{V(\,-\,)}}} \arrow[r, "{(\,-\,)}^{\circledast}"]
+      \& {\IMode{{P(\,=\,)}^{P(\,-\,)}}}
     \end{tikzcd}
   \]
 \end{remark}
-  
-For any context $\Gamma$, we have an induced map
-$\Of{\nu_\Gamma}{\left(\prod_{x\in\Dom\Gamma}V_{\Gamma(x)}\right)\to
-\left(\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}\right)}$.
 
 \subsection{The signature endofunctor and its initial algebras}
 
@@ -757,57 +770,81 @@ For each signature $\Match{\Sigma}{\Pair{\Sorts}{\Operators}}$, we have an
 endofunctor
 $\Of{\SigFun{\Sigma}}{\widehat{\HypCat}^\Sorts\to\widehat{\HypCat}^\Sorts}$,
 which is defined as follows:
-
-
 \begin{align*}
-  \IMode{\SigFun{\Sigma}(X)_s(\Upsilon\parallel\Gamma)}
+  \IMode{{\SigFun{\Sigma}(X)}_{s}}
     &\triangleq
     \OMode{
-      \coprod_{\vartheta\in\Operators\Pair{\Upsilon}{\MkArity{\vec{v}}{s}}}
+      \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{s}}}
       \prod_{\MkValence{\vec{p}}{\vec{q}}{s'}\in\vec{v}}
-      X_{s'}(\Upsilon,\vec{p}\parallel\Gamma,\vec{q})
+      X_{s'}^{\Yoneda{\vec{p}\parallel\vec{q}}}
     }
 \end{align*}
-
-\begin{remark}
-  By $\Upsilon,\vec{p}$ we mean any extension of $\Upsilon$ by fresh symbols $\vec{u}$ of sorts $\vec{p}$.
-\end{remark}
 
 Then, a $\Sigma$-model is a $\Sigma$-monoid $P$ which is equipped with an initial
 algebra $\Of{\alpha}{\SigFun{\Sigma}(P)\to P}$, which shall interpret
 applications of each operator.
 
-\subsection{Interpretations of terms}
+\subsection{Interpretation of terms}
 
+The metavariable, symbol and variable contexts are interpreted in a model $P$ as an
+environment presheaf in the following way:
 \[
   \Define{
     \SemBrackets{
       \Omega\triangleright\Upsilon\parallel\Gamma
     }_P
   }{
-    \left(\prod_{(\MV{m}:\MkValence{\vec{p}}{\vec{q}}{s})\in\Omega}
-    P_{s}^{\Yoneda{\vec{p}\parallel\vec{q}})}\right)
+    \left(\prod_{(m:\MkValence{\vec{p}}{\vec{q}}{s})\in\Omega}P_{s}^{\Yoneda{\vec{p}\parallel\vec{q}}}\right)
     \times
-    \prod_{x\in\Dom\Gamma}V_{\Gamma(x)}
-  } %% ???
+    S^{\{\Upsilon\}}
+    \times
+    V^{[\Gamma]}
+  }
 \]
 
-Let $\Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash
-M:s}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\to P_s}$ be
-defined as follows:
+Then, the interpretation of a term in a model $P$ is a map from its environment
+to $P$, that is,
+$\Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash
+M:s}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\to P_s}$.
+The interpretation of a variable
+$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x_j:s}_P$
+simply projects it of the environment and embeds it into the
+model, as follows:
+\[
+  \begin{tikzcd}[ampersand replacement = \&]
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\pi_3}"]
+    \& {\IMode{V^{[\Gamma]}}} \arrow[r, "\IMode{\nu_{\Gamma}}"]
+    \& {\IMode{P^{[\Gamma]}}} \arrow[r, "\IMode{\pi_j}"]
+    \& \IMode{P_s}
+  \end{tikzcd}
+  \tag{var}
+\]
+
+The interpretation of metavariable applications
+$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash
+\MApp{\MV{m}_i}{u_0,\dots,u_m}{M_0,\dots,M_n} : s}_P$, where
+$\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{p}}{\vec{q}}{s}}$, proceeds by projecting the metavariable's interpretation from the environment and intantiating it via substitution:
+\[
+  \begin{tikzcd}[ampersand replacement = \&, sep=huge]
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
+          \arrow[r, "\IMode{\Tuple{\pi_i\,\pi_1, \phi\,\pi_2, \psi}}"]
+    \& {\IMode{P_{s'}^{\Yoneda{\vec{p}\parallel\vec{q}}}\times S^{\{\vec{p}\}} \times P^{[\vec{q}]}}}
+          \arrow[r, "\IMode{\varsigma_{\vec{p}\parallel\vec{q}}}"]
+    \& \IMode{P_s}
+  \end{tikzcd}
+  \tag{metavar}
+\]
+where
 \begin{align*}
-  \ADefine{
-    \SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x_j : s}_P
-  }{
-    \begin{tikzcd}[ampersand replacement = \&]
-      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P} \arrow[r, "\pi_2"]
-      \& { \prod_{x\in\Dom\Gamma}V_{\Gamma(x)} } \arrow[r, "\nu_{\Gamma}"]
-      \& {\prod_{x\in\Dom\Gamma} P_{\Gamma(x)}} \arrow[r, "\pi_j"]
-      \& P_s
-    \end{tikzcd}
+  \ADefine{\phi}{
+    \Dom{\vec{p}}\mapsto \vec{u}
+  }\\
+  \ADefine{\psi}{
+    \Tuple{
+      \SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M_j:q_j}_P
+    }_{j\leq n}
   }
 \end{align*}
-
 
 
 \section{Case Study: Wellformed Sequents}
@@ -819,10 +856,10 @@ and sequents, the encoding is sufficiently laborious and obscure that it is not
 used in practice.
 
 Crary has demonstrated a first-order encoding of contexts in the logical
-framework in bijection with actual LF-contexts \cite{crary:2009}, which has
+framework in bijection with actual LF-contexts~\cite{crary:2009}, which has
 been successfully used in large-scale mechanization efforts, including that of
-Standard ML \cite{lee-crary-harper:2007} and the Edinburgh Logical Framework
-itself \cite{martens-crary:2012}.
+Standard ML~\cite{lee-crary-harper:2007} and the Edinburgh Logical Framework
+itself~\cite{martens-crary:2012}.
 
 %%% TODO: talk about context encodings in Abella
 
@@ -1085,64 +1122,6 @@ The refinement for telescopes proceeds by induction:
     \end{array}
   }
 \end{gather*}
-
-\section{Code}
-
-\CatchFileBetweenTags\tmp{Code.tex}{agda}
-
-\subsection{Kan Extensions}
-
-\subsubsection{Lan}
-
-\ExecuteMetaData[Code.tex]{lang}\\
-
-\ExecuteMetaData[Code.tex]{lan}
-
-\subsubsection{Ran}
-
-\ExecuteMetaData[Code.tex]{rang}\\
-
-\ExecuteMetaData[Code.tex]{ran}
-
-\subsection{Variables and Symbols}
-
-\ExecuteMetaData[Code.tex]{var}\\
-
-\ExecuteMetaData[Code.tex]{sym}
-
-\subsection{Contexts}
-
-\ExecuteMetaData[Code.tex]{ctx}\\
-
-\ExecuteMetaData[Code.tex]{sctx}\\
-
-\ExecuteMetaData[Code.tex]{ctxdom}\\
-
-\ExecuteMetaData[Code.tex]{ctxidx}\\
-
-\ExecuteMetaData[Code.tex]{elem}
-
-\subsection{Signatures}
-
-\ExecuteMetaData[Code.tex]{sign}
-
-\subsection{Trees}
-
-\ExecuteMetaData[Code.tex]{trees}
-
-\subsection{Substitution Monoidal Structure}
-
-\ExecuteMetaData[Code.tex]{H}\\
-
-\ExecuteMetaData[Code.tex]{HHat}\\
-
-\ExecuteMetaData[Code.tex]{V}\\
-
-\ExecuteMetaData[Code.tex]{tensor0}\\
-
-\ExecuteMetaData[Code.tex]{tensor1}\\
-
-\ExecuteMetaData[Code.tex]{extension}
 
 \nocite{*}
 \bibliographystyle{abbrv}
