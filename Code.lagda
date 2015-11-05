@@ -108,7 +108,6 @@ F ~> G = ∀ {c} → F c → G c
 -- dependent coproduct
 module ∐ where
   record t (A : Set) (B : 𝔓 A) : Set where
-    no-eta-equality
     constructor _,_
     field
       π₀ : A
@@ -282,6 +281,13 @@ module Vec where
   [] ⧺ ys = ys
   (x ∷ xs) ⧺ ys = x ∷ (xs ⧺ ys)
 
+  map
+    : {A B : Set} {n : Nat.t} (f : A → B)
+    → t A n
+    → t B n
+  map f [] = []
+  map f (x ∷ xs) = f x ∷ map f xs
+
   lookup : {A : Set} {n : Nat.t} → Fin.t n → t A n → A
   lookup Fin.ze (x ∷ _) = x
   lookup (Fin.su i) (_ ∷ xs) = lookup i xs
@@ -307,6 +313,10 @@ module □ where
     → t P (xs Vec.⧺ ys)
   [] ⧺ ys = ys
   (x ∷ xs) ⧺ ys = x ∷ (xs ⧺ ys)
+
+  lookup : {A : Set} {P : 𝔓 A} {n : Nat.t} {xs : Vec.t A n} (i : Fin.t n) → t P xs → P (Vec.lookup i xs)
+  lookup Fin.ze (x ∷ _) = x
+  lookup (Fin.su i) (_ ∷ xs) = lookup i xs
 
   transform
     : {A : Set} {P Q : 𝔓 A} {n : Nat.t} {xs : Vec.t A n}
@@ -412,6 +422,7 @@ _⧺t_ : ∀ {𝒮 : Set} (Γ Γ′ : TCtx.t 𝒮) → TCtx.t 𝒮
 _∋⟨_,_⟩t : ∀ {𝒮} (Γ : TCtx.t 𝒮) (x : tdom Γ ) (s : 𝒮) → Set
 Γ ∋⟨ x , s ⟩t = Γ [ x ]t ≡.t s
 
+-- valences
 module 𝒱 where
   record t (𝒮 : Set) : Set where
     no-eta-equality
@@ -428,35 +439,37 @@ module 𝒱 where
     τ = let (_ , _ , τ) = π in τ
   open t public
 
+-- arities
 module 𝒜 where
   record t (𝒮 : Set) : Set where
     no-eta-equality
     constructor ι
     field
       π : TCtx.t (𝒱.t 𝒮) ⊗.t 𝒮
-    Γ : _
-    Γ = let (Γ , _) = π in Γ
+
+    Ω : _
+    Ω = let (Γ , _) = π in Γ
 
     τ : _
     τ = let (_ , τ) = π in τ
 
     adom : _
-    adom = tdom Γ
+    adom = tdom Ω
 
-    aidx : tdom Γ → _
-    aidx x = Γ [ x ]t
+    aidx : tdom Ω → _
+    aidx x = Ω [ x ]t
 
     syntax aidx α x = α [ x ]a
   open t public
 open 𝒜 using (aidx; adom)
 
-_[_]a→Υ : ∀ {𝒮} (α : 𝒜.t 𝒮) (x : adom α) → _
+_[_]a→Υ : ∀ {𝒮} (α : 𝒜.t 𝒮) (x : adom α) → SCtx.t 𝒮
 α [ x ]a→Υ = 𝒱.Υ (α [ x ]a)
 
-_[_]a→Γ : ∀ {𝒮} (α : 𝒜.t 𝒮) (x : adom α) → _
+_[_]a→Γ : ∀ {𝒮} (α : 𝒜.t 𝒮) (x : adom α) → TCtx.t 𝒮
 α [ x ]a→Γ = 𝒱.Γ (α [ x ]a)
 
-_[_]a→τ : ∀ {𝒮} (α : 𝒜.t 𝒮) (x : adom α) → _
+_[_]a→τ : ∀ {𝒮} (α : 𝒜.t 𝒮) (x : adom α) → 𝒮
 α [ x ]a→τ = 𝒱.τ (α [ x ]a)
 
 module MCtx where
@@ -629,6 +642,27 @@ module _ (Σ : Sign.t) where
       field
         π : (𝓎.t h ⊗↑.t A) ~> B
 
+  module ↗m where
+    record _[_]
+      (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t)
+      (Ω : MCtx.t (Sign.𝒮 Σ))
+      (h : H.t)
+        : Set where
+      no-eta-equality
+      constructor ι
+      field
+        π :
+          □.t
+            (λ 𝓋 → let 𝒱.ι (psₘ , qsₘ , τₘ) = 𝓋 in (X τₘ ↗.t 𝓎.t (psₘ ∥ qsₘ)) h)
+            (tctx (MCtx.π Ω))
+
+    open _[_] public
+
+    lookup
+      : {X : Sign.𝒮 Σ → 𝔓 H.t} {Ω : MCtx.t (Sign.𝒮 Σ)} (𝔪 : mdom Ω) (let 𝒱.ι (psₘ , qsₘ , τₘ) = midx Ω 𝔪)
+      → X [ Ω ] ~> (X τₘ ↗.t 𝓎.t (psₘ ∥ qsₘ))
+    lookup 𝔪 (ι □Ω) = □.lookup (Var.π 𝔪) □Ω
+
   module ↗s where
     record _[_]
       (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t)
@@ -640,10 +674,17 @@ module _ (Σ : Sign.t) where
       field
         π : □.t (λ x → X x h) (sctx Υ)
 
+    open _[_] public
+
     ⧺
       : ∀ {Υ Υ′ X}
       → (X [ Υ ] ⊗↑.t X [ Υ′ ]) ~> X [ Υ ⧺s Υ′ ]
     ⧺ (⊗↑.ι (ι X↗Υ , ι X↗Υ′)) = ι (X↗Υ □.⧺ X↗Υ′)
+
+    lookup
+      : {X : Sign.𝒮 Σ → 𝔓 H.t} {Υ : SCtx.t (Sign.𝒮 Σ)} (s : Sym.t ∣ Υ ∣s)
+      → X [ Υ ] ~> X (sidx Υ s)
+    lookup x (ι □Υ) = □.lookup (Sym.π x) □Υ
 
   module ↗t where
     record _[_]
@@ -655,11 +696,17 @@ module _ (Σ : Sign.t) where
       constructor ι
       field
         π : □.t (λ x → X x h) (tctx Γ)
+    open _[_] public
 
     ⧺
       : ∀ {Γ Γ′ X}
       → (X [ Γ ] ⊗↑.t X [ Γ′ ]) ~> X [ Γ ⧺t Γ′ ]
     ⧺ (⊗↑.ι (ι X↗Γ , ι X↗Γ′)) = ι (X↗Γ □.⧺ X↗Γ′)
+
+    lookup
+      : {X : Sign.𝒮 Σ → 𝔓 H.t} {Γ : TCtx.t (Sign.𝒮 Σ)} (x : Var.t ∣ Γ ∣t)
+      → X [ Γ ] ~> X (tidx Γ x)
+    lookup x (ι □Γ) = □.lookup (Var.π x) □Γ
 
   module S where
     record t (τ : Sign.𝒮 Σ) (h : H.t) : Set where
@@ -674,6 +721,7 @@ module _ (Σ : Sign.t) where
       constructor ι
       field
         π : [ H.Γ h ]t⁻¹ τ
+    open t public
 
   module ⊚ where
     record _t_
@@ -711,13 +759,13 @@ module _ (Σ : Sign.t) where
       → Ω > Υ ∥ Γ ⊢ Γ [ x ]t -- Γ [ x ]t
     mvar
       : (𝔪 : mdom Ω)
-      → (∀ 𝓈 → [ Υ ]s⁻¹ Ω [ 𝔪 ]m→Υ [ 𝓈 ]s)
-      → (∀ x → Ω > Υ ∥ Γ ⊢ Ω [ 𝔪 ]m→Γ [ x ]t)
+      → □.t (spre Υ) (sctx (Ω [ 𝔪 ]m→Υ))
+      → □.t (Ω > Υ ∥ Γ ⊢_) (tctx (Ω [ 𝔪 ]m→Γ))
       → Ω > Υ ∥ Γ ⊢ Ω [ 𝔪 ]m→τ
     app
       : ∀ {α}
       → (ϑ : Sign.𝒪 Σ (Υ , α))
-      → (∀ x → Ω > (Υ ⧺s α [ x ]a→Υ) ∥ (Γ ⧺t α [ x ]a→Γ) ⊢ α [ x ]a→τ)
+      → □.t (λ 𝓋 → Ω > Υ ⧺s 𝒱.Υ 𝓋  ∥ Γ ⧺t 𝒱.Γ 𝓋 ⊢ 𝒱.τ 𝓋) (tctx (𝒜.Ω α))
       → Ω > Υ ∥ Γ ⊢ 𝒜.τ α
 
   module Model
@@ -802,10 +850,7 @@ module _ (Σ : Sign.t) where
 
     -- interpretation of contexts
     ⟦_⟧m : MCtx.t (Sign.𝒮 Σ) → 𝔓 H.t
-    ⟦_⟧m (MCtx.ι Ω) h =
-      □.t
-        (λ { (𝒱.ι (psₘ , qsₘ , τₘ)) → (P τₘ ↗.t 𝓎.t (psₘ ∥ qsₘ)) h })
-        (tctx Ω)
+    ⟦ Ω ⟧m = P ↗m.[ Ω ]
 
     ⟦_⟧s : SCtx.t (Sign.𝒮 Σ) → 𝔓 H.t
     ⟦ Υ ⟧s = S.t ↗s.[ Υ ]
@@ -815,5 +860,35 @@ module _ (Σ : Sign.t) where
 
     ⟦_>_∥_⟧ : MCtx.t (Sign.𝒮 Σ) → SCtx.t (Sign.𝒮 Σ) → TCtx.t (Sign.𝒮 Σ) → 𝔓 H.t
     ⟦ Ω > Υ ∥ Γ ⟧ = ⟦ Ω ⟧m ⊗↑.t ⟦ Υ ⟧s ⊗↑.t ⟦ Γ ⟧t
+
+    -- interpretation of terms
+    {-# TERMINATING #-}
+    ⟦_⟧_ : ∀ {Ω Υ Γ s} → Ω > Υ ∥ Γ ⊢ s → ⟦ Ω > Υ ∥ Γ ⟧ ~> P s
+    ⟦ tvar x ⟧ ⊗↑.ι (_ , ⊗↑.ι (_ , ⟦Γ⟧)) = ν (↗t.lookup x ⟦Γ⟧)
+    ⟦ mvar 𝔪 us Ms ⟧ ⊗↑.ι (⟦Ω⟧ , ⊗↑.ι (⟦Υ⟧ , ⟦Γ⟧)) =
+      ς⟨ _ , _ ⟩
+        (⊗↑.ι
+          ( ↗m.lookup 𝔪 ⟦Ω⟧
+          , ⊗↑.ι
+              ( ↗s.ι
+                  (□.transform
+                    (λ { (Sym.ι x ∐., x≡) →
+                           ≡.map
+                             (λ c → S.t c _)
+                             (≡.inv x≡)
+                             (□.lookup x (↗s.π ⟦Υ⟧))
+                       }
+                    )
+                    us
+                  )
+              , ↗t.ι
+                  (□.transform
+                    (⟦_⟧ ⊗↑.ι (⟦Ω⟧ , (⊗↑.ι (⟦Υ⟧ , ⟦Γ⟧))))
+                    Ms
+                  )
+              )
+          )
+        )
+    ⟦ app ϑ x ⟧ ρ = {!!}
 
 \end{code}
