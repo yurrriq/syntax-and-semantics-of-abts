@@ -48,6 +48,7 @@ exit 0\
     else:
         opts_class = ''
         args_latexmk = ''
+        args_pdflatex = ''
 
         if args.watch:
             # enable continuous preview
