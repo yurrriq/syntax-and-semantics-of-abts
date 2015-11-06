@@ -804,13 +804,14 @@ environment presheaf in the following way:
 \]
 
 Then, the interpretation of a term in a model $P$ is a map from its environment
-to $P$, that is,
-$\Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash
-M:s}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\to P_s}$.
+to $P$:
+\[%
+  \Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash%
+      M:s}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\to P_s}%
+\]%
 The interpretation of a variable
-$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x_j:s}_P$
-simply projects it of the environment and embeds it into the
-model, as follows:
+$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x_j:s}_P$ simply
+projects it of the environment and embeds it into the model, as follows:
 \[
   \begin{tikzcd}[ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\pi_3}"]
@@ -821,10 +822,14 @@ model, as follows:
   \tag{var}
 \]
 
-The interpretation of metavariable applications
-$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash
-\MApp{\MV{m}_i}{u_0,\dots,u_m}{M_0,\dots,M_n} : s}_P$, where
-$\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{p}}{\vec{q}}{s}}$, proceeds by projecting the metavariable's interpretation from the environment and intantiating it via substitution:
+Next we have the interpretation of metavariable applications
+\[%
+  \SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash%
+    \MApp{\MV{m}_i}{u_0,\dots,u_m}{M_0,\dots,M_n} : s}_P%
+  \qquad(\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{p}}{\vec{q}}{s}})
+\]
+which proceeds by projecting the metavariable's interpretation from the
+environment and intantiating it via substitution:
 \[
   \begin{tikzcd}[ampersand replacement = \&, sep=huge]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
