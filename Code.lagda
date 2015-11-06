@@ -99,20 +99,20 @@ module ⇒ where
   → (X ⊗.t Y → A ⊗.t B)
 ⟨ f ⊗ g ⟩ = ⟨ f ⇒.∘ ⊗.π₀ , g ⇒.∘ ⊗.π₁ ⟩
 
-𝔓 : (X : Set) → Set
-𝔓 X = X → Set
+℘ : (X : Set) → Set
+℘ X = X → Set
 
-Sub : ∀ {𝒞} (F G : 𝔓 𝒞) → Set
+Sub : ∀ {𝒞} (F G : ℘ 𝒞) → Set
 Sub F G = ∀ {c} → F c → G c
 
 syntax Sub {𝒞} F G = F ⊆[ 𝒞 ] G
 
-_⊆_ : ∀ {𝒞} (F G : 𝔓 𝒞) → Set
+_⊆_ : ∀ {𝒞} (F G : ℘ 𝒞) → Set
 F ⊆ G = ∀ {c} → F c → G c
 
 -- dependent coproduct
 module ∐ where
-  record t (A : Set) (B : 𝔓 A) : Set where
+  record t (A : Set) (B : ℘ A) : Set where
     constructor _,_
     field
       π₀ : A
@@ -124,7 +124,7 @@ module ∐ where
 
 -- dependent product
 module ∏ where
-  record t (I : Set) (P : 𝔓 I) : Set where
+  record t (I : Set) (P : ℘ I) : Set where
     no-eta-equality
     constructor ι
     field
@@ -137,7 +137,7 @@ module ∏ where
 
 -- coend
 module ⨛ where
-  record t {I : Set} (P : 𝔓 I) : Set where
+  record t {I : Set} (P : ℘ I) : Set where
     no-eta-equality
     constructor ι
     field
@@ -148,12 +148,12 @@ module ⨛ where
   infixr 1 t
   syntax t {I = I} (λ i → P) = [ I ∋ i ] P
 
-  ι[_] : {I : Set} {P : 𝔓 I} (i : I) → P i → t P
+  ι[_] : {I : Set} {P : ℘ I} (i : I) → P i → t P
   ι[_] = λ {I} {P} i → ι
 
 -- end
 module ⨜ where
-  record t {I : Set} (P : 𝔓 I) : Set where
+  record t {I : Set} (P : ℘ I) : Set where
     no-eta-equality
     constructor ι
     field
@@ -173,19 +173,19 @@ record SET↓ (I : Set) : Set where
     dom : Set
     map : dom → I
 
-[_]⁻¹ : ∀ {E I} → (E → I) → 𝔓 I
+[_]⁻¹ : ∀ {E I} → (E → I) → ℘ I
 [ p ]⁻¹ i = ∐.[ _ ∋ e ] (i ≡.t p e)
 
-tot : ∀ {I} → 𝔓 I → Set
+tot : ∀ {I} → ℘ I → Set
 tot = ∐.t _
 
-fib : ∀ {I} (ϕ : 𝔓 I) → (tot ϕ → I)
+fib : ∀ {I} (ϕ : ℘ I) → (tot ϕ → I)
 fib ϕ = ∐.π₀
 
-fam : ∀ {I} → 𝔓 I → SET↓ I
+fam : ∀ {I} → ℘ I → SET↓ I
 fam ϕ = ∃ tot ϕ ↓ fib ϕ
 
-pow : ∀ {I} → SET↓ I → 𝔓 I
+pow : ∀ {I} → SET↓ I → ℘ I
 pow (∃ dom ↓ map) = [ map ]⁻¹
 
 Lan
@@ -202,40 +202,40 @@ Ran
   → (𝒟 → Set)
 Ran 𝒟[_,_] _⟦⋔⟧_ J F d = ⨜.[ _ ∋ c ] 𝒟[ d , J c ] ⟦⋔⟧ F c
 
-Σ : ∀ {A B} (f : A → B) → (𝔓 A → 𝔓 B)
+Σ : ∀ {A B} (f : A → B) → (℘ A → ℘ B)
 Σ f = Lan ≡._t_ ⊗._t_ f
 
-Δ : ∀ {A B} (f : A → B) → (𝔓 B → 𝔓 A)
+Δ : ∀ {A B} (f : A → B) → (℘ B → ℘ A)
 Δ f = ⇒._∘ f
 
-Π : ∀ {A B} (f : A → B) → (𝔓 A → 𝔓 B)
+Π : ∀ {A B} (f : A → B) → (℘ A → ℘ B)
 Π f = Ran ≡._t_ ⇒._t_ f
 
-𝔓[_,_] : _
-𝔓[_,_] = _⊆_
+℘[_,_] : _
+℘[_,_] = _⊆_
 
 Σ⊣₀Δ
-  : ∀ {A B}(f : A → B)(Φ : 𝔓 A)(Ψ : 𝔓 B)
-  → 𝔓[ Σ f Φ , Ψ ]
-  → 𝔓[ Φ , Δ f Ψ ]
+  : ∀ {A B}(f : A → B)(Φ : ℘ A)(Ψ : ℘ B)
+  → ℘[ Σ f Φ , Ψ ]
+  → ℘[ Φ , Δ f Ψ ]
 Σ⊣₀Δ f Φ Ψ k {c} ϕ = k (⨛.ι (ϕ , ≡.idn))
 
 Σ⊣₁Δ
-  : ∀ {A B}(f : A → B)(Φ : 𝔓 A)(Ψ : 𝔓 B)
-  → 𝔓[ Φ , Δ f Ψ ]
-  → 𝔓[ Σ f Φ , Ψ ]
+  : ∀ {A B}(f : A → B)(Φ : ℘ A)(Ψ : ℘ B)
+  → ℘[ Φ , Δ f Ψ ]
+  → ℘[ Σ f Φ , Ψ ]
 Σ⊣₁Δ f Φ Ψ k (⨛.ι (ϕ , p)) = ≡.map Ψ p (k ϕ)
 
 Δ⊣₀Π
-  : ∀ {A B}(f : A → B)(Φ : 𝔓 A)(Ψ : 𝔓 B)
-  → 𝔓[ Δ f Ψ , Φ ]
-  → 𝔓[ Ψ , Π f Φ ]
+  : ∀ {A B}(f : A → B)(Φ : ℘ A)(Ψ : ℘ B)
+  → ℘[ Δ f Ψ , Φ ]
+  → ℘[ Ψ , Π f Φ ]
 Δ⊣₀Π f Φ Ψ k {c} ψ = ⨜.ι λ p → k (≡.map Ψ p ψ)
 
 Δ⊣₁Π
-  : ∀ {A B}(f : A → B)(Φ : 𝔓 A)(Ψ : 𝔓 B)
-  → 𝔓[ Ψ , Π f Φ ]
-  → 𝔓[ Δ f Ψ , Φ ]
+  : ∀ {A B}(f : A → B)(Φ : ℘ A)(Ψ : ℘ B)
+  → ℘[ Ψ , Π f Φ ]
+  → ℘[ Δ f Ψ , Φ ]
 Δ⊣₁Π f Φ Ψ k {c} ψ = ⨜.π (k ψ) ≡.idn
 
 module Nat where
@@ -319,24 +319,24 @@ module Vec where
 
 
 module □ where
-  data t {A : Set} (P : 𝔓 A) : {n : Nat.t} → Vec.t A n → Set where
+  data t {A : Set} (P : ℘ A) : {n : Nat.t} → Vec.t A n → Set where
     [] : t P Vec.[]
     _∷_ : {n : Nat.t} {x : A} {xs : Vec.t A n} → P x → t P xs → t P (x Vec.∷ xs)
 
   _⧺_
-    : {A : Set} {P : 𝔓 A} {m n : Nat.t} {xs : Vec.t A m} {ys : Vec.t A n}
+    : {A : Set} {P : ℘ A} {m n : Nat.t} {xs : Vec.t A m} {ys : Vec.t A n}
     → t P xs
     → t P ys
     → t P (xs Vec.⧺ ys)
   [] ⧺ ys = ys
   (x ∷ xs) ⧺ ys = x ∷ (xs ⧺ ys)
 
-  π : {A : Set} {P : 𝔓 A} {n : Nat.t} {xs : Vec.t A n} (i : Fin.t n) → t P xs → P (Vec.π i xs)
+  π : {A : Set} {P : ℘ A} {n : Nat.t} {xs : Vec.t A n} (i : Fin.t n) → t P xs → P (Vec.π i xs)
   π Fin.ze (x ∷ _) = x
   π (Fin.su i) (_ ∷ xs) = π i xs
 
   map
-    : {A : Set} {P Q : 𝔓 A} {n : Nat.t} {xs : Vec.t A n}
+    : {A : Set} {P Q : ℘ A} {n : Nat.t} {xs : Vec.t A n}
     → (P ⊆ Q)
     → t P xs
     → t Q xs
@@ -344,7 +344,7 @@ module □ where
   map η (x ∷ xs) = η x ∷ map η xs
 
   tabulate
-    : {A : Set} {P : 𝔓 A} {n : Nat.t} {xs : Vec.t A n}
+    : {A : Set} {P : ℘ A} {n : Nat.t} {xs : Vec.t A n}
     → ((i : Fin.t n) → P (Vec.π i xs))
     → t P xs
   tabulate {xs = Vec.[]} φ = []
@@ -390,7 +390,7 @@ module SCtx where
     sdom : Set
     sdom = SET↓.dom π↓s
 
-    spre : 𝔓 𝒮
+    spre : ℘ 𝒮
     spre = pow π↓s
 
     infix 1 slen
@@ -426,7 +426,7 @@ module TCtx where
     tdom : Set
     tdom = SET↓.dom π↓t
 
-    tpre : 𝔓 𝒮
+    tpre : ℘ 𝒮
     tpre = pow π↓t
 
     infix 1 tlen
@@ -619,7 +619,7 @@ module Sign where
     constructor ι
     field
       𝒮 : Set
-      𝒪 : 𝔓 (SCtx.t 𝒮 ⊗.t 𝒜.t 𝒮)
+      𝒪 : ℘ (SCtx.t 𝒮 ⊗.t 𝒜.t 𝒮)
       map : ∀ {a Υ Υ′} → Υ ↪s Υ′ → (𝒪 (Υ , a) → 𝒪 (Υ′ , a))
   open t public
 
@@ -653,14 +653,14 @@ module _ (Σ : Sign.t) where
 
   module ⊗↑ where
     infixr 1 _t_
-    record _t_ (A B : 𝔓 H.t) (h : H.t) : Set where
+    record _t_ (A B : ℘ H.t) (h : H.t) : Set where
       no-eta-equality
       constructor ι
       field
         π : A h ⊗.t B h
 
   module ↗ where
-    record _t_ (B A : 𝔓 H.t) (h : H.t) : Set where
+    record _t_ (B A : ℘ H.t) (h : H.t) : Set where
       no-eta-equality
       constructor ι
       field
@@ -669,7 +669,7 @@ module _ (Σ : Sign.t) where
 
   module ↗m where
     record _[_]
-      (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t)
+      (X : (τ : Sign.𝒮 Σ) → ℘ H.t)
       (Ω : MCtx.t (Sign.𝒮 Σ))
       (h : H.t)
         : Set where
@@ -684,13 +684,13 @@ module _ (Σ : Sign.t) where
     open _[_] public
 
     lookup
-      : {X : Sign.𝒮 Σ → 𝔓 H.t} {Ω : MCtx.t (Sign.𝒮 Σ)} (𝔪 : mdom Ω) (let 𝒱.ι (psₘ , qsₘ , τₘ) = midx Ω 𝔪)
+      : {X : Sign.𝒮 Σ → ℘ H.t} {Ω : MCtx.t (Sign.𝒮 Σ)} (𝔪 : mdom Ω) (let 𝒱.ι (psₘ , qsₘ , τₘ) = midx Ω 𝔪)
       → X [ Ω ] ⊆ (X τₘ ↗.t 𝓎.t (psₘ ∥ qsₘ))
     lookup 𝔪 (ι □Ω) = □.π (Var.π 𝔪) □Ω
 
   module ↗s where
     record _[_]
-      (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t)
+      (X : (τ : Sign.𝒮 Σ) → ℘ H.t)
       (Υ : SCtx.t (Sign.𝒮 Σ))
       (h : H.t)
         : Set where
@@ -707,13 +707,13 @@ module _ (Σ : Sign.t) where
     ⧺ (⊗↑.ι (ι X↗Υ , ι X↗Υ′)) = ι (X↗Υ □.⧺ X↗Υ′)
 
     lookup
-      : {X : Sign.𝒮 Σ → 𝔓 H.t} {Υ : SCtx.t (Sign.𝒮 Σ)} (s : Sym.t ∣ Υ ∣s)
+      : {X : Sign.𝒮 Σ → ℘ H.t} {Υ : SCtx.t (Sign.𝒮 Σ)} (s : Sym.t ∣ Υ ∣s)
       → X [ Υ ] ⊆ X (sidx Υ s)
     lookup x (ι □Υ) = □.π (Sym.π x) □Υ
 
   module ↗t where
     record _[_]
-      (X : (τ : Sign.𝒮 Σ) → 𝔓 H.t)
+      (X : (τ : Sign.𝒮 Σ) → ℘ H.t)
       (Γ : TCtx.t (Sign.𝒮 Σ))
       (h : H.t)
         : Set where
@@ -729,7 +729,7 @@ module _ (Σ : Sign.t) where
     ⧺ (⊗↑.ι (ι X↗Γ , ι X↗Γ′)) = ι (X↗Γ □.⧺ X↗Γ′)
 
     lookup
-      : {X : Sign.𝒮 Σ → 𝔓 H.t} {Γ : TCtx.t (Sign.𝒮 Σ)} (x : Var.t ∣ Γ ∣t)
+      : {X : Sign.𝒮 Σ → ℘ H.t} {Γ : TCtx.t (Sign.𝒮 Σ)} (x : Var.t ∣ Γ ∣t)
       → X [ Γ ] ⊆ X (tidx Γ x)
     lookup x (ι □Γ) = □.π (Var.π x) □Γ
 
@@ -751,8 +751,8 @@ module _ (Σ : Sign.t) where
 
   module ⊚ where
     record _t_
-      (A : 𝔓 H.t)
-      (P : (τ : Sign.𝒮 Σ) → 𝔓 H.t)
+      (A : ℘ H.t)
+      (P : (τ : Sign.𝒮 Σ) → ℘ H.t)
       (h : H.t)
         : Set where
       no-eta-equality
@@ -766,7 +766,7 @@ module _ (Σ : Sign.t) where
 
   module ⊙ where
     record _t_
-      (P Q : (τ : Sign.𝒮 Σ) → 𝔓 H.t)
+      (P Q : (τ : Sign.𝒮 Σ) → ℘ H.t)
       (τ : Sign.𝒮 Σ)
       (h : H.t)
         : Set where
@@ -776,10 +776,10 @@ module _ (Σ : Sign.t) where
         π : (P τ ⊚.t Q) h
 
   module 𝔉 where
-    𝒪[_] : 𝒜.t (Sign.𝒮 Σ) → 𝔓 H.t
+    𝒪[_] : 𝒜.t (Sign.𝒮 Σ) → ℘ H.t
     𝒪[ 𝒶 ] (Υ ∥ _) = Sign.𝒪 Σ (Υ , 𝒶)
 
-    t : (X : Sign.𝒮 Σ → 𝔓 H.t) → Sign.𝒮 Σ → 𝔓 H.t
+    t : (X : Sign.𝒮 Σ → ℘ H.t) → Sign.𝒮 Σ → ℘ H.t
     t X τ h =
       ∐.[ 𝒜.t (Sign.𝒮 Σ) ∋ 𝒶 ] (𝒜.τ 𝒶 ≡.t τ) ⊗.t
         (∐.[ 𝒪[ 𝒶 ] h ∋ ϑ ]
@@ -808,7 +808,7 @@ module _ (Σ : Sign.t) where
       → Ω > Υ ∥ Γ ⊢ 𝒜.τ α
 
   module Model
-    (P : Sign.𝒮 Σ → 𝔓 H.t)
+    (P : Sign.𝒮 Σ → ℘ H.t)
     (ν : {τ : Sign.𝒮 Σ} → V.t τ ⊆ P τ)
     (ς : {τ : Sign.𝒮 Σ} → (P ⊙.t P) τ ⊆ P τ)
     (α : {τ : Sign.𝒮 Σ} → 𝔉.t P τ ⊆ P τ)
@@ -889,16 +889,16 @@ module _ (Σ : Sign.t) where
             )
 
     -- interpretation of contexts
-    ⟦_⟧m : MCtx.t (Sign.𝒮 Σ) → 𝔓 H.t
+    ⟦_⟧m : MCtx.t (Sign.𝒮 Σ) → ℘ H.t
     ⟦ Ω ⟧m = P ↗m.[ Ω ]
 
-    ⟦_⟧s : SCtx.t (Sign.𝒮 Σ) → 𝔓 H.t
+    ⟦_⟧s : SCtx.t (Sign.𝒮 Σ) → ℘ H.t
     ⟦ Υ ⟧s = S.t ↗s.[ Υ ]
 
-    ⟦_⟧t : TCtx.t (Sign.𝒮 Σ) → 𝔓 H.t
+    ⟦_⟧t : TCtx.t (Sign.𝒮 Σ) → ℘ H.t
     ⟦ Γ ⟧t = V.t ↗t.[ Γ ]
 
-    ⟦_>_∥_⟧ : MCtx.t (Sign.𝒮 Σ) → SCtx.t (Sign.𝒮 Σ) → TCtx.t (Sign.𝒮 Σ) → 𝔓 H.t
+    ⟦_>_∥_⟧ : MCtx.t (Sign.𝒮 Σ) → SCtx.t (Sign.𝒮 Σ) → TCtx.t (Sign.𝒮 Σ) → ℘ H.t
     ⟦ Ω > Υ ∥ Γ ⟧ = ⟦ Ω ⟧m ⊗↑.t ⟦ Υ ⟧s ⊗↑.t ⟦ Γ ⟧t
 
     -- interpretation of terms
