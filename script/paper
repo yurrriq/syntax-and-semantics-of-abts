@@ -56,10 +56,14 @@ exit 0\
             # don't halt on errors
             args_pdflatex = '--interaction=nonstopmode'
 
-        if args.mode == 'final':
-            opts_class = "%s" % 'final'
+        if args.mode == 'draft':
+            opts_class += "\PassOptionsToClass{%s}{article}" % 'draft'
+            opts_class += "\PassOptionsToPackage{%s}{microtype}" % 'draft'
 
-        opts_class = "\PassOptionsToClass{%s}{article}" % opts_class
+        if args.mode == 'final':
+            opts_class += "\PassOptionsToClass{%s}{article}" % 'final'
+            opts_class += "\PassOptionsToPackage{%s}{microtype}" % 'final'
+
         cmds_latex =\
 """\
 pushd script/.. 1>&-
