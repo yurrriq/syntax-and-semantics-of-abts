@@ -52,16 +52,23 @@ exit 0\
 
         if args.watch:
             # enable continuous preview
-            args_latexmk = "%s" % '-pvc '
+            args_latexmk += "%s" % '-pvc '
             # don't halt on errors
-            args_pdflatex = '--interaction=nonstopmode'
+            args_pdflatex += '--interaction=nonstopmode'
 
         if args.mode == 'draft':
+            args_latexmk += "%s" % '-bibtex- '
             opts_class += "\PassOptionsToClass{%s}{article}" % 'draft'
+            opts_class += "\PassOptionsToPackage{%s}{graphicx}" % 'draft'
+            opts_class += "\PassOptionsToPackage{%s}{hyperref}" % 'draft'
+            opts_class += "\PassOptionsToPackage{%s}{ifdraft}" % 'draft'
             opts_class += "\PassOptionsToPackage{%s}{microtype}" % 'draft'
 
         if args.mode == 'final':
             opts_class += "\PassOptionsToClass{%s}{article}" % 'final'
+            opts_class += "\PassOptionsToPackage{%s}{graphicx}" % 'final'
+            opts_class += "\PassOptionsToPackage{%s}{hyperref}" % 'final'
+            opts_class += "\PassOptionsToPackage{%s}{ifdraft}" % 'final'
             opts_class += "\PassOptionsToPackage{%s}{microtype}" % 'final'
 
         cmds_latex =\

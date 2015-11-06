@@ -6,7 +6,6 @@ $postscript_mode = 0;
 $dvi_mode = 0;
 
 $recorder = 1;
-$bibtex_use = 2;
 $pdf_previewer = "start open %O %S";
 
 add_cus_dep('lagda', 'tex', 0, 'agda_tex');

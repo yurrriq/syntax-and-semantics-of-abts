@@ -9,6 +9,7 @@
 \usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{ifdraft}
 \usepackage{ifthen}
 \usepackage{mathtools}
 \usepackage{proof}
@@ -1123,8 +1124,10 @@ The refinement for telescopes proceeds by induction:
   }
 \end{gather*}
 
-\nocite{*}
-\bibliographystyle{abbrv}
-\bibliography{refs}
+\ifdraft{}{
+  \nocite{*}
+  \bibliographystyle{abbrv}
+  \bibliography{refs}
+}
 
 \end{document}
