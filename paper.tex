@@ -114,6 +114,7 @@
 
 \newcommand\Cats{\mathbf{Cat}}
 \newcommand\Discrete[1]{#1_{\equiv}}
+\newcommand\Arr[1]{\mathbf{{#1}^{\rightarrow}}}
 \newcommand\Sets{\mathbf{Set}}
 \newcommand\SCtx{\mathbf{SCtx}}
 \newcommand\Ctx{\mathbf{Ctx}}
@@ -254,35 +255,35 @@ $(U,\mathfrak{s})$.
 Then, fix a covariant presheaf (copresheaf) of operators
 $\Of{\Operators}{\SCtx\times\Discrete{\Arities}\to\Sets}$ such that the arrows
 in $\SCtx$ lift to renamings of operators' parameters. Via the Grothendieck
-construction\footnote{In this case, $\mathbf{C}\Grothendieck{}{\Psi}$
-  represents the category of elements of a copresheaf
-  $\Of{\Psi}{\mathbf{C}\to\Sets}$ but we keep the $\mathbf{C}$ implicit and
-  simply refer to it as the Grothendieck construction.  Alternatively, this
-  construction can be understood as a coend
-$\IMode{\mathbf{C}\Grothendieck{}{\Psi}}\cong \IMode{\int^{c \in
-\mathbf{C}}\Coslice{c}{\mathbf{C}} \otimes \Discrete{\Psi(c)}}$.}
+construction\footnote{In this case, $\mathbf{C}\Grothendieck{}{\Psi}$ represents
+  the category of elements of a copresheaf $\Of{\Psi}{\mathbf{C}\to\Sets}$ but
+  we keep the $\mathbf{C}$ implicit and simply refer to it as the Grothendieck
+  construction. Alternatively, this construction can be understood as a coend
+  $\IMode{\mathbf{C}\Grothendieck{}{\Psi}}\cong \IMode{\int^{c \in
+      \mathbf{C}}\Coslice{c}{\mathbf{C}} \otimes \Discrete{\Psi(c)}}$.}
 $\Of{\Grothendieck{}{(-)}}{\Sets^{\mathbf{C}}\to\Cats}$ on operators, we have a
 category of objects
-$\Member{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Grothendieck{}{\Operators}}$
-for $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and morphisms
+$\Member{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Grothendieck{}{\Operators}}$ for
+$\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and morphisms
 $\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{a'}}{\vartheta'}}$
 for $\Of{\Pair{\varrho}{f}}{\Pair{\Upsilon}{a}\to\Pair{\Upsilon'}{a'}}$ such
 that
 $\EqMember{\FLift{\varrho}{f}(\vartheta)}{\vartheta'}{\Operators\Pair{\Upsilon'}{a'}}$.
 Equivalently, $\Grothendieck{}{\Operators}$ is the pullback of $\Operators$
-along the universal $\Sets$-bundle where $\pi_{\Operators}$ is a discrete
-Grothendieck opfibration and $\Forget{-}_{\SSingleton}$ is the forgetful functor
-from pointed sets:
+along the the codomain Grothendieck bifibration $\pi_{cod}$ where
+$\pi_{\Operators}$ is also a discrete Grothendieck opfibration:
 
 \[
 \begin{tikzcd}[ampersand replacement = \&, sep = large]
   {\Grothendieck{}{\Operators}}
-    \arrow[r, "{\pi_{\in}}"]
+    \arrow[rr, "{\Pair{\Pair{\Upsilon}{a}}{\vartheta}\ \mapsto\ \ArrId{\Operators\Pair{\Upsilon}{a}}}"]
     \arrow[d, "{\pi_{\Operators}}" left]
-  \& {\Sets_{\SSingleton}}
-    \arrow[d, "{\Forget{-}_{\SSingleton}}"] \\
+  \&
+  \& {\Arr{\Sets}}
+    \arrow[d, "{\pi_{cod}}"] \\
   {\SCtx\times\Discrete{\Arities}}
-     \arrow[r, "{\Operators}" below]
+     \arrow[rr, "{\Operators}" below]
+  \&
   \& {\Sets} \\
 \end{tikzcd}
 \]
