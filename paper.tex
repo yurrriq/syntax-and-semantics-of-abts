@@ -275,13 +275,14 @@ $\pi_{\Operators}$ is also a discrete Grothendieck opfibration:
 
 \[
 \begin{tikzcd}[ampersand replacement = \&, sep = large]
-  {\Grothendieck{}{\Operators}} \arrow[rr,
-  "{\Member{\vartheta\,}{\,\Operators\Pair{\Upsilon}{a}}\ \mapsto\
-    \ArrId{\Operators\Pair{\Upsilon}{a}}}"] \arrow[d, "{\pi_{\Operators}}" left]
-  \& \& {\Arr{\Sets}}
-  \arrow[d, "{\pi_{cod}}"] \\
-  {\SCtx\times\Discrete{\Arities}} \arrow[rr, "{\Operators}" below] \&
-  \& {\Sets} \\
+  {\OMode{\Grothendieck{}{\Operators}}}
+  \arrow[rr,
+    "{\IMode{\Pair{\Pair{\Upsilon}{a}}{\vartheta}\ \mapsto\
+      \ArrId{\Operators\Pair{\Upsilon}{a}}}}"] \arrow[d, "\IMode{\pi_{\Operators}}" left]
+  \& \& {\IMode{\Arr{\Sets}}}
+    \arrow[d, "\IMode{\pi_{cod}}"] \\
+  {\IMode{\SCtx\times\Discrete{\Arities}}} \arrow[rr, "\IMode{\Operators}" below] \&
+  \& {\IMode{\Sets}} \\
 \end{tikzcd}
 \]
 
