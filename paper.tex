@@ -777,8 +777,8 @@ which is defined as follows:
     &\triangleq
     \OMode{
       \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{\tau}}}
-      \prod_{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau'}\in\vec{v}}
-      X_{\tau'}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}
+      \prod_{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau_i}\in\vec{v}}
+      X_{\tau_i}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}
     }
 \end{align*}
 
@@ -837,7 +837,7 @@ environment and intantiating it via substitution:
           \arrow[r, "\IMode{\Tuple{\pi_\MV{m}\,\pi_1, \phi\,\pi_2, \psi}}"]
     \& {\IMode{P_{\tau}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}\times S^{\{\vec{\sigma}\}} \times P^{[\vec{\tau}]}}}
           \arrow[r, "\IMode{\varsigma_{\vec{\sigma}\parallel\vec{\tau}}}"]
-    \& \IMode{P_s}
+    \& \IMode{P_\tau}
   \end{tikzcd}
   \tag{metavar}
 \]
@@ -859,7 +859,7 @@ where
 \end{align*}
 
 The interpretation of operator applications is most complicated. Recall that,
-unlike in standard treatments of algebraic theories, our operators are indexed
+unlike in standard treatments of universal algebra, our operators are indexed
 by symbol collections; therefore, operators must pass through suitable
 renamings in order to be used in the interpretation. Let us begin by
 constructing for each operator $\IsOperator{\Upsilon}{\vartheta}{a}$ the
@@ -879,6 +879,75 @@ the environment.
    \end{tikzcd}
  }
 \]
+
+We will proceed using the initial $\SigFun{\Sigma}$-algebra $\alpha$, as
+follows.
+\[
+   \begin{tikzcd}[ampersand replacement = \&, sep=large]
+     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\OMode{\beta}"]
+     \& {\IMode{\SigFun{\Sigma}(P)_\tau}} \arrow[r, "\IMode{\alpha}"]
+     \& {\IMode{P_\tau}}
+   \end{tikzcd}
+\]
+
+\begin{align*}
+  \ADefine{
+    \beta
+  }{
+   \begin{tikzcd}[ampersand replacement = \&, sep=huge]
+      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P} \arrow[r, "\Tuple{\SemBrackets{\vartheta}_P, \gamma}"]
+      \& {
+        \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{\tau}}}
+        \prod_{\MkValence{\vec{\sigma}_i}{\vec{\tau}_i}{\tau_i}\in\vec{v}}
+        P_{\tau_i}^{\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}}
+      }
+   \end{tikzcd}
+  }\\
+  \ADefine{
+    \gamma
+  }{
+   \begin{tikzcd}[ampersand replacement = \&, sep=6em]
+      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P} \arrow[r, "\Tuple{\lambda x. \eta_i(-,x))}_i"]
+      \& {
+        \prod_{\MkValence{\vec{\sigma}_i}{\vec{\tau}_i}{\tau_i}\in\vec{v}}
+        P_{\tau_i}^{\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}}
+      }
+   \end{tikzcd}
+  }\\
+  \ADefine{
+    \eta_i
+  }{
+   \begin{tikzcd}[ampersand replacement = \&, sep=7em]
+      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
+        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_u}
+      } \arrow[r, "\Tuple{\pi_1\circ\pi_1,\phi_i,\nu_{\Gamma,\vec{\tau}_i}\circ\psi_i}"]
+      \& {\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_i}_P}
+      \arrow[r, "\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_i\vdash M_i:\tau_i}_P"]
+      \& {P_{\tau_i}}
+   \end{tikzcd}
+  }\\
+  \ADefine{
+    \phi_i
+  }{
+   \begin{tikzcd}[ampersand replacement = \&, sep=12em]
+      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
+        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_u}
+      } \arrow[r, "\Tuple{\pi_u\circ\pi_1}_{u\in\Dom\Upsilon}\oplus\Tuple{\pi_u\circ\pi_1\circ\pi_2}_{u\in\Dom{\vec{\sigma}_i}}"]
+      \& {S^{\{\Upsilon,\vec{\sigma}_i\}}}
+   \end{tikzcd}
+  }\\
+  \ADefine{
+    \psi_i
+  }{
+   \begin{tikzcd}[ampersand replacement = \&, sep=12em]
+      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
+        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_u}
+      } \arrow[r, "\Tuple{\pi_u\circ\pi_1}_{u\in\Dom\Upsilon}\oplus\Tuple{\pi_u\circ\pi_1\circ\pi_2}_{u\in\Dom{\vec{\sigma}_i}}"]
+      \& {V^{[\Gamma,\vec{\tau}_i]}}
+   \end{tikzcd}
+  }
+\end{align*}
+
 
 \section{Case Study: Wellformed Sequents}
 
