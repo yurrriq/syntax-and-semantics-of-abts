@@ -823,130 +823,120 @@ projects it of the environment and embeds it into the model, as follows:
 \]
 
 Next we have the interpretation of metavariable applications
-\[%
-  \SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash%
-    \MApp{\MV{m}}{\vec{u}}{\vec{M}} : \tau}_P%
-  \qquad(\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}})
-\]
-which proceeds by projecting the metavariable's interpretation from the
-environment and intantiating it via substitution:
+$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash\MApp{\MV{m}}{\vec{u}}{\vec{M}}
+: \tau}_P$ where
+$\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}}$, which
+proceeds by projecting the metavariable's interpretation from the environment
+and intantiating it via substitution:
 \[
-  \begin{tikzcd}[ampersand replacement = \&, sep=huge]
+  \begin{tikzcd}[ampersand replacement = \&, sep=7em]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
           \arrow[r, "\IMode{\Tuple{\pi_\MV{m}\,\pi_1, \phi\,\pi_2, \psi}}"]
     \& {\IMode{P_{\tau}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}\times S^{\{\vec{\sigma}\}} \times P^{[\vec{\tau}]}}}
-          \arrow[r, "\IMode{\varsigma_{\vec{\sigma}\parallel\vec{\tau}}}"]
+          \arrow[r, "\IMode{\varsigma^\tau_{\vec{\sigma}\parallel\vec{\tau}}}"]
     \& \IMode{P_\tau}
   \end{tikzcd}
   \tag{metavar}
 \]
 where
-\begin{align*}
-  \ADefine{\phi}{
-  \begin{tikzcd}[ampersand replacement = \&, sep=huge]
-    {S^{\{\Upsilon\}}} \arrow[r, "\Tuple{\pi_u}_{u\in\vec{u}}"]
-    \& {S^{\{\vec{\sigma}\}}}
+\begin{gather*}
+  \begin{tikzcd}[ampersand replacement = \&, sep=8em]
+    {\IMode{S^{\{\Upsilon\}}}} \arrow[r, "\Define{\phi\,}{\,\Tuple{\pi_u}_{u\in\vec{u}}}"]
+    \& {\IMode{S^{\{\vec{\sigma}\}}}}
+  \end{tikzcd}\\
+  \begin{tikzcd}[ampersand replacement = \&, sep=14em]
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
+      \arrow[r, "\Define{\psi\,}{\,\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau}_P}_{(M,\tau)\in (\vec{M},\vec{\tau})}}"]
+    \& {\IMode{P^{[\vec{\tau}]}}}
   \end{tikzcd}
-  }\\
-  \ADefine{\psi}{
-   \begin{tikzcd}[ampersand replacement = \&, sep=28ex]
-     {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}
-     \arrow[r, "\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau}_P}_{(M,\tau)\in (\vec{M},\vec{\tau})}"]
-     \& {P^{[\vec{\tau}]}}
-   \end{tikzcd}
-  }
-\end{align*}
+\end{gather*}
 
 The interpretation of operator applications is most complicated. Recall that,
 unlike in standard treatments of universal algebra, our operators are indexed
 by symbol collections; therefore, operators must pass through suitable
 renamings in order to be used in the interpretation. Let us begin by
 constructing for each operator $\IsOperator{\Upsilon}{\vartheta}{a}$ the
-natural transformation
+morphism
 $\Of{\SemBrackets{\vartheta}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
 \to\Operators_{a}}$, which shall rename the parameters of the operator using
-the environment.
-
+the environment. The natural transformation $\SemBrackets{\vartheta}_P$ is the
+following composite:
 \[
-  \Define{
-    \SemBrackets{\vartheta}_P
-  }{
-   \begin{tikzcd}[ampersand replacement = \&, sep=large]
-     {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P} \arrow[r, "\pi_2"]
-     \& {S^{\{\Upsilon\}}} \arrow[r, "\FLift{\pi_{(-)}}{}"]
-     \& {\Operators_a}
-   \end{tikzcd}
- }
+  \begin{tikzcd}[ampersand replacement = \&, sep=large]
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\pi_2}"]
+    \& {\IMode{S^{\{\Upsilon\}}}} \arrow[r, "\IMode{\FLift{\pi_{(-)}}{}}"]
+    \& {\IMode{\Operators_a}}
+  \end{tikzcd}
 \]
 
 We will proceed using the initial $\SigFun{\Sigma}$-algebra $\alpha$, as
-follows.
+follows, by postcomposing it with a morphism $\beta$ from the environment into
+the signature endofunctor, which interprets the syntax of operator
+applications:
 \[
    \begin{tikzcd}[ampersand replacement = \&, sep=large]
-     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\OMode{\beta}"]
+     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\beta}"]
      \& {\IMode{\SigFun{\Sigma}(P)_\tau}} \arrow[r, "\IMode{\alpha_\tau}"]
      \& {\IMode{P_\tau}}
    \end{tikzcd}
 \]
 
-\begin{align*}
-  \ADefine{
-    \beta
-  }{
-   \begin{tikzcd}[ampersand replacement = \&, sep=huge]
-      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P} \arrow[r, "\Tuple{\SemBrackets{\vartheta}_P, \gamma}"]
-      \& {
-        \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{\tau}}}
-        \prod_{\MkValence{\vec{\sigma}_i}{\vec{\tau}_i}{\tau_i}\in\vec{v}}
-        P_{\tau_i}^{\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}}
-      }
-   \end{tikzcd}
-  }\\
-  \ADefine{
-    \gamma
-  }{
-   \begin{tikzcd}[ampersand replacement = \&, sep=6em]
-      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P} \arrow[r, "\Tuple{\lambda x. \eta_i(-,x))}_i"]
-      \& {
-        \prod_{\MkValence{\vec{\sigma}_i}{\vec{\tau}_i}{\tau_i}\in\vec{v}}
-        P_{\tau_i}^{\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}}
-      }
-   \end{tikzcd}
-  }\\
-  \ADefine{
-    \eta_i
-  }{
-   \begin{tikzcd}[ampersand replacement = \&, sep=7em]
-      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
-        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_u}
-      } \arrow[r, "\Tuple{\pi_1\circ\pi_1,\phi_i,\psi_i}"]
-      \& {\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_i}_P}
-      \arrow[r, "\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_i\vdash M_i:\tau_i}_P"]
-      \& {P_{\tau_i}}
-   \end{tikzcd}
-  }\\
-  \ADefine{
-    \phi_i
-  }{
-   \begin{tikzcd}[ampersand replacement = \&, sep=12em]
-      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
-        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
-      } \arrow[r, "\Tuple{\pi_u\circ\pi_1}_{u\in\Dom\Upsilon}\oplus\Tuple{\pi_u\circ\pi_1\circ\pi_2}_{u\in\Dom{\vec{\sigma}_i}}"]
-      \& {S^{\{\Upsilon,\vec{\sigma}_i\}}}
-   \end{tikzcd}
-  }\\
-  \ADefine{
-    \psi_i
-  }{
-   \begin{tikzcd}[ampersand replacement = \&, sep=12em]
-      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
-        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
-      } \arrow[r, "\Tuple{\pi_x\circ\pi_1}_{x\in\Dom\Gamma}\oplus\Tuple{\pi_x\circ\pi_1\circ\pi_2}_{x\in\Dom{\vec{\tau}_i}}"]
-      \& {V^{[\Gamma,\vec{\tau}_i]}}
-   \end{tikzcd}
-  }
-\end{align*}
+The construction of $\beta$ proceeds by renaming the parameters of the operator
+$\vartheta$ and constructing the (bound) arguments $\gamma$ of the operator.
 
+\[
+  \begin{tikzcd}[ampersand replacement = \&, sep=10em]
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
+       \arrow[r, "\Define{\beta\,}{\,\Tuple{\SemBrackets{\vartheta}_P, \gamma}}"]
+    \& {\IMode{%
+       \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{\tau}}}%
+       \prod_{\MkValence{\vec{\sigma}_i}{\vec{\tau}_i}{\tau_i}\in\vec{v}}%
+       P_{\tau_i}^{\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}}%
+    }}
+  \end{tikzcd}
+\]
+
+Each argument
+%
+\begin{tikzcd}[ampersand replacement = \&]
+  {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
+    \arrow[r, "\IMode{\gamma_i}"]
+  \& {\IMode{%
+    P_{\tau_i}^{\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}}
+  }}
+\end{tikzcd}
+%
+is the exponential transpose of the composite,
+\[
+  \begin{tikzcd}[ampersand replacement = \&, sep=8em]
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
+       \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_u}
+    }}
+      \arrow[r, "\IMode{\Tuple{\pi_1\circ\pi_1,\phi_i,\psi_i}}"]
+    \& {\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_i}_P}}
+      \arrow[r, "\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_i\vdash M_i:\tau_i}_P}"]
+    \& {\IMode{P_{\tau_i}}}
+  \end{tikzcd}
+\]
+where $\phi_i,\psi_i$ are defined as follows:
+\begin{gather*}
+  \begin{tikzcd}[ampersand replacement = \&, sep=14em]
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
+       \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
+    }}
+      \arrow[r, "\Define{\phi_i\,}{\,\Tuple{\pi_u\circ\pi_1}_{u\in\Dom{\Upsilon}},\, \Tuple{\pi_u\circ\pi_1\circ\pi_2}_{u\in\Dom{\vec{\sigma}_i}}}"]
+    \& {\IMode{S^{\{\Upsilon,\vec{\sigma}_i\}}}}
+  \end{tikzcd}\\
+  \begin{tikzcd}[ampersand replacement = \&, sep=14em]
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
+       \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
+    }}
+      \arrow[r, "\Define{\psi_i\,}{\,\Tuple{\pi_x\circ\pi_1}_{x\in\Dom{\Gamma}},\, \Tuple{\pi_x\circ\pi_1\circ\pi_2}_{x\in\Dom{\vec{\tau}_i}}}"]
+    \& {\IMode{V^{[\Gamma,\vec{\tau}_i]}}}
+  \end{tikzcd}
+\end{gather*}
+
+This concludes the interpretation of well-sorted terms into any $\Sigma$-model.
 
 \section{Case Study: Wellformed Sequents}
 
