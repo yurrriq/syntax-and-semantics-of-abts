@@ -885,7 +885,7 @@ follows.
 \[
    \begin{tikzcd}[ampersand replacement = \&, sep=large]
      {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\OMode{\beta}"]
-     \& {\IMode{\SigFun{\Sigma}(P)_\tau}} \arrow[r, "\IMode{\alpha}"]
+     \& {\IMode{\SigFun{\Sigma}(P)_\tau}} \arrow[r, "\IMode{\alpha_\tau}"]
      \& {\IMode{P_\tau}}
    \end{tikzcd}
 \]
@@ -931,7 +931,7 @@ follows.
   }{
    \begin{tikzcd}[ampersand replacement = \&, sep=12em]
       {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
-        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_u}
+        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
       } \arrow[r, "\Tuple{\pi_u\circ\pi_1}_{u\in\Dom\Upsilon}\oplus\Tuple{\pi_u\circ\pi_1\circ\pi_2}_{u\in\Dom{\vec{\sigma}_i}}"]
       \& {S^{\{\Upsilon,\vec{\sigma}_i\}}}
    \end{tikzcd}
@@ -941,8 +941,8 @@ follows.
   }{
    \begin{tikzcd}[ampersand replacement = \&, sep=12em]
       {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
-        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_u}
-      } \arrow[r, "\Tuple{\pi_u\circ\pi_1}_{u\in\Dom\Upsilon}\oplus\Tuple{\pi_u\circ\pi_1\circ\pi_2}_{u\in\Dom{\vec{\sigma}_i}}"]
+        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
+      } \arrow[r, "\Tuple{\pi_x\circ\pi_1}_{x\in\Dom\Gamma}\oplus\Tuple{\pi_x\circ\pi_1\circ\pi_2}_{x\in\Dom{\vec{\tau}_i}}"]
       \& {V^{[\Gamma,\vec{\tau}_i]}}
    \end{tikzcd}
   }
