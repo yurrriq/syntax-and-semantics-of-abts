@@ -699,9 +699,9 @@ For an object $\Of{P}{\widehat{\HypCat}^\Sorts}$, we will use the notation
 $P^{[\Gamma]}$ to mean $\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}$; likewise,
 $S^{\{\Upsilon\}}$ shall mean $\prod_{u\in\Dom\Upsilon}S_{\Upsilon(u)}$.
 
-For a presheaf $A:\widehat{\HypCat}$ and a sort-indexed family of presheaves
-$P:\widehat{\HypCat}^\Sorts$, we have an operation $A\bullet P$,
-defined as a coend in the following way:
+For a presheaf $\Of{A}{\widehat{\HypCat}}$ and a sort-indexed family of
+presheaves $\Of{P}{\widehat{\HypCat}^\Sorts}$, we have an operation $A\bullet
+P$, defined as a coend in the following way:
 \[
   \Define{(A\bullet P)(\Upsilon\parallel\Gamma)}{
     \int^{(\Upsilon'\parallel\Delta)\in\HypCat}
@@ -740,7 +740,7 @@ of variables.
 \]
 
 %%TODO
-We also have an induced maps $\Of{\nu_\Gamma}{V^{[\Gamma]}\to P^{[\Gamma]}}$
+We also have the induced maps $\Of{\nu_\Gamma}{V^{[\Gamma]}\to P^{[\Gamma]}}$
 and
 $\Of{\varsigma_{\Upsilon\parallel\Gamma}}{P_s^{\Yoneda{\Upsilon\parallel\Gamma}} \times
 S^{\{\Upsilon\}}\times P^{[\Gamma]}\to P_s}$.
@@ -826,7 +826,7 @@ projects it of the environment and embeds it into the model, as follows:
 Next we have the interpretation of metavariable applications
 \[%
   \SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash%
-    \MApp{\MV{m}_i}{u_0,\dots,u_m}{M_0,\dots,M_n} : s}_P%
+    \MApp{\MV{m}_i}{\vec{u}}{\vec{M}} : s}_P%
   \qquad(\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{p}}{\vec{q}}{s}})
 \]
 which proceeds by projecting the metavariable's interpretation from the
@@ -844,12 +844,17 @@ environment and intantiating it via substitution:
 where
 \begin{align*}
   \ADefine{\phi}{
-    \Dom{\vec{p}}\mapsto \vec{u}
+  \begin{tikzcd}[ampersand replacement = \&, sep=huge]
+    {S^{\{\Upsilon\}}} \arrow[r, "\Tuple{\pi_u}_{u\in\vec{u}}"]
+    \& {S^{\{\vec{p}\}}}
+  \end{tikzcd}
   }\\
   \ADefine{\psi}{
-    \Tuple{
-      \SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M_j:q_j}_P
-    }_{j\leq n}
+   \begin{tikzcd}[ampersand replacement = \&, sep=28ex]
+     {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}
+        \arrow[r, "\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:q}_P}_{(M,q)\in \vec{M}\otimes\vec{q}}"]
+     \& {P^{[\vec{q}]}}
+   \end{tikzcd}
   }
 \end{align*}
 
