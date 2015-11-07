@@ -852,12 +852,33 @@ where
   \ADefine{\psi}{
    \begin{tikzcd}[ampersand replacement = \&, sep=28ex]
      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}
-        \arrow[r, "\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau}_P}_{(M,\tau)\in \vec{M}\otimes\vec{\tau}}"]
+     \arrow[r, "\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau}_P}_{(M,\tau)\in (\vec{M},\vec{\tau})}"]
      \& {P^{[\vec{\tau}]}}
    \end{tikzcd}
   }
 \end{align*}
 
+The interpretation of operator applications is most complicated. Recall that,
+unlike in standard treatments of algebraic theories, our operators are indexed
+by symbol collections; therefore, operators must pass through suitable
+renamings in order to be used in the interpretation. Let us begin by
+constructing for each operator $\IsOperator{\Upsilon}{\vartheta}{a}$ the
+natural transformation
+$\Of{\SemBrackets{\vartheta}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
+\to\Operators_{a}}$, which shall rename the parameters of the operator using
+the environment.
+
+\[
+  \Define{
+    \SemBrackets{\vartheta}_P
+  }{
+   \begin{tikzcd}[ampersand replacement = \&, sep=large]
+     {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P} \arrow[r, "\pi_2"]
+     \& {S^{\{\Upsilon\}}} \arrow[r, "\FLift{\pi_{(-)}}{}"]
+     \& {\Operators_a}
+   \end{tikzcd}
+ }
+\]
 
 \section{Case Study: Wellformed Sequents}
 
