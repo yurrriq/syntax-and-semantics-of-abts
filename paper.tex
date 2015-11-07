@@ -164,7 +164,7 @@
   \IMode{#4}:\IMode{#5}%
 }
 
-\newcommand\MV[1]{\textsc{#1}}
+\newcommand\MV[1]{\mathfrak{#1}}
 \newcommand\MApp[3]{#1\{#2\}(#3)}
 \newcommand\App[2]{#1(#2)}
 \newcommand\Dom[1]{\left\vert#1\right\vert}
@@ -213,30 +213,30 @@
 
 \section{Preliminaries}
 
-Fix a set $\Sorts$ of \emph{sorts}. We will say $\IsSort{s}$ when
-$\Member{s}{S}$. A valence $\MkValence{\vec{p}}{\vec{q}}{s}$ specifies an
-expression of sort $s$ which binds symbols in $\vec{p}$ and variables in
-$\vec{q}$.
+Fix a set $\Sorts$ of \emph{sorts}. We will say $\IsSort{\tau}$ when
+$\Member{\tau}{\Sorts}$. A valence $\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}$ specifies an
+expression of sort $\tau$ which binds symbols in $\vec{\sigma}$ and variables in
+$\vec{\tau}$.
 
 \[
   \infer{
-    \IsValence{\MkValence{p_0,\dots,p_m}{q_0,\dots,q_n}{s}}
+    \IsValence{\MkValence{\sigma_0,\dots,\sigma_m}{\tau_0,\dots,\tau_n}{\tau}}
   }{
-    \IsSort{s} &
-    \HypJ{\IsSort{p_i}}{\Leq{i}{m}} &
-    \HypJ{\IsSort{q_i}}{\Leq{i}{n}} &
+    \IsSort{\tau} &
+    \HypJ{\IsSort{\sigma_i}}{\Leq{i}{m}} &
+    \HypJ{\IsSort{\tau_i}}{\Leq{i}{n}} &
   }
 \]
 
-An arity $\MkArity{\vec{v}}{s}$ specifies an operator of sort $s$ with
+An arity $\MkArity{\vec{v}}{\tau}$ specifies an operator of sort $\tau$ with
 arguments of valences $\vec{v}$. We will call the set of valences $\Valences$,
 and the set of arities $\Arities$.
 
 \[
   \infer{
-    \IsArity{\MkArity{v_0,\ldots,v_n}{s}}
+    \IsArity{\MkArity{v_0,\ldots,v_n}{\tau}}
   }{
-    \IsSort{s} &
+    \IsSort{\tau} &
     \HypJ{\IsValence{v_i}}{\Leq{i}{n}}
   }
 \]
@@ -385,10 +385,10 @@ context $\Upsilon$ is a collection of bindings of sorts to symbols.
   }{
   }\qquad
   \infer{
-    \IsVarCtx{\Gamma,x:s}
+    \IsVarCtx{\Gamma,x:\tau}
   }{
     \IsVarCtx{\Gamma} &
-    \IsSort{s} &
+    \IsSort{\tau} &
     \NotIn{x}{\Dom\Gamma}
   }
 \end{gather*}
@@ -399,18 +399,18 @@ context $\Upsilon$ is a collection of bindings of sorts to symbols.
   }{
   }\qquad
   \infer{
-    \IsSymCtx{\Upsilon,u:s}
+    \IsSymCtx{\Upsilon,u:\tau}
   }{
     \IsVarCtx{\Upsilon} &
-    \IsSort{s} &
+    \IsSort{\tau} &
     \NotIn{u}{\Dom\Upsilon}
   }
 \end{gather*}
 
 \section{Abstract Binding Trees}
 
-Let the judgment $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{s}$ presuppose
-$\IsMetaCtx{\Omega}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and $\IsSort{s}$,
+Let the judgment $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$ presuppose
+$\IsMetaCtx{\Omega}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and $\IsSort{\tau}$,
 meaning that $M$ is an abstract binding tree of sort $s$, with metavariables in
 $\Omega$, parameters in $\Upsilon$, and variables in $\Gamma$. Let the judgment
 $\IsBTm{\Omega}{\Upsilon}{\Gamma}{E}{v}$ presuppose $\IsValence{v}$.  Then, the
@@ -418,21 +418,21 @@ syntax of abstract binding trees (abts) is inductively defined in four rules:
 
 \begin{gather*}
   \infer[\textit{var}]{
-    \IsAbt{\Omega}{\Upsilon}{\Gamma}{x}{s}
+    \IsAbt{\Omega}{\Upsilon}{\Gamma}{x}{\tau}
   }{
-    \Lookup{\Gamma}{x}{s}
+    \Lookup{\Gamma}{x}{\tau}
   }\\[6pt]
   %
   \infer[\textit{mvar}]{
     \IsAbt{\Omega}{\Upsilon}{\Gamma}{
       \MApp{\MV{m}}{u_0,\dots,u_m}{M_0,\dots,M_n}
-    }{s}
+    }{\tau}
   }{
     \begin{array}{l}
-      \Lookup{\Omega}{\MV{m}}{\MkValence{p_0,\dots,p_m}{q_0,\dots,q_n}{s}}\\
-      \HypJ{\Lookup{\Upsilon}{u_i}{p_i}}{\Leq{i}{m}}\\
+      \Lookup{\Omega}{\MV{m}}{\MkValence{\sigma_0,\dots,\sigma_m}{\tau_0,\dots,\tau_n}{\tau}}\\
+      \HypJ{\Lookup{\Upsilon}{u_i}{\sigma_i}}{\Leq{i}{m}}\\
       \HypJ{
-        \IsAbt{\Omega}{\Upsilon}{\Gamma}{M_i}{q_i}
+        \IsAbt{\Omega}{\Upsilon}{\Gamma}{M_i}{\tau_i}
       }{
         \Leq{i}{n}
       }
@@ -442,14 +442,14 @@ syntax of abstract binding trees (abts) is inductively defined in four rules:
   \infer[\textit{app}]{
     \IsAbt{\Omega}{\Upsilon}{\Gamma}{
       \App{\vartheta}{E_0,\dots,E_n}
-    }{s}
+    }{\tau}
   }{
     \begin{array}{l}
       \IsOperator{\Upsilon}{\vartheta}{
-        v_1,\dots,v_n
+        \MkArity{v_1,\dots,v_n}{\tau}
       }\\
       \HypJ{
-        \IsBTm{\Omega}{\Upsilon}{\Gamma}{E_i}{q_i}
+        \IsBTm{\Omega}{\Upsilon}{\Gamma}{E_i}{v_i}
       }{
         \Leq{i}{n}
       }
@@ -459,13 +459,13 @@ syntax of abstract binding trees (abts) is inductively defined in four rules:
     \IsBTm{\Omega}{\Upsilon}{\Gamma}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
-      \MkValence{\vec{p}}{\vec{q}}{s}
+      \MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}
     }
   }{
-    \IsAbt{\Omega}{\Upsilon, \vec{u}:\vec{p}}{\Gamma,\vec{x}:{\vec{q}}}{
+    \IsAbt{\Omega}{\Upsilon, \vec{u}:\vec{\sigma}}{\Gamma,\vec{x}:{\vec{\tau}}}{
       M
     }{
-      s
+      \tau
     }
   }
 \end{gather*}
@@ -481,7 +481,7 @@ operators (unlike variables, symbols are not terms). Therefore, the functorial
 action of the operator presheaf can be lifted into terms by recursion on their
 structure, via a pair of judgments $\IsRenaming{\varrho}{M}{N}$ and
 $\IsRenaming{\varrho}{E}{F}$, presupposing
-$\Of{\varrho}{\Upsilon\to\Upsilon'}$, and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{s}$
+$\Of{\varrho}{\Upsilon\to\Upsilon'}$, and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$
 and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
 
 \begin{gather*}
@@ -686,11 +686,11 @@ construction $\Define{\Ctx}{\Comma{\FinSets}{\Sorts}}$ is the category of
 variable contexts. Let $\Define{\HypCat}{\OpCat{(\SCtx\times\Ctx)}}$; then we
 fix the functor category $\widehat{\HypCat}^\Sorts$ as our semantic universe.
 
-Let $\Define{V_s(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid
-\Gamma(x)=s}}$ be called the presheaf of variables; additionally, we have a
+Let $\Define{V_\tau(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid
+\Gamma(x)=\tau}}$ be called the presheaf of variables; additionally, we have a
 presheaf of symbols
-$\Define{S_s(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
-\Upsilon(x)=s}}$. Lastly, we have the presheaf of operators with arity $a$,
+$\Define{S_\tau(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
+\Upsilon(x)=\tau}}$. Lastly, we have the presheaf of operators with arity $a$,
 $\Define{\Operators_a(\Upsilon\parallel\Gamma)}{\Operators\Pair{\Upsilon}{a}}$
 
 \subsection{Substitution monoidal structures}
@@ -715,12 +715,12 @@ Using this, we can define a tensor $P\odot Q$ for
 $\Of{P,Q}{\widehat{\HypCat}^\Sorts}$ as follows:
 \[
   \HypJ{
-    \Define{{(P\odot Q)}_{s}}{
-      P_s\bullet Q
+    \Define{{(P\odot Q)}_{\tau}}{
+      P_\tau\bullet Q
     }
     \quad
   }{
-    \Member{s}{\Sorts}
+    \Member{\tau}{\Sorts}
   }
 \]
 
@@ -742,8 +742,8 @@ of variables.
 %%TODO
 We also have the induced maps $\Of{\nu_\Gamma}{V^{[\Gamma]}\to P^{[\Gamma]}}$
 and
-$\Of{\varsigma_{\Upsilon\parallel\Gamma}}{P_s^{\Yoneda{\Upsilon\parallel\Gamma}} \times
-S^{\{\Upsilon\}}\times P^{[\Gamma]}\to P_s}$.
+$\Of{\varsigma_{\Upsilon\parallel\Gamma}}{P_\tau^{\Yoneda{\Upsilon\parallel\Gamma}}
+\times S^{\{\Upsilon\}}\times P^{[\Gamma]}\to P_\tau}$.
 
 
 \begin{remark}
@@ -773,12 +773,12 @@ endofunctor
 $\Of{\SigFun{\Sigma}}{\widehat{\HypCat}^\Sorts\to\widehat{\HypCat}^\Sorts}$,
 which is defined as follows:
 \begin{align*}
-  \IMode{{\SigFun{\Sigma}(X)}_{s}}
+  \IMode{{\SigFun{\Sigma}(X)}_{\tau}}
     &\triangleq
     \OMode{
-      \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{s}}}
-      \prod_{\MkValence{\vec{p}}{\vec{q}}{s'}\in\vec{v}}
-      X_{s'}^{\Yoneda{\vec{p}\parallel\vec{q}}}
+      \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{\tau}}}
+      \prod_{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau'}\in\vec{v}}
+      X_{\tau'}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}
     }
 \end{align*}
 
@@ -796,7 +796,7 @@ environment presheaf in the following way:
       \Omega\triangleright\Upsilon\parallel\Gamma
     }_P
   }{
-    \left(\prod_{(m:\MkValence{\vec{p}}{\vec{q}}{s})\in\Omega}P_{s}^{\Yoneda{\vec{p}\parallel\vec{q}}}\right)
+    \left(\prod_{(m:\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau})\in\Omega}P_{\tau}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}\right)
     \times
     S^{\{\Upsilon\}}
     \times
@@ -808,17 +808,17 @@ Then, the interpretation of a term in a model $P$ is a map from its environment
 to $P$:
 \[%
   \Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash%
-      M:s}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\to P_s}%
+      M:\tau}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\to P_\tau}%
 \]%
 The interpretation of a variable
-$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x_j:s}_P$ simply
+$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x:\tau}_P$ simply
 projects it of the environment and embeds it into the model, as follows:
 \[
   \begin{tikzcd}[ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\pi_3}"]
     \& {\IMode{V^{[\Gamma]}}} \arrow[r, "\IMode{\nu_{\Gamma}}"]
-    \& {\IMode{P^{[\Gamma]}}} \arrow[r, "\IMode{\pi_j}"]
-    \& \IMode{P_s}
+    \& {\IMode{P^{[\Gamma]}}} \arrow[r, "\IMode{\pi_x}"]
+    \& \IMode{P_\tau}
   \end{tikzcd}
   \tag{var}
 \]
@@ -826,17 +826,17 @@ projects it of the environment and embeds it into the model, as follows:
 Next we have the interpretation of metavariable applications
 \[%
   \SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash%
-    \MApp{\MV{m}_i}{\vec{u}}{\vec{M}} : s}_P%
-  \qquad(\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{p}}{\vec{q}}{s}})
+    \MApp{\MV{m}}{\vec{u}}{\vec{M}} : \tau}_P%
+  \qquad(\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}})
 \]
 which proceeds by projecting the metavariable's interpretation from the
 environment and intantiating it via substitution:
 \[
   \begin{tikzcd}[ampersand replacement = \&, sep=huge]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
-          \arrow[r, "\IMode{\Tuple{\pi_i\,\pi_1, \phi\,\pi_2, \psi}}"]
-    \& {\IMode{P_{s'}^{\Yoneda{\vec{p}\parallel\vec{q}}}\times S^{\{\vec{p}\}} \times P^{[\vec{q}]}}}
-          \arrow[r, "\IMode{\varsigma_{\vec{p}\parallel\vec{q}}}"]
+          \arrow[r, "\IMode{\Tuple{\pi_\MV{m}\,\pi_1, \phi\,\pi_2, \psi}}"]
+    \& {\IMode{P_{\tau}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}\times S^{\{\vec{\sigma}\}} \times P^{[\vec{\tau}]}}}
+          \arrow[r, "\IMode{\varsigma_{\vec{\sigma}\parallel\vec{\tau}}}"]
     \& \IMode{P_s}
   \end{tikzcd}
   \tag{metavar}
@@ -846,14 +846,14 @@ where
   \ADefine{\phi}{
   \begin{tikzcd}[ampersand replacement = \&, sep=huge]
     {S^{\{\Upsilon\}}} \arrow[r, "\Tuple{\pi_u}_{u\in\vec{u}}"]
-    \& {S^{\{\vec{p}\}}}
+    \& {S^{\{\vec{\sigma}\}}}
   \end{tikzcd}
   }\\
   \ADefine{\psi}{
    \begin{tikzcd}[ampersand replacement = \&, sep=28ex]
      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}
-        \arrow[r, "\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:q}_P}_{(M,q)\in \vec{M}\otimes\vec{q}}"]
-     \& {P^{[\vec{q}]}}
+        \arrow[r, "\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:q}_P}_{(M,q)\in \vec{M}\otimes\vec{\tau}}"]
+     \& {P^{[\vec{\tau}]}}
    \end{tikzcd}
   }
 \end{align*}
@@ -995,11 +995,11 @@ Now, we have the following well-formed sequent:
 
 The above sequent has free symbols, but we can close over them by adding a form
 of parametric higher-order judgment to our object language, indexed by a
-collection of sorts $\vec{s}$:
+collection of sorts $\vec{\sigma}$:
 \[
-  \IsOperator{\Upsilon}{\OpNabla{\vec{s}}}{
+  \IsOperator{\Upsilon}{\OpNabla{\vec{\sigma}}}{
     \MkArity{
-      \MkValence{\vec{s}}{}{\SortJdg}
+      \MkValence{\vec{\sigma}}{}{\SortJdg}
     }{\SortJdg}
   }
 \]
@@ -1022,9 +1022,9 @@ Then, we may write a closed sequent judgment as follows:
 Having specified an approximation of the grammar of telescopes and sequents in
 the abt logical framework, we can proceed to define proper wellformedness via
 \emph{inductive refinement}. The basic idea is to introduce a new form of
-(meta)-judgment $\IsWf{\Omega}{\Upsilon}{\Gamma}{M}{s}$ which expresses the
+(meta)-judgment $\IsWf{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$ which expresses the
 extrinsic wellformedness properties we wish to verify, presupposing
-$\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{s}$. Additionally, we introduce an
+$\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$. Additionally, we introduce an
 analogous judgment on bound terms, $\IsWf{\Omega}{\Upsilon}{\Gamma}{E}{v}$
 presupposing $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$, defined uniformly as
 follows:
@@ -1033,28 +1033,28 @@ follows:
     \IsWf{\Omega}{\Upsilon}{\Gamma}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
-      \MkValence{\vec{p}}{\vec{q}}{s}
+      \MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}
     }
   }{
-    \IsWf{\Omega}{\Upsilon,\vec{u}:\vec{p}}{\Gamma,\vec{x}:\vec{q}}{M}{s}
+    \IsWf{\Omega}{\Upsilon,\vec{u}:\vec{\sigma}}{\Gamma,\vec{x}:\vec{\tau}}{M}{\tau}
   }
 \]
 
 Likewise, wellformedness for variables and metavariables is defined uniformly:
 \begin{gather*}
   \infer{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{x}{s}
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{x}{\tau}
   }{
   }\qquad
   \infer{
     \IsWf{\Omega}{\Upsilon}{\Gamma}{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
-    }{s}
+    }{\tau}
   }{
     \begin{array}{l}
-      \Lookup{\Omega}{\MV{m}}{\MkValence{\vec{p}}{q_0,\dots,q_n}{s}}\\
+      \Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\tau_0,\dots,\tau_n}{\tau}}\\
       \HypJ{
-        \IsWf{\Omega}{\Upsilon}{\Gamma}{M_i}{q_i}
+        \IsWf{\Omega}{\Upsilon}{\Gamma}{M_i}{\tau_i}
       }{
         \Leq{i}{n}
       }
@@ -1064,7 +1064,7 @@ Likewise, wellformedness for variables and metavariables is defined uniformly:
 
 \begin{remark}
   Note that the refinement for variables $x$ is not trivial, since it is only
-  defined in case the presupposition $\IsAbt{\Omega}{\Upsilon}{\Gamma}{x}{s}$
+  defined in case the presupposition $\IsAbt{\Omega}{\Upsilon}{\Gamma}{x}{\tau}$
   is satisfied.
 \end{remark}
 
@@ -1075,17 +1075,17 @@ grammatical:
 
 \[
   \infer[
-    \text{for $\Member{s}{\MkSet{\SortExp,\SortType}}$}
+    \text{for $\Member{\tau}{\MkSet{\SortExp,\SortType}}$}
   ]{
     \IsWf{\Omega}{\Upsilon}{\Gamma}{
       \App{\vartheta}{E_0,\dots,E_n}
-    }{s}
+    }{\tau}
   }{
     \begin{array}{l}
       \IsOperator{\Upsilon}{\vartheta}{
         \MkArity{
           v_0,\dots,v_n
-        }{s}
+        }{\tau}
       }\\
       \HypJ{
         \IsWf{\Omega}{\Upsilon}{\Gamma}{E_i}{v_i}
@@ -1101,12 +1101,12 @@ subterms as well:
 \begin{gather*}
   \infer{
     \IsWf{\Omega}{\Upsilon}{\Gamma}{
-      \App{\OpNabla{\vec{s}}}{
+      \App{\OpNabla{\vec{\sigma}}}{
         \MkBTm{\vec{u}}{}{J}
       }
     }{\SortJdg}
   }{
-    \IsWf{\Omega}{\Upsilon,\vec{u}:\vec{s}}{\Gamma}{J}{\SortJdg}
+    \IsWf{\Omega}{\Upsilon,\vec{u}:\vec{\sigma}}{\Gamma}{J}{\SortJdg}
   }\\[6pt]
   \infer{
     \IsWf{\Omega}{\Upsilon}{\Gamma}{
