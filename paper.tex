@@ -207,10 +207,41 @@
 
 \begin{document}
 
-\title{Abstract Binding Trees}
+\title{Syntax and Semantics of Indexed Abstract Binding Trees}
 \date{}
 \author{Jon Sterling and Darin Morrison}
 \maketitle
+
+Abstract binding trees (abts) are a generalization of abstract syntax trees
+where operators may express variable binding structure as part of their
+arities.  Originally inspired by Martin-L\"of's theory of arities
+\cite{martin-lof:1984}, unisorted abts have been deployed successfully as the
+uniform syntactic framework for several implementations of Constructive Type
+Theory, including Nuprl \cite{constable:1986}, MetaPRL \cite{hickey:2003} and
+JonPRL \cite{jonprl:2015}.
+
+In \emph{Practical Foundations for Programming Languages} \cite{harper:2016},
+Robert Harper develops the multi-sorted version of abstract binding trees and
+proposes an extension to include families of operators indexed by
+\emph{symbols}, which are, unlike variables, subject to only
+distinctness-preserving renaming and not substitution; furthermore, symbols do
+not appear in the syntax of abts, and are only introduced as parameters to
+operators. This generalization to \emph{indexed abts} is essential for a
+correct treatment of programming languages with open sums (e.g. ML's
+\texttt{exn} type), as well as assignable references.
+
+In parallel, M.\ Fiore and his collaborators have developed the categorical
+semantics for several variations of second-order algebraic theories
+\cite{fiore:1999, fiore:2005, fiore-hur:2010, fiore-mamoud:2010}; of these, the
+simply sorted second order algebraic theories treated by Fiore et al.\ are
+equivalent to abstract binding trees augmented with a notion of second-order
+variable (metavariable).
+
+The contribution of this paper is the development of the syntax and semantics
+of \emph{indexed multi-sorted abts}, an extension of second order universal
+algebra to support symbol-indexed families of operators. Additionally, we have
+developed the categorical semantics for indexed abts formally in Constructive
+Type Theory using the Agda proof assistant.
 
 \section{Preliminaries}
 
@@ -413,7 +444,7 @@ $\IsMetaCtx{\Omega}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and $\IsSort{\tau}$
 meaning that $M$ is an abstract binding tree of sort $s$, with metavariables in
 $\Omega$, parameters in $\Upsilon$, and variables in $\Gamma$. Let the judgment
 $\IsBTm{\Omega}{\Upsilon}{\Gamma}{E}{v}$ presuppose $\IsValence{v}$.  Then, the
-syntax of abstract binding trees (abts) is inductively defined in four rules:
+syntax of abstract binding trees is inductively defined in four rules:
 
 \begin{gather*}
   \infer[\textit{var}]{
