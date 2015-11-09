@@ -102,6 +102,7 @@
 \newcommand\Leq[2]{\IMode{#1}\leq\IMode{#2}}
 
 \newcommand\ArrId[1]{1_{#1}}
+\newcommand\Shriek[1]{\,{{{\mathexclam}}}_{#1}}
 \newcommand\Match[2]{\IMode{#1}\equiv\OMode{#2}}
 
 \newcommand\Symbols{\mathbf{I}}
@@ -112,6 +113,7 @@
 \newcommand\Arities{\mathcal{A}}
 \newcommand\Operators{\mathcal{O}}
 
+\newcommand\Iso[2]{#1\mathrel{{{\cong}}}#2}
 \newcommand\Cats{\mathbf{Cat}}
 \newcommand\Discrete[1]{#1_{\equiv}}
 \newcommand\Arr[1]{\mathbf{{#1}^{\rightarrow}}}
@@ -284,37 +286,30 @@ $(U,\mathfrak{s})$.
 
 Then, fix a covariant presheaf (copresheaf) of operators
 $\Of{\Operators}{\SCtx\times\Discrete{\Arities}\to\Sets}$ such that the arrows
-in $\SCtx$ lift to renamings of operators' parameters. Via the Grothendieck
-construction\footnote{In this case, $\mathbf{C}\Grothendieck{}{\Psi}$ represents
-  the category of elements of a copresheaf $\Of{\Psi}{\mathbf{C}\to\Sets}$ but
-  we keep the $\mathbf{C}$ implicit and simply refer to it as the Grothendieck
-  construction. Alternatively, this construction can be understood as a coend
-  $\IMode{\mathbf{C}\Grothendieck{}{\Psi}}\cong \IMode{\int^{c \in
-      \mathbf{C}}\Coslice{c}{\mathbf{C}} \otimes \Discrete{\Psi(c)}}$.}
-$\Of{\Grothendieck{}{(-)}}{\Sets^{\mathbf{C}}\to\Cats}$ on operators, we have a
-category of objects
-$\Member{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Grothendieck{}{\Operators}}$ for
-$\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and morphisms
-$\Hom{\Grothendieck{}{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}}{\Pair{\Pair{\Upsilon'}{a'}}{\vartheta'}}$
-for $\Of{\Pair{\varrho}{f}}{\Pair{\Upsilon}{a}\to\Pair{\Upsilon'}{a'}}$ such
-that
-$\EqMember{\FLift{\varrho}{f}(\vartheta)}{\vartheta'}{\Operators\Pair{\Upsilon'}{a'}}$.
-Equivalently, $\Grothendieck{}{\Operators}$ is the pullback of $\Operators$
-along the codomain Grothendieck bifibration $\pi_{cod}$ where
-$\pi_{\Operators}$ is also a discrete Grothendieck opfibration:
+in $\SCtx$ lift to renamings of operators' parameters. Then by the Grothendieck
+construction $\Iso{\Grothendieck{}{\Operators}}{\Comma{𝟙}{\Operators}}$
+we have a category of elements of $\Operators$ where objects are triples
+$\Pair{\Pair{\Upsilon}{a}}{\vartheta}$, interpreted as
+$\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are diagrams:
 
 \[
-\begin{tikzcd}[ampersand replacement = \&, sep = large]
-  {\OMode{\Grothendieck{}{\Operators}}}
-  \arrow[rr,
-    "{\IMode{\vartheta\in\Operators\Pair{\Upsilon}{a}\ \mapsto\
-      \ArrId{\Operators\Pair{\Upsilon}{a}}}}"] \arrow[d, "\IMode{\pi_{\Operators}}" left]
-  \& \& {\IMode{\Arr{\Sets}}}
-    \arrow[d, "\IMode{\pi_{cod}}"] \\
-  {\IMode{\SCtx\times\Discrete{\Arities}}} \arrow[rr, "\IMode{\Operators}" below] \&
-  \& {\IMode{\Sets}} \\
-\end{tikzcd}
-\]
+  \begin{tikzcd}[ampersand replacement = \&]
+    \& 𝟙
+      \arrow[dl, "\vartheta", swap]
+      \arrow[dr, "\vartheta'"]
+    \&
+    \\
+    {\Operators\Pair{\Upsilon}{a}}
+      \arrow[rr, "\Operators\Pair{\rho}{f}", swap]
+    \&
+    \& {\Operators\Pair{\Upsilon'}{a'}}
+    \\
+    {\Pair{\Upsilon}{a}}
+      \arrow[rr, "\Pair{\rho}{f}", swap]
+    \&
+    \& {\Pair{\Upsilon'}{a'}}
+  \end{tikzcd}
+\]\\
 
 \[
   \infer{
