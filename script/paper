@@ -7,7 +7,8 @@ import os
 if __name__ == "__main__":
     ### check invocation dir
 
-    if os.path.basename(os.getcwd()) != "nominal-binding-algebras":
+    basename = os.path.basename(os.getcwd())
+    if (basename != "nominal-binding-algebras") and (basename != "syntax-and-semantics-of-abts"):
         print "Invoke this script from the project root; exiting…"
         exit(1)
 
