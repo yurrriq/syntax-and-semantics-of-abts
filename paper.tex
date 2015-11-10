@@ -1,38 +1,43 @@
 \documentclass[11pt]{article}
 
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
-\usepackage{agda} % this should come after ams*
+%\usepackage{agda} % this should come after ams*
 \usepackage{catchfilebetweentags}
-\usepackage{fontspec}
+%\usepackage{fontspec}
 \usepackage{geometry}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{ifdraft}
 \usepackage{ifthen}
-\usepackage{lualatex-math}
-%\usepackage{mathtools}
+%\usepackage{lualatex-math}
+\usepackage{mathtools}
 \usepackage{proof}
 \usepackage{scalerel}
 \usepackage{setspace}
 \usepackage{stmaryrd}
 \usepackage{supertabular}
 \usepackage{tikz-cd}
-\usepackage{unicode-math}
+%\usepackage{unicode-math}
 \usepackage{url}
-\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
-\usepackage{xunicode}
+%\usepackage{xunicode}
 
 \definecolor{dark-gray}{gray}{0.20}
 
 % fonts
+%\usepackage{pxfonts}
+%\usepackage{eulervm}
 \usepackage[
   activate={true,nocompatibility},
+  kerning=true,
+  spacing=true,
   tracking=true
 ]{microtype}
-\setmainfont{Linux Libertine O}
-\setmathfont{Asana Math}
+\microtypecontext{spacing=nonfrench}
+% \setmainfont{Linux Libertine O}
+% \setmathfont{Asana Math}
 
 % make lualatex play nice with agda
 \makeatletter
@@ -287,14 +292,14 @@ $(U,\mathfrak{s})$.
 Then, fix a covariant presheaf (copresheaf) of operators
 $\Of{\Operators}{\SCtx\times\Discrete{\Arities}\to\Sets}$ such that the arrows
 in $\SCtx$ lift to renamings of operators' parameters. By the Grothendieck
-construction $\Iso{\Grothendieck{}{\Operators}}{\Comma{𝟙}{\Operators}}$ we have
+construction $\Iso{\Grothendieck{}{\Operators}}{\Comma{*}{\Operators}}$ we have
 a category of elements of $\Operators$ where objects are triples
 $\Pair{\Pair{\Upsilon}{a}}{\vartheta}$, interpreted as
 $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are diagrams:
 
 \[
   \begin{tikzcd}[ampersand replacement = \&]
-    \& 𝟙
+    \& *
       \arrow[dl, "\vartheta", swap]
       \arrow[dr, "\vartheta'"]
     \&

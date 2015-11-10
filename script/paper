@@ -75,7 +75,7 @@ exit 0\
         cmds_latex =\
 """\
 pushd script/.. 1>&-
-latexmk %s-pdflatex='internal custom_latex lualatex %s %%O \"%s\input{%%S}\"' paper
+latexmk %s-pdflatex='internal custom_latex pdflatex %s %%O \"%s\input{%%S}\"' paper
 popd 1>&-
 exit 0\
 """ % (args_latexmk, args_pdflatex, opts_class)
