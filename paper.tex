@@ -79,6 +79,12 @@
 \def\IModeColorName{MidnightBlue}
 \def\OModeColorName{Maroon}
 
+%% Euler doesn't have \varsigma and \varrho
+\DeclareSymbolFont{greekletters}{OML}{cmr}{m}{it}
+\DeclareMathSymbol{\varrho}{\mathalpha}{greekletters}{"25}
+\DeclareMathSymbol{\varsigma}{\mathalpha}{greekletters}{"26}
+
+
 \newcommand\IMode[1]{{\color{\IModeColorName}{#1}}}
 \newcommand\OMode[1]{{\color{\OModeColorName}{#1}}}
 
