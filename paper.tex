@@ -303,7 +303,12 @@ of elements of $\Operators$ where objects are triples
 $\Pair{\Pair{\Upsilon}{a}}{\vartheta}$, interpreted as
 $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are diagrams:
 \[
-  \begin{tikzcd}[ampersand replacement = \&]
+  \begin{tikzcd}[cramped, ampersand replacement = \&]
+    {\Pair{\Upsilon}{a}}
+      \arrow[r, "\Pair{\rho}{f}", swap]
+    \& {\Pair{\Upsilon'}{a'}}
+  \end{tikzcd}
+  \qquad\begin{tikzcd}[cramped, sep = small, ampersand replacement = \&]
     \& *
       \arrow[dl, "\vartheta", swap]
       \arrow[dr, "\vartheta'"]
@@ -313,11 +318,6 @@ $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are diagrams:
       \arrow[rr, "\Operators\Pair{\rho}{f}", swap]
     \&
     \& {\Operators\Pair{\Upsilon'}{a'}}
-    \\
-    {\Pair{\Upsilon}{a}}
-      \arrow[rr, "\Pair{\rho}{f}", swap]
-    \&
-    \& {\Pair{\Upsilon'}{a'}}
   \end{tikzcd}
 \]
 We will write $\IsOperator{\Upsilon}{\vartheta}{a}$ in case
@@ -768,23 +768,27 @@ Then, $V$ is the unit to this tensor. We will say that an object
 $\Of{P}{\widehat{\HypCat}^\Sorts}$ is a $\Sigma$-monoid in case it is equipped
 with the following natural transformations where $\nu$ embeds variables into
 $P$ and $\varsigma$ equips $P$ with an operation for simultaneous substitutions
-of variables.
-
+of variables. Furthermore, $\nu$ and $\varsigma$ induce maps ${\nu}_{\Gamma}$ and
+${{\varsigma}^{\tau}}_{\Upsilon\parallel\Gamma}$:
+\vspace{-0.5em}
 \[
-  \begin{tikzcd}[ampersand replacement = \&]
+  \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{V}} \arrow[r, "\IMode\nu"]
     \& {\IMode{P}}
     \& {\IMode{P\odot P}}
     \arrow[l, "\IMode\varsigma", swap]
   \end{tikzcd}
+  \qquad\begin{tikzcd}[cramped, ampersand replacement = \&]
+    {\IMode{{V}^{[\Gamma]}}}
+      \arrow[r, "\IMode{{\nu}_{\Gamma}}"]
+    \& {\IMode{{P}^{[\Gamma]}}}
+  \end{tikzcd}
+  \qquad\begin{tikzcd}[cramped, sep = large, ampersand replacement = \&]
+    {\IMode{{P_\tau^{\Yoneda{\Upsilon\parallel\Gamma}}\times S^{\{\Upsilon\}}\times P^{[\Gamma]}}}}
+      \arrow[r, "\IMode{\varsigma^\tau_{\Upsilon\parallel\Gamma}}"]
+    \& {\IMode{P_\tau}}
+  \end{tikzcd}
 \]
-
-%%TODO
-We also have the induced maps $\Of{\nu_\Gamma}{V^{[\Gamma]}\to P^{[\Gamma]}}$
-and
-$\Of{\varsigma^\tau_{\Upsilon\parallel\Gamma}}{P_\tau^{\Yoneda{\Upsilon\parallel\Gamma}}
-\times S^{\{\Upsilon\}}\times P^{[\Gamma]}\to P_\tau}$.
-
 
 \begin{remark}
   A presheaf $P$ with a substitution monoidal structure $\Pair{\nu}{\varsigma}$
@@ -797,13 +801,7 @@ $\Of{\varsigma^\tau_{\Upsilon\parallel\Gamma}}{P_\tau^{\Yoneda{\Upsilon\parallel
     computer science and logic, does not involve iteration of the monad
     functor.} on the functor $\Of{V}{\widehat{\HypCat}^\Sorts}$ of variables.
   Consequently, the monoid multiplication $\varsigma$ can be replaced with an
-  extension operation:
-  \[
-    \begin{tikzcd}[ampersand replacement = \&, sep = huge]
-      {\IMode{{P(\,=\,)}^{V(\,-\,)}}} \arrow[r, "{(\,-\,)}^{\circledast}"]
-      \& {\IMode{{P(\,=\,)}^{P(\,-\,)}}}
-    \end{tikzcd}
-  \]
+  extension operation $\Of{{(\,-\,)}^{\circledast}}{{\IMode{{P(\,=\,)}^{V(\,-\,)}}}\to{\IMode{{P(\,=\,)}^{P(\,-\,)}}}}$.
 \end{remark}
 
 \subsection{The signature endofunctor and its initial algebras}
@@ -848,14 +846,14 @@ Then, the interpretation of a term in a model $P$ is a map from its environment
 to $P$:
 \[%
   \Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash%
-      M:\tau}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\to P_\tau}%
+      M:\tau}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\longrightarrow P_\tau}%
 \]
 
 The interpretation of a variable
 $\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x:\tau}_P$ simply
 projects it of the environment and embeds it into the model, as follows:
 \[
-  \begin{tikzcd}[ampersand replacement = \&]
+  \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\pi_3}"]
     \& {\IMode{V^{[\Gamma]}}} \arrow[r, "\IMode{\nu_{\Gamma}}"]
     \& {\IMode{P^{[\Gamma]}}} \arrow[r, "\IMode{\pi_x}"]
@@ -871,25 +869,26 @@ $\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}}$, which
 proceeds by projecting the metavariable's interpretation from the environment
 and intantiating it via substitution:
 \[
-  \begin{tikzcd}[ampersand replacement = \&, sep=7em]
+  \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
           \arrow[r, "\IMode{\Tuple{\pi_\MV{m}\,\pi_1, \phi\,\pi_2, \psi}}"]
-    \& {\IMode{P_{\tau}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}\times S^{\{\vec{\sigma}\}} \times P^{[\vec{\tau}]}}}
+    \&[4.0em] {\IMode{P_{\tau}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}\times S^{\{\vec{\sigma}\}} \times P^{[\vec{\tau}]}}}
           \arrow[r, "\IMode{\varsigma^\tau_{\vec{\sigma}\parallel\vec{\tau}}}"]
-    \& \IMode{P_\tau}
+    \&[1.0em] \IMode{P_\tau}
   \end{tikzcd}
   \tag{metavar}
 \]
 where
+\vspace{-0.5em}
 \begin{gather*}
-  \begin{tikzcd}[ampersand replacement = \&, sep=8em]
+  \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{S^{\{\Upsilon\}}}} \arrow[r, "\Define{\phi\,}{\,\Tuple{\pi_u}_{u\in\vec{u}}}"]
-    \& {\IMode{S^{\{\vec{\sigma}\}}}}
-  \end{tikzcd}\\
-  \begin{tikzcd}[ampersand replacement = \&, sep=14em]
+    \&[3.0em] {\IMode{S^{\{\vec{\sigma}\}}}}
+  \end{tikzcd}
+  \qquad\begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
       \arrow[r, "\Define{\psi\,}{\,\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau}_P}_{(M,\tau)\in (\vec{M},\vec{\tau})}}"]
-    \& {\IMode{P^{[\vec{\tau}]}}}
+    \&[11.0em] {\IMode{P^{[\vec{\tau}]}}}
   \end{tikzcd}
 \end{gather*}
 
@@ -904,10 +903,10 @@ $\Of{\SemBrackets{\vartheta}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parall
 the environment. The natural transformation $\SemBrackets{\vartheta}_P$ is the
 following composite:
 \[
-  \begin{tikzcd}[ampersand replacement = \&, sep=large]
+  \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\pi_2}"]
     \& {\IMode{S^{\{\Upsilon\}}}} \arrow[r, "\IMode{\FLift{\pi_{(-)}}{}}"]
-    \& {\IMode{\Operators_a}}
+    \&[1.5em] {\IMode{\Operators_a}}
   \end{tikzcd}
 \]
 
@@ -916,7 +915,7 @@ follows, by postcomposing it with a morphism $\beta$ from the environment into
 the signature endofunctor, which interprets the syntax of operator
 applications:
 \[
-   \begin{tikzcd}[ampersand replacement = \&, sep=large]
+   \begin{tikzcd}[cramped, ampersand replacement = \&]
      {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\beta}"]
      \& {\IMode{\SigFun{\Sigma}(P)_\tau}} \arrow[r, "\IMode{\alpha_\tau}"]
      \& {\IMode{P_\tau}}
@@ -925,22 +924,20 @@ applications:
 
 The construction of $\beta$ proceeds by renaming the parameters of the operator
 $\vartheta$ and constructing the (bound) arguments $\gamma$ of the operator.
-
 \[
-  \begin{tikzcd}[ampersand replacement = \&, sep=10em]
+  \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
        \arrow[r, "\Define{\beta\,}{\,\Tuple{\SemBrackets{\vartheta}_P, \gamma}}"]
-    \& {\IMode{%
+    \&[3.0em] {\IMode{%
        \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{\tau}}}%
        \prod_{\MkValence{\vec{\sigma}_i}{\vec{\tau}_i}{\tau_i}\in\vec{v}}%
        P_{\tau_i}^{\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}}%
     }}
   \end{tikzcd}
 \]
-
 Each argument
 %
-\begin{tikzcd}[ampersand replacement = \&]
+\begin{tikzcd}[cramped, ampersand replacement = \&]
   {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
     \arrow[r, "\IMode{\gamma_i}"]
   \& {\IMode{%
@@ -950,31 +947,29 @@ Each argument
 %
 is the exponential transpose of the composite,
 \[
-  \begin{tikzcd}[ampersand replacement = \&, sep=7.6em]
+  \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
     }}
       \arrow[r, "\IMode{\Tuple{\pi_1\circ\pi_1,\phi_i,\psi_i}}"]
-    \& {\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_i}_P}}
+    \&[4.0em] {\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_i}_P}}
       \arrow[r, "\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_i\vdash M_i:\tau_i}_P}"]
-    \& {\IMode{P_{\tau_i}}}
+    \&[7.5em] {\IMode{P_{\tau_i}}}
   \end{tikzcd}
 \]
 where $\phi_i,\psi_i$ are defined as follows:
 \begin{gather*}
-  \begin{tikzcd}[ampersand replacement = \&, sep=14em]
+  \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
     }}
       \arrow[r, "\Define{\phi_i\,}{\,\Tuple{\pi_u\circ\pi_1}_{u\in\Dom{\Upsilon}},\, \Tuple{\pi_u\circ\pi_1\circ\pi_2}_{u\in\Dom{\vec{\sigma}_i}}}"]
-    \& {\IMode{S^{\{\Upsilon,\vec{\sigma}_i\}}}}
-  \end{tikzcd}\\
-  \begin{tikzcd}[ampersand replacement = \&, sep=14em]
+    \&[12.0em] {\IMode{S^{\{\Upsilon,\vec{\sigma}_i\}}}}\\[-1.0em]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
     }}
       \arrow[r, "\Define{\psi_i\,}{\,\Tuple{\pi_x\circ\pi_1}_{x\in\Dom{\Gamma}},\, \Tuple{\pi_x\circ\pi_1\circ\pi_2}_{x\in\Dom{\vec{\tau}_i}}}"]
-    \& {\IMode{V^{[\Gamma,\vec{\tau}_i]}}}
+    \&[12.0em] {\IMode{V^{[\Gamma,\vec{\tau}_i]}}}
   \end{tikzcd}
 \end{gather*}
 
