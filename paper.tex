@@ -359,12 +359,12 @@ operators:
 These rules correspond to objects of $\Grothendieck{}{{\Operators}_{\lambda}}$ and we
 collect their fibers into sets of operators:
 \begin{alignat*}{5}
-{\pi_{{\Operators}_{\lambda}}}^{-1}&\Pair{\Upsilon}{{\MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}}}\quad&&=
-  &&\quad\MkSet{\mathtt{lam}}\\
-{\pi_{{\Operators}_{\lambda}}}^{-1}&\Pair{\Upsilon}{\MkArity{\MkValence{}{}{\SortExp},\MkValence{}{}{\SortExp}}{\SortExp}}\quad&&=
-  &&\quad\MkSet{\mathtt{ap}}\\
-{\pi_{{\Sigma}_{\lambda}}}^{-1}&=\bigcup_{\Pair{\Upsilon}{a}}{{\pi_{{\Operators}_{\lambda}}}^{-1}{\Pair{\Upsilon}{a}}}\quad&&=
-  &&\quad\MkSet{\mathtt{lam},\ \mathtt{ap}}\\
+\IMode{{\pi_{{\Operators}_{\lambda}}}^{-1}}&\IMode{\Pair{\Upsilon}{{\MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}}}}\quad&&=
+  &&\quad\OMode{\MkSet{\mathtt{lam}}}\\
+\IMode{{\pi_{{\Operators}_{\lambda}}}^{-1}}&\IMode{\Pair{\Upsilon}{\MkArity{\MkValence{}{}{\SortExp},\MkValence{}{}{\SortExp}}{\SortExp}}}\quad&&=
+  &&\quad\OMode{\MkSet{\mathtt{ap}}}\\
+\IMode{{\pi_{{\Sigma}_{\lambda}}}^{-1}}&=\IMode{\bigcup_{\Pair{\Upsilon}{a}}{{\pi_{{\Operators}_{\lambda}}}^{-1}{\Pair{\Upsilon}{a}}}}\quad&&=
+  &&\quad\OMode{\MkSet{\mathtt{lam},\ \mathtt{ap}}}\\
 \end{alignat*}
 So far, we have made no use of symbols and parameters; however, consider the
 extension of the calculus with assignables (references):
