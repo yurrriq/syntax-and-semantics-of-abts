@@ -298,10 +298,11 @@ in $\SCtx$ lift to renamings of operators' parameters. Together, $\Sorts$ and
 $\Operators$ form a \emph{signature} $\Define{\Sigma}{\Pair{\Sorts}{\Operators}}$.
 
 By the Grothendieck construction
-$\Iso{\Grothendieck{}{\Operators}}{\Comma{*}{\Operators}}$ we have a category
-of elements of $\Operators$ where objects are triples
+$\Iso{\Grothendieck{}{\Operators}}{\Comma{*}{\Operators}}$ we have a category of
+elements of $\Operators$ where objects are triples
 $\Pair{\Pair{\Upsilon}{a}}{\vartheta}$, interpreted as
-$\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are diagrams:
+$\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are paired
+diagrams:
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\Pair{\Upsilon}{a}}
@@ -363,7 +364,7 @@ collect their fibers into sets of operators:
   &&\quad\OMode{\MkSet{\mathtt{lam}}}\\
 \IMode{{\pi_{{\Operators}_{\lambda}}}^{-1}}&\IMode{\Pair{\Upsilon}{\MkArity{\MkValence{}{}{\SortExp},\MkValence{}{}{\SortExp}}{\SortExp}}}\quad&&=
   &&\quad\OMode{\MkSet{\mathtt{ap}}}\\
-\IMode{{\pi_{{\Sigma}_{\lambda}}}^{-1}}&=\IMode{\bigcup_{\Pair{\Upsilon}{a}}{{\pi_{{\Operators}_{\lambda}}}^{-1}{\Pair{\Upsilon}{a}}}}\quad&&=
+\IMode{{\pi_{{\Sigma}_{\lambda}}}^{-1}}&\triangleq\IMode{\bigcup_{\Pair{\Upsilon}{a}}{{\pi_{{\Operators}_{\lambda}}}^{-1}{\Pair{\Upsilon}{a}}}}\quad&&=
   &&\quad\OMode{\MkSet{\mathtt{lam},\ \mathtt{ap}}}\\
 \end{alignat*}
 So far, we have made no use of symbols and parameters; however, consider the
