@@ -933,38 +933,42 @@ applications:
 \]
 
 The construction of $\beta$ proceeds by renaming the parameters of the operator
-$\vartheta$ and constructing the (bound) arguments $\gamma$ of the operator.
+$\vartheta$ and constructing the (bound) exponentiated arguments $\gamma$ of the
+operator.
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
-       \arrow[r, "\Define{\beta\,}{\,\Tuple{\SemBrackets{\vartheta}_P, \gamma}}"]
-    \&[3.0em] {\IMode{%
+       \arrow[r, "\Define{\beta\,}{\,\Tuple{\SemBrackets{\vartheta}_P, \lambda\gamma}}"]
+    \&[4.0em] {\IMode{%
        \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{\tau}}}%
        \prod_{\MkValence{\vec{\sigma}_i}{\vec{\tau}_i}{\tau_i}\in\vec{v}}%
        P_{\tau_i}^{\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}}%
     }}
   \end{tikzcd}
 \]
-Each argument
-%
-\begin{tikzcd}[cramped, ampersand replacement = \&]
-  {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
-    \arrow[r, "\IMode{\gamma_i}"]
-  \& {\IMode{%
-    P_{\tau_i}^{\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}}
-  }}
-\end{tikzcd}
-%
-is the exponential transpose of the composite,
+Argument $\lambda\IMode{{\gamma}_{i}}$ are the exponential transposes (curried
+form) of the composites $\IMode{{\gamma}_{i}}$:
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
-       \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
-    }}
-      \arrow[r, "\IMode{\Tuple{\pi_1\circ\pi_1,\phi_i,\psi_i}}"]
-    \&[4.0em] {\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_i}_P}}
-      \arrow[r, "\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_i\vdash M_i:\tau_i}_P}"]
-    \&[7.5em] {\IMode{P_{\tau_i}}}
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_{P}}}
+      \arrow[d, dashed, swap, "\IMode{\lambda{\gamma}_{i}}"]
+    \&
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_{P}
+       \times\Yoneda{\vec{\sigma}_{i}\parallel\vec{\tau}_{i}}}
+    }
+      \arrow[r, "\IMode{\Tuple{{\pi}_{[1,1]},{\phi}_{i},{\psi}_{i}}}"]
+      \arrow[d, dashed, swap, "\IMode{{\gamma}_{i}}"]
+    \&[3.5em]
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_{i}}_{P}}}
+      \ar{dl}[
+        , rotate = +19.25
+        , xshift = -4.5em
+        , yshift = -0.2em
+      ]{\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_{i}\parallel\Gamma,\vec{\tau}_{i}\vdash M_i:\tau_i}_P}}
+    \\[2.0em]
+    {\IMode{{P}_{{\tau}_{i}}^{\Yoneda{\vec{\sigma}_{i}\parallel\vec{\tau}_{i}}}}}
+    \& {\IMode{P_{{\tau}_{i}}}}
+    \&
   \end{tikzcd}
 \]
 where $\phi_i,\psi_i$ are defined as follows:
@@ -973,12 +977,12 @@ where $\phi_i,\psi_i$ are defined as follows:
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
     }}
-      \arrow[r, "\Define{\phi_i\,}{\,\Tuple{\pi_u\circ\pi_1}_{u\in\Dom{\Upsilon}},\, \Tuple{\pi_u\circ\pi_1\circ\pi_2}_{u\in\Dom{\vec{\sigma}_i}}}"]
+      \arrow[r, "\Define{\phi_i\,}{\,\Pair{\Tuple{\pi_u\circ\pi_1}_{u\in\Dom{\Upsilon}}}{\,\Tuple{\pi_u\circ\pi_{[2,1]}}_{u\in\Dom{\vec{\sigma}_i}}}}"]
     \&[12.0em] {\IMode{S^{\{\Upsilon,\vec{\sigma}_i\}}}}\\[-1.0em]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
     }}
-      \arrow[r, "\Define{\psi_i\,}{\,\Tuple{\pi_x\circ\pi_1}_{x\in\Dom{\Gamma}},\, \Tuple{\pi_x\circ\pi_1\circ\pi_2}_{x\in\Dom{\vec{\tau}_i}}}"]
+      \arrow[r, "\Define{\psi_i\,}{\,\Pair{\Tuple{\pi_x\circ\pi_1}_{x\in\Dom{\Gamma}}}{\,\Tuple{\pi_x\circ\pi_{[2,1]}}_{x\in\Dom{\vec{\tau}_i}}}}"]
     \&[12.0em] {\IMode{V^{[\Gamma,\vec{\tau}_i]}}}
   \end{tikzcd}
 \end{gather*}
