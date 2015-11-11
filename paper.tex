@@ -86,7 +86,7 @@
 
 \newcommand\IsTac[1]{\IMode{#1}\ \textit{tactic}}
 
-\newcommand\MkSet[1]{\left\{#1\right\}}
+\newcommand\MkSet[1]{\left\{\,#1\,\right\}}
 \newcommand\Member[2]{\IMode{#1}\in\IMode{#2}}
 \newcommand\EqMember[3]{\IMode{#1}=\IMode{#2}\in\IMode{#3}}
 \newcommand\Of[2]{\IMode{#1}: \IMode{#2}}
@@ -130,7 +130,9 @@
 
 \newcommand\OpCat[1]{#1^{\mathtt{op}}}
 
-\newcommand\IsOperator[3]{\IMode{#1}\,{\Vdash}_{\scriptscriptstyle{\Operators}}\,\IMode{#2}: \OMode{#3}}
+\newcommand\IsOperator[3]{
+  \IMode{#1}\,{\Vdash}_{\Sigma}\,\IMode{#2}: \OMode{#3}
+}
 
 \newcommand\IsMetaCtx[1]{\IMode{#1}\ \textit{mctx}}
 \newcommand\IsVarCtx[1]{\IMode{#1}\ \textit{vctx}}
@@ -291,9 +293,12 @@ $(U,\mathfrak{s})$.
 
 Then, fix a covariant presheaf (copresheaf) of operators
 $\Of{\Operators}{\SCtx\times\Discrete{\Arities}\to\Sets}$ such that the arrows
-in $\SCtx$ lift to renamings of operators' parameters. By the Grothendieck
-construction $\Iso{\Grothendieck{}{\Operators}}{\Comma{*}{\Operators}}$ we have
-a category of elements of $\Operators$ where objects are triples
+in $\SCtx$ lift to renamings of operators' parameters. Together, $\Sorts$ and
+$\Operators$ form a \emph{signature} $\Define{\Sigma}{\Pair{\Sorts}{\Operators}}$.
+
+By the Grothendieck construction
+$\Iso{\Grothendieck{}{\Operators}}{\Comma{*}{\Operators}}$ we have a category
+of elements of $\Operators$ where objects are triples
 $\Pair{\Pair{\Upsilon}{a}}{\vartheta}$, interpreted as
 $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are diagrams:
 \[
@@ -348,11 +353,11 @@ These rules correspond to objects of $\Grothendieck{}{\Operators}$ and we
 collect their fibers into sets of operators:
 \begin{alignat*}{5}
 {\pi_{\Operators}}^{-1}&\Pair{\Upsilon}{{\MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}}}\quad&&=
-  &&\quad\{\,\lambda\,\}\\
+  &&\quad\MkSet{\lambda}\\
 {\pi_{\Operators}}^{-1}&\Pair{\Upsilon}{\MkArity{\MkValence{}{}{\SortExp},\MkValence{}{}{\SortExp}}{\SortExp}}\quad&&=
-  &&\quad\{\,\mathtt{ap}\,\}\\
+  &&\quad\MkSet{\mathtt{ap}}\\
 \bigcup_{\Pair{\Upsilon}{a}}&{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}\quad&&=
-  &&\quad\{\,\lambda,\ \mathtt{ap}\,\}\\
+  &&\quad\MkSet{\lambda,\ \mathtt{ap}}\\
 \end{alignat*}
 So far, we have made no use of symbols and parameters; however, consider the
 extension of the calculus with assignables (references):
@@ -389,10 +394,6 @@ $\Discrete{\Arities}$ is discrete and has only identity arrows, through an abuse
 of notation we will often write $\FLift{\varrho}{}$ to mean
 $\FLift{\varrho}{\ArrId{}}$. In particular, the renaming
 $\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathtt{get}[u]$ to $\mathtt{get}[v]$.
-
-\begin{definition}
-  A \emph{signature} $\Sigma$ is a set of sorts $\Sorts$ together with a copresheaf $\Operators$ of operators.
-\end{definition}
 
 \section{Contexts}
 
@@ -846,7 +847,8 @@ to $P$:
 \[%
   \Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash%
       M:\tau}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\to P_\tau}%
-\]%
+\]
+
 The interpretation of a variable
 $\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x:\tau}_P$ simply
 projects it of the environment and embeds it into the model, as follows:
@@ -860,7 +862,7 @@ projects it of the environment and embeds it into the model, as follows:
   \tag{var}
 \]
 
-Next we have the interpretation of metavariable applications
+Next interpret metavariable applications
 $\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash\MApp{\MV{m}}{\vec{u}}{\vec{M}}
 : \tau}_P$ where
 $\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}}$, which
@@ -946,7 +948,7 @@ Each argument
 %
 is the exponential transpose of the composite,
 \[
-  \begin{tikzcd}[ampersand replacement = \&, sep=8em]
+  \begin{tikzcd}[ampersand replacement = \&, sep=7.6em]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
     }}
