@@ -328,11 +328,16 @@ specifying the fibers of
 $\Of{\pi_{\Operators}}{\Grothendieck{}{\Operators}\to\SCtx\times\Discrete{\Arities}}$
 in which they reside:
 \begin{alignat*}{3}
-  &{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}&&\,\mathrel{\ {{:}}}\,&&\SCtx\times\Discrete{\Arities}\to\Sets\\
-  &{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}&&\,=\,\ && %
-    \{\ \ \Member{\vartheta}{\Pair{\Upsilon}{a}}\ \ |\ \
-    {\pi_{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}} =
-    \Pair{\Upsilon}{a}\,\}
+  &\IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}&&\,\mathrel{\ {{:}}}\,&&\IMode{\SCtx\times\Discrete{\Arities}\to\Sets}\\
+  &\IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}&&\,=\,\ && %
+    \OMode{%
+      \MkSet{
+        \vartheta\in\Pair{\Upsilon}{a}
+        \mid
+        {\pi_{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}} =
+        \Pair{\Upsilon}{a}
+      }
+    }
 \end{alignat*}
 
 \paragraph{Examples}
