@@ -130,7 +130,7 @@
 
 \newcommand\OpCat[1]{#1^{\mathtt{op}}}
 
-\newcommand\IsOperator[3]{\IMode{#1}\Vdash\IMode{#2}: \OMode{#3}}
+\newcommand\IsOperator[3]{\IMode{#1}\,{\Vdash}_{\scriptscriptstyle{\Operators}}\,\IMode{#2}: \OMode{#3}}
 
 \newcommand\IsMetaCtx[1]{\IMode{#1}\ \textit{mctx}}
 \newcommand\IsVarCtx[1]{\IMode{#1}\ \textit{vctx}}
@@ -139,7 +139,7 @@
 \newcommand\Lookup[3]{\IMode{#1}\ni\IMode{#2}:\OMode{#3}}
 
 \newcommand\Grothendieck[2]{\oint^{#1} #2#1}
-\newcommand\Pair[2]{\left\langle#1, #2 \right\rangle}
+\newcommand\Pair[2]{\left\langle\,#1,#2\,\right\rangle}
 \newcommand\Tuple[1]{\left\langle#1 \right\rangle}
 \newcommand\FLift[2]{
   \Operators\langle#1%
@@ -155,7 +155,7 @@
 \newcommand\IsAbt[5]{%
   \IMode{#1}\triangleright%
   \IMode{#2}\parallel%
-  \IMode{#3}\vdash%
+  \,{\IMode{#3}\vdash}_{\scriptscriptstyle{\Operators}}\,%
   \IMode{#4}:\OMode{#5}%
 }
 \newcommand\IsWf[5]{%
@@ -168,7 +168,7 @@
 \newcommand\IsBTm[5]{%
   \IMode{#1}\triangleright%
   \IMode{#2}\parallel%
-  \IMode{#3}\vdash%
+  \,{\IMode{#3}\vdash}_{\scriptscriptstyle{\Operators}}\,%
   \IMode{#4}:\IMode{#5}%
 }
 
@@ -296,7 +296,6 @@ construction $\Iso{\Grothendieck{}{\Operators}}{\Comma{*}{\Operators}}$ we have
 a category of elements of $\Operators$ where objects are triples
 $\Pair{\Pair{\Upsilon}{a}}{\vartheta}$, interpreted as
 $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are diagrams:
-
 \[
   \begin{tikzcd}[ampersand replacement = \&]
     \& *
@@ -314,20 +313,26 @@ $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are diagrams:
     \&
     \& {\Pair{\Upsilon'}{a'}}
   \end{tikzcd}
-\]\\
-
+\]
 We will write $\IsOperator{\Upsilon}{\vartheta}{a}$ in case
-$\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$. The judgment
-$\IsOperator{\Upsilon}{\vartheta}{a}$ enjoys the structural properties of
-weakening and exchange via the functoriality of $\Operators$.
+$\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and note that this judgment
+enjoys the structural properties of weakening and exchange via functoriality of
+$\Operators$. Operators $\vartheta_{0}, \ldots, \vartheta_{n}$ are defined by
+specifying the fibers of
+$\Of{\pi_{\Operators}}{\Grothendieck{}{\Operators}\to\SCtx\times\Discrete{\Arities}}$
+in which they reside:
+\begin{alignat*}{3}
+  &{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}&&\,\mathrel{\ {{:}}}\,&&\Sets\\
+  &{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}&&\,=\,\ && %
+    \{\,\vartheta \in \Pair{\Upsilon}{a}%
+      {{|}}\ {\pi_{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}} = \Pair{\Upsilon}{a}%
+  \}
+\end{alignat*}
 
 \paragraph{Examples}
 
-Operators are defined by specifying the fibers of
-$\Of{\pi_{\Operators}}{\Grothendieck{}{\Operators}\to\SCtx\times\Discrete{\Arities}}$ in
-which they reside. For instance, consider the lambda calculus with a single
-sort, $\SortExp$; we give its signature by asserting the following about its
-operators:
+For instance, consider the lambda calculus with a single sort, $\SortExp$; we
+give its signature by asserting the following about its operators:
 \begin{gather*}
   \IsOperator{\Upsilon}{\lambda}{
     \MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}
@@ -339,7 +344,16 @@ operators:
     }{\SortExp}
   }
 \end{gather*}
-
+These rules correspond to objects of $\Grothendieck{}{\Operators}$ and we
+collect their fibers into sets of operators:
+\begin{alignat*}{5}
+{\pi_{\Operators}}^{-1}&\Pair{\Upsilon}{{\MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}}}\quad&&=
+  &&\quad\{\,\lambda\,\}\\
+{\pi_{\Operators}}^{-1}&\Pair{\Upsilon}{\MkArity{\MkValence{}{}{\SortExp},\MkValence{}{}{\SortExp}}{\SortExp}}\quad&&=
+  &&\quad\{\,\mathtt{ap}\,\}\\
+\bigcup_{\Pair{\Upsilon}{a}}&{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}\quad&&=
+  &&\quad\{\,\lambda,\ \mathtt{ap}\,\}\\
+\end{alignat*}
 So far, we have made no use of symbols and parameters; however, consider the
 extension of the calculus with assignables (references):
 
