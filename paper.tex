@@ -132,7 +132,7 @@
 \newcommand\OpCat[1]{#1^{\mathtt{op}}}
 
 \newcommand\IsOperator[3]{
-  \IMode{#1}\,{\Vdash}_{\Sigma}\,\IMode{#2}: \OMode{#3}
+  \IMode{#1}\,{\Vdash}\,\IMode{#2}: \OMode{#3}
 }
 
 \newcommand\IsMetaCtx[1]{\IMode{#1}\ \textit{mctx}}
@@ -158,7 +158,7 @@
 \newcommand\IsAbt[5]{%
   \IMode{#1}\triangleright%
   \IMode{#2}\parallel%
-  \,{\IMode{#3}\vdash}_{\Sigma}\,%
+  \,{\IMode{#3}\vdash}\,%
   \IMode{#4}:\OMode{#5}%
 }
 \newcommand\IsWf[5]{%
@@ -171,7 +171,7 @@
 \newcommand\IsBTm[5]{%
   \IMode{#1}\triangleright%
   \IMode{#2}\parallel%
-  \,{\IMode{#3}\vdash}_{\Sigma}\,%
+  \,{\IMode{#3}\vdash}\,%
   \IMode{#4}:\IMode{#5}%
 }
 
@@ -328,7 +328,7 @@ specifying the fibers of
 $\Of{\pi_{\Operators}}{\Grothendieck{}{\Operators}\to\SCtx\times\Discrete{\Arities}}$
 in which they reside:
 \begin{alignat*}{3}
-  &{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}&&\,\mathrel{\ {{:}}}\,&&\Sets\\
+  &{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}&&\,\mathrel{\ {{:}}}\,&&\SCtx\times\Discrete{\Arities}\to\Sets\\
   &{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}&&\,=\,\ && %
     \{\ \ \Member{\vartheta}{\Pair{\Upsilon}{a}}\ \ |\ \
     {\pi_{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}} =
@@ -337,8 +337,9 @@ in which they reside:
 
 \paragraph{Examples}
 
-For instance, consider the lambda calculus with a single sort, $\SortExp$; we
-give its signature by asserting the following about its operators:
+For instance, consider the $\lambda$-calculus with a single sort, $\SortExp$; we
+give its signature $\Sigma_{\lambda}$ by asserting the following about its
+operators:
 \begin{gather*}
   \IsOperator{\Upsilon}{\mathtt{lam}}{
     \MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}
@@ -350,14 +351,14 @@ give its signature by asserting the following about its operators:
     }{\SortExp}
   }
 \end{gather*}
-These rules correspond to objects of $\Grothendieck{}{\Operators}$ and we
+These rules correspond to objects of $\Grothendieck{}{{\Operators}_{\lambda}}$ and we
 collect their fibers into sets of operators:
 \begin{alignat*}{5}
-{\pi_{\Operators}}^{-1}&\Pair{\Upsilon}{{\MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}}}\quad&&=
+{\pi_{{\Operators}_{\lambda}}}^{-1}&\Pair{\Upsilon}{{\MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}}}\quad&&=
   &&\quad\MkSet{\mathtt{lam}}\\
-{\pi_{\Operators}}^{-1}&\Pair{\Upsilon}{\MkArity{\MkValence{}{}{\SortExp},\MkValence{}{}{\SortExp}}{\SortExp}}\quad&&=
+{\pi_{{\Operators}_{\lambda}}}^{-1}&\Pair{\Upsilon}{\MkArity{\MkValence{}{}{\SortExp},\MkValence{}{}{\SortExp}}{\SortExp}}\quad&&=
   &&\quad\MkSet{\mathtt{ap}}\\
-\bigcup_{\Pair{\Upsilon}{a}}&{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}\quad&&=
+{\pi_{{\Sigma}_{\lambda}}}^{-1}&=\bigcup_{\Pair{\Upsilon}{a}}{{\pi_{{\Operators}_{\lambda}}}^{-1}{\Pair{\Upsilon}{a}}}\quad&&=
   &&\quad\MkSet{\mathtt{lam},\ \mathtt{ap}}\\
 \end{alignat*}
 So far, we have made no use of symbols and parameters; however, consider the
