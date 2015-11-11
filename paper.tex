@@ -893,20 +893,24 @@ where
 \end{gather*}
 
 The interpretation of operator applications is most complicated. Recall that,
-unlike in standard treatments of universal algebra, our operators are indexed
-by symbol collections; therefore, operators must pass through suitable
-renamings in order to be used in the interpretation. Let us begin by
-constructing for each operator $\IsOperator{\Upsilon}{\vartheta}{a}$ the
-morphism
-$\Of{\SemBrackets{\vartheta}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
-\to\Operators_{a}}$, which shall rename the parameters of the operator using
-the environment. The natural transformation $\SemBrackets{\vartheta}_P$ is the
-following composite:
+unlike in standard treatments of universal algebra, our operators are indexed by
+symbol collections; therefore, operators must pass through suitable renamings in
+order to be used in the interpretation. Let us begin by constructing for each
+operator $\IsOperator{\Upsilon}{\vartheta}{a}$ the morphism
+$\SemBrackets{\vartheta}_P$ which shall rename the parameters of the operator
+using the environment:
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\pi_2}"]
-    \& {\IMode{S^{\{\Upsilon\}}}} \arrow[r, "\IMode{\FLift{\pi_{(-)}}{}}"]
-    \&[1.5em] {\IMode{\Operators_a}}
+    |[alias = Src]|
+    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
+      \arrow[r, swap, "\IMode{\pi_2}"]
+    \&
+    {\IMode{S^{\{\Upsilon\}}}}
+      \arrow[r, swap, "\IMode{\FLift{\pi_{(-)}}{}}"]
+    \&[1.5em]
+    |[alias = Tgt]|
+    {\IMode{\Operators_a}}
+    \arrow[from = Src, to = Tgt, bend left, dashed, "\IMode{\SemBrackets{\vartheta}_{P}}"]
   \end{tikzcd}
 \]
 
