@@ -29,6 +29,7 @@
 % fonts
 \usepackage{pxfonts}
 \usepackage{eulervm}
+\usepackage{bbold}
 \usepackage[
   activate={true,nocompatibility},
   kerning=true,
@@ -99,7 +100,7 @@
     [#2]%
   }.\, #3%
 }
-\newcommand\MkBTm[3]{\{#1\}[#2].\, #3}
+\newcommand\MkBTm[3]{\mathbb{\lambda}\{#1\}[#2].\, #3}
 \newcommand\MkArity[2]{(#1)\, #2}
 \newcommand\IsArity[1]{\IMode{#1}\ \textit{arity}}
 \newcommand\IsValence[1]{\IMode{#1}\ \textit{valence}}
@@ -339,7 +340,7 @@ in which they reside:
 For instance, consider the lambda calculus with a single sort, $\SortExp$; we
 give its signature by asserting the following about its operators:
 \begin{gather*}
-  \IsOperator{\Upsilon}{\lambda}{
+  \IsOperator{\Upsilon}{\mathtt{lam}}{
     \MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}
   }\\
   \IsOperator{\Upsilon}{\mathtt{ap}}{
@@ -353,11 +354,11 @@ These rules correspond to objects of $\Grothendieck{}{\Operators}$ and we
 collect their fibers into sets of operators:
 \begin{alignat*}{5}
 {\pi_{\Operators}}^{-1}&\Pair{\Upsilon}{{\MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}}}\quad&&=
-  &&\quad\MkSet{\lambda}\\
+  &&\quad\MkSet{\mathtt{lam}}\\
 {\pi_{\Operators}}^{-1}&\Pair{\Upsilon}{\MkArity{\MkValence{}{}{\SortExp},\MkValence{}{}{\SortExp}}{\SortExp}}\quad&&=
   &&\quad\MkSet{\mathtt{ap}}\\
 \bigcup_{\Pair{\Upsilon}{a}}&{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}\quad&&=
-  &&\quad\MkSet{\lambda,\ \mathtt{ap}}\\
+  &&\quad\MkSet{\mathtt{lam},\ \mathtt{ap}}\\
 \end{alignat*}
 So far, we have made no use of symbols and parameters; however, consider the
 extension of the calculus with assignables (references):
