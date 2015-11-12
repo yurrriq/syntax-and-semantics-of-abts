@@ -304,7 +304,7 @@ in $\SCtx$ lift to renamings of operators' parameters. Together, $\Sorts$ and
 $\Operators$ form a \emph{signature} $\Define{\Sigma}{\Pair{\Sorts}{\Operators}}$.
 
 By the Grothendieck construction
-$\Iso{\Grothendieck{}{\Operators}}{\Comma{*}{\Operators}}$ we have a category of
+$\Iso{\Grothendieck{}{\Operators}}{\Comma{\mathbb{1}}{\Operators}}$ we have a category of
 elements of $\Operators$ where objects are triples
 $\Pair{\Pair{\Upsilon}{a}}{\vartheta}$, interpreted as
 $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are paired
@@ -316,7 +316,7 @@ diagrams:
     \& {\Pair{\Upsilon'}{a'}}
   \end{tikzcd}
   \qquad\begin{tikzcd}[cramped, sep = small, ampersand replacement = \&]
-    \& *
+    \& \mathbb{1}
       \arrow[dl, "\vartheta", swap]
       \arrow[dr, "\vartheta'"]
     \&
