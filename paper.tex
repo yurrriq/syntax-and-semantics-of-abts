@@ -861,50 +861,51 @@ to $P$:
       M:\tau}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\longrightarrow P_\tau}%
 \]
 
-The interpretation of a variable
-$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x:\tau}_P$ simply
-projects it of the environment and embeds it into the model, as follows:
-\[
-  \begin{tikzcd}[cramped, ampersand replacement = \&]
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\pi_3}"]
-    \& {\IMode{V^{[\Gamma]}}} \arrow[r, "\IMode{\nu_{\Gamma}}"]
-    \& {\IMode{P^{[\Gamma]}}} \arrow[r, "\IMode{\pi_x}"]
-    \& \IMode{P_\tau}
-  \end{tikzcd}
-  \tag{var}
-\]
-
-Next interpret metavariable applications
+Variables are interpreted by the map
+$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x:\tau}_P$ which
+projects them from the environment and embeds them into the model. Metavariables
+are resolved by the map
 $\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash\MApp{\MV{m}}{\vec{u}}{\vec{M}}
-: \tau}_P$ where
-$\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}}$, which
-proceeds by projecting the metavariable's interpretation from the environment
-and intantiating it via substitution:
+  : \tau}_P$ (where
+$\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}}$) which
+projects their interpretation from the environment and intantiates it via
+substitution:
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
-          \arrow[r, "\IMode{\Tuple{\pi_\MV{m}\,\pi_1, \phi\,\pi_2, \psi}}"]
-    \&[4.0em] {\IMode{P_{\tau}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}\times S^{\{\vec{\sigma}\}} \times P^{[\vec{\tau}]}}}
-          \arrow[r, "\IMode{\varsigma^\tau_{\vec{\sigma}\parallel\vec{\tau}}}"]
-    \&[1.0em] \IMode{P_\tau}
+    {\IMode{P_\tau}}
+    \&[8.0em] {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
+      \arrow[rr, dashed, "\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x:\tau}_P"]
+      \ar{drr}[
+        , rotate = -16.5
+        , xshift = +1.5em
+        , yshift = -0.2em
+        , swap
+      ]{{\nu}_{\Gamma} {\pi}_{3}}
+      \ar{dl}[
+        , rotate = +11.5
+        , xshift = -2.75em
+      ]{\IMode{\Tuple{\pi_\MV{m}\,\pi_1, \phi\,\pi_2, \psi}}}
+      \arrow[l, dashed, swap, "\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash\MApp{\MV{m}}{\vec{u}}{\vec{M}}: \tau}_P"]
+    \&[-2.0em]
+    \&[+3.0em]{\IMode{P_\tau}}
+    \\
+    {\IMode{P_{\tau}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}\times S^{\{\vec{\sigma}\}} \times P^{[\vec{\tau}]}}}
+      \arrow[u, "\IMode{\varsigma^\tau_{\vec{\sigma}\parallel\vec{\tau}}}"]
+    \&{}
+    \&{}
+    \& {\IMode{P^{[\Gamma]}}}
+      \arrow[u, swap, "{\pi}_{x}"]
+    \\
+    {\IMode{P^{[\vec{\tau}]}}}
+    \& {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
+      \arrow[l, swap, "\Define{\psi\,}{\,\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau}_P}_{(M,\tau)\in (\vec{M},\vec{\tau})}}"]
+    \& {\IMode{S^{\{\Upsilon\}}}}
+      \arrow[r, "\Define{\phi\,}{\,\Tuple{\pi_u}_{u\in\vec{u}}}"]
+    \& {\IMode{S^{\{\vec{\sigma}\}}}}
   \end{tikzcd}
-  \tag{metavar}
 \]
-where
-\vspace{-0.5em}
-\begin{gather*}
-  \begin{tikzcd}[cramped, ampersand replacement = \&]
-    {\IMode{S^{\{\Upsilon\}}}} \arrow[r, "\Define{\phi\,}{\,\Tuple{\pi_u}_{u\in\vec{u}}}"]
-    \&[3.0em] {\IMode{S^{\{\vec{\sigma}\}}}}
-  \end{tikzcd}
-  \qquad\begin{tikzcd}[cramped, ampersand replacement = \&]
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
-      \arrow[r, "\Define{\psi\,}{\,\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau}_P}_{(M,\tau)\in (\vec{M},\vec{\tau})}}"]
-    \&[11.0em] {\IMode{P^{[\vec{\tau}]}}}
-  \end{tikzcd}
-\end{gather*}
 
-The interpretation of operator applications is most complicated. Recall that,
+Interpretation of operator applications is the most complicated. Recall that,
 unlike in standard treatments of universal algebra, our operators are indexed by
 symbol collections; therefore, operators must pass through suitable renamings in
 order to be used in the interpretation. Let us begin by constructing for each
@@ -952,7 +953,7 @@ operator.
     }}
   \end{tikzcd}
 \]
-Argument $\lambda\IMode{{\gamma}_{i}}$ are the exponential transposes (curried
+Arguments $\lambda\IMode{{\gamma}_{i}}$ are the exponential transposes (curried
 form) of the composites $\IMode{{\gamma}_{i}}$:
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
