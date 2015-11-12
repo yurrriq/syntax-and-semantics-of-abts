@@ -873,7 +873,7 @@ substitution:
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{P_\tau}}
     \&[8.0em] {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
-      \arrow[rr, dashed, "\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x:\tau}_P"]
+      \arrow[rr, dashed, "\OMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x:\tau}_P}"]
       \ar{drr}[
         , rotate = -16.5
         , xshift = +1.5em
@@ -884,7 +884,7 @@ substitution:
         , rotate = +11.5
         , xshift = -2.75em
       ]{\IMode{\Tuple{\pi_\MV{m}\,\pi_1, \phi\,\pi_2, \psi}}}
-      \arrow[l, dashed, swap, "\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash\MApp{\MV{m}}{\vec{u}}{\vec{M}}: \tau}_P"]
+      \arrow[l, dashed, swap, "\OMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash\MApp{\MV{m}}{\vec{u}}{\vec{M}}: \tau}_P}"]
     \&[-2.0em]
     \&[+3.0em]{\IMode{P_\tau}}
     \\
@@ -897,9 +897,9 @@ substitution:
     \\
     {\IMode{P^{[\vec{\tau}]}}}
     \& {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
-      \arrow[l, swap, "\Define{\psi\,}{\,\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau}_P}_{(M,\tau)\in (\vec{M},\vec{\tau})}}"]
+      \arrow[l, dashed, swap, "\Define{\psi\,}{\,\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau}_P}_{(M,\tau)\in (\vec{M},\vec{\tau})}}"]
     \& {\IMode{S^{\{\Upsilon\}}}}
-      \arrow[r, "\Define{\phi\,}{\,\Tuple{\pi_u}_{u\in\vec{u}}}"]
+      \arrow[r, dashed, "\Define{\phi\,}{\,\Tuple{\pi_u}_{u\in\vec{u}}}"]
     \& {\IMode{S^{\{\vec{\sigma}\}}}}
   \end{tikzcd}
 \]
@@ -922,7 +922,7 @@ using the environment:
     \&[1.5em]
     |[alias = Tgt]|
     {\IMode{\Operators_a}}
-    \arrow[from = Src, to = Tgt, bend left, dashed, "\IMode{\SemBrackets{\vartheta}_{P}}"]
+    \arrow[from = Src, to = Tgt, bend left, dashed, "\OMode{\SemBrackets{\vartheta}_{P}}"]
   \end{tikzcd}
 \]
 
@@ -944,7 +944,7 @@ operator.
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
-       \arrow[r, "\Define{\beta\,}{\,\Tuple{\SemBrackets{\vartheta}_P, \lambda\gamma}}"]
+       \arrow[r, dashed, "\Define{\beta\,}{\,\Tuple{\SemBrackets{\vartheta}_P, \lambda\gamma}}"]
     \&[4.0em] {\IMode{%
        \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{\tau}}}%
        \prod_{\MkValence{\vec{\sigma}_i}{\vec{\tau}_i}{\tau_i}\in\vec{v}}%
@@ -957,13 +957,13 @@ form) of the composites $\IMode{{\gamma}_{i}}$:
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_{P}}}
-      \arrow[d, dashed, swap, "\IMode{\lambda{\gamma}_{i}}"]
+      \arrow[d, dashed, swap, "\OMode{\lambda{\gamma}_{i}}"]
     \&
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_{P}
        \times\Yoneda{\vec{\sigma}_{i}\parallel\vec{\tau}_{i}}}
     }
       \arrow[r, "\IMode{\Tuple{{\pi}_{[1,1]},{\phi}_{i},{\psi}_{i}}}"]
-      \arrow[d, dashed, swap, "\IMode{{\gamma}_{i}}"]
+      \arrow[d, dashed, swap, "\OMode{{\gamma}_{i}}"]
     \&[3.5em]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_{i}}_{P}}}
       \ar{dl}[
@@ -983,12 +983,12 @@ where $\phi_i,\psi_i$ are defined as follows:
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
     }}
-      \arrow[r, "\Define{\phi_i\,}{\,\Pair{\Tuple{\pi_u\circ\pi_1}_{u\in\Dom{\Upsilon}}}{\,\Tuple{\pi_u\circ\pi_{[2,1]}}_{u\in\Dom{\vec{\sigma}_i}}}}"]
+      \arrow[r, dashed, "\Define{\phi_i\,}{\,\Pair{\Tuple{\pi_u\circ\pi_1}_{u\in\Dom{\Upsilon}}}{\,\Tuple{\pi_u\circ\pi_{[2,1]}}_{u\in\Dom{\vec{\sigma}_i}}}}"]
     \&[12.0em] {\IMode{S^{\{\Upsilon,\vec{\sigma}_i\}}}}\\[-1.0em]
     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
        \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
     }}
-      \arrow[r, "\Define{\psi_i\,}{\,\Pair{\Tuple{\pi_x\circ\pi_1}_{x\in\Dom{\Gamma}}}{\,\Tuple{\pi_x\circ\pi_{[2,1]}}_{x\in\Dom{\vec{\tau}_i}}}}"]
+      \arrow[r, dashed, "\Define{\psi_i\,}{\,\Pair{\Tuple{\pi_x\circ\pi_1}_{x\in\Dom{\Gamma}}}{\,\Tuple{\pi_x\circ\pi_{[2,1]}}_{x\in\Dom{\vec{\tau}_i}}}}"]
     \&[12.0em] {\IMode{V^{[\Gamma,\vec{\tau}_i]}}}
   \end{tikzcd}
 \end{gather*}
