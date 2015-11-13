@@ -18,6 +18,7 @@
 \usepackage{stmaryrd}
 \usepackage{supertabular}
 \usepackage{tikz-cd}
+\usepackage{tikzpfeile}
 \usepackage{url}
 
 \definecolor{dark-gray}{gray}{0.20}
@@ -121,7 +122,7 @@
 \newcommand\Iso[2]{#1\mathrel{{{\cong}}}#2}
 \newcommand\Cats{\mathbf{Cat}}
 \newcommand\Discrete[1]{#1_{\equiv}}
-\newcommand\Arr[1]{\mathbf{{#1}^{\rightarrow}}}
+\newcommand\Arr[1]{\mathbf{{#1}^{\ra}}}
 \newcommand\Sets{\mathbf{Set}}
 \newcommand\SCtx{\mathbf{SCtx}}
 \newcommand\Ctx{\mathbf{Ctx}}
@@ -287,12 +288,12 @@ finite subsets of $\Symbols$ and their injective maps; then the comma
 construction $\Define{\SCtx}{\Comma{\SymSets}{\Discrete{\Sorts}}}$, with
 $\Discrete{\Sorts}$ the discrete category on the set $\mathcal{S}$, is the
 category of contexts of symbols, whose objects are finite sets of symbols $U$
-and sort-assignments $\Of{\mathfrak{s}}{U\to\Sorts}$, and whose morphisms are
+and sort-assignments $\Of{\mathfrak{s}}{U\ra\Sorts}$, and whose morphisms are
 sort-preserving renamings; we will write $\Upsilon$ for a symbol context
 $(U,\mathfrak{s})$.
 
 Then, fix a covariant presheaf (copresheaf) of operators
-$\Of{\Operators}{\SCtx\times\Discrete{\Arities}\to\Sets}$ such that the arrows
+$\Of{\Operators}{\SCtx\times\Discrete{\Arities}\ra\Sets}$ such that the arrows
 in $\SCtx$ lift to renamings of operators' parameters. Together, $\Sorts$ and
 $\Operators$ form a \emph{signature} $\Define{\Sigma}{\Pair{\Sorts}{\Operators}}$.
 
@@ -325,10 +326,10 @@ $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and note that this judgment
 enjoys the structural properties of weakening and exchange via functoriality of
 $\Operators$. Operators $\vartheta_{0}, \ldots, \vartheta_{n}$ are defined by
 specifying the fibers of
-$\Of{\pi_{\Operators}}{\Grothendieck{}{\Operators}\to\SCtx\times\Discrete{\Arities}}$
+$\Of{\pi_{\Operators}}{\Grothendieck{}{\Operators}\ra\SCtx\times\Discrete{\Arities}}$
 in which they reside:
 \begin{alignat*}{3}
-  &\IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}&&\,\mathrel{\ {{:}}}\,&&\IMode{\SCtx\times\Discrete{\Arities}\to\Sets}\\
+  &\IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}&&\,\mathrel{\ {{:}}}\,&&\IMode{\SCtx\times\Discrete{\Arities}\ra\Sets}\\
   &\IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}&&\,=\,\ && %
     \OMode{%
       \MkSet{
@@ -393,8 +394,8 @@ extension of the calculus with assignables (references):
 Declaring a new assignable consists in providing an initial value, and an
 expression binding a symbol (which shall represent the assignable in scope).
 Note that the functoriality of $\Operators$ guarantees for any renaming
-$\Of{\varrho}{\Upsilon\to\Upsilon'}$ and $\Of{f}{a\to a'}$, a lifted map
-$\Of{\FLift{\varrho}{f}}{\Operators\Pair{\Upsilon}{a}\to\Operators\Pair{\Upsilon'}{a'}}$
+$\Of{\varrho}{\Upsilon\ra\Upsilon'}$ and $\Of{f}{a\ra a'}$, a lifted map
+$\Of{\FLift{\varrho}{f}}{\Operators\Pair{\Upsilon}{a}\ra\Operators\Pair{\Upsilon'}{a'}}$
 such that $\IsOperator{\Upsilon'}{\FLift{\varrho}{f}(\vartheta)}{a'}$ when
 $\IsOperator{\Upsilon}{\vartheta}{a}$. Because the category
 $\Discrete{\Arities}$ is discrete and has only identity arrows, through an abuse
@@ -526,7 +527,7 @@ operators (unlike variables, symbols are not terms). Therefore, the functorial
 action of the operator copresheaf can be lifted into terms by recursion on their
 structure, via a pair of judgments $\IsRenaming{\varrho}{M}{N}$ and
 $\IsRenaming{\varrho}{E}{F}$, presupposing
-$\Of{\varrho}{\Upsilon\to\Upsilon'}$, and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$
+$\Of{\varrho}{\Upsilon\ra\Upsilon'}$, and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$
 and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
 
 \begin{gather*}
@@ -806,14 +807,14 @@ ${{\varsigma}^{\tau}}_{\Upsilon\parallel\Gamma}$:
     computer science and logic, does not involve iteration of the monad
     functor.} on the functor $\Of{V}{\widehat{\HypCat}^\Sorts}$ of variables.
   Consequently, monoid multiplication $\varsigma$ can be replaced with extension
-$\Of{\circledast}{\int_{\Tuple{\tau, (\Upsilon\parallel\Gamma), (\Upsilon'\parallel\Gamma')}}{{{P}_{\tau}(\Upsilon'\parallel\Gamma')}^{{V}_{\tau}(\Upsilon\parallel\Gamma)} \longrightarrow {{P}_{\tau}(\Upsilon'\parallel\Gamma')}^{{P}_{\tau}(\Upsilon\parallel\Gamma)}}}$.
+$\Of{\circledast}{\int_{\Tuple{\tau, (\Upsilon\parallel\Gamma), (\Upsilon'\parallel\Gamma')}}{{{P}_{\tau}(\Upsilon'\parallel\Gamma')}^{{V}_{\tau}(\Upsilon\parallel\Gamma)} \ra {{P}_{\tau}(\Upsilon'\parallel\Gamma')}^{{P}_{\tau}(\Upsilon\parallel\Gamma)}}}$.
 \end{remark}
 
 \subsection{The signature endofunctor and its initial algebras}
 
 For each signature $\Match{\Sigma}{\Pair{\Sorts}{\Operators}}$, we have an
 endofunctor
-$\Of{\SigFun{\Sigma}}{\widehat{\HypCat}^\Sorts\to\widehat{\HypCat}^\Sorts}$,
+$\Of{\SigFun{\Sigma}}{\widehat{\HypCat}^\Sorts\ra\widehat{\HypCat}^\Sorts}$,
 which is defined as follows:
 \begin{align*}
   \IMode{{\SigFun{\Sigma}(X)}_{\tau}}
@@ -826,7 +827,7 @@ which is defined as follows:
 \end{align*}
 
 Then, a $\Sigma$-model is a $\Sigma$-monoid $P$ which is equipped with an initial
-algebra $\Of{\alpha}{\SigFun{\Sigma}(P)\to P}$, which shall interpret
+algebra $\Of{\alpha}{\SigFun{\Sigma}(P)\ra P}$, which shall interpret
 applications of each operator.
 
 \subsection{Interpretation of terms}
@@ -851,7 +852,7 @@ Then, the interpretation of a term in a model $P$ is a map from its environment
 to $P$:
 \[%
   \Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash%
-      M:\tau}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\longrightarrow P_\tau}%
+      M:\tau}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\ra P_\tau}%
 \]
 
 Variables are interpreted by the map
