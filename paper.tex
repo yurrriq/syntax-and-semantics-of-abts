@@ -224,12 +224,12 @@
 \maketitle
 
 Abstract binding trees (abts) are a generalization of abstract syntax trees
-where operators may express variable binding structure as part of their
-arities.  Originally formulated by Peter Aczel~\cite{aczel:1978}, unisorted
-abts have been deployed successfully as the uniform syntactic framework for
-several implementations of Constructive Type Theory, including Nuprl
-\cite{constable:1986}, MetaPRL~\cite{hickey:2003} and JonPRL
-\cite{jonprl:2015}.
+where operators may express variable binding structure as part of their arities.
+Originally formulated by Peter Aczel~\cite{aczel:1978}, unisorted abts have been
+deployed successfully as the uniform syntactic framework for several
+implementations of Constructive Type Theory, including
+Nuprl~\cite{constable:1986}, MetaPRL~\cite{hickey:2003} and
+JonPRL~\cite{jonprl:2015}.
 
 In \emph{Practical Foundations for Programming Languages}~\cite{harper:2016},
 Robert Harper develops the multi-sorted version of abstract binding trees and
@@ -237,36 +237,43 @@ proposes an extension to include families of operators indexed by
 \emph{symbols}, which are, unlike variables, subject to only
 distinctness-preserving renaming and not substitution; furthermore, symbols do
 not appear in the syntax of abts, and are only introduced as parameters to
-operators. This extension to support symbols is essential for a
-correct treatment of programming languages with open sums (e.g. ML's
-\texttt{exn} type), as well as assignable references.
+operators. This extension to support symbols is essential for a correct
+treatment of programming languages with open sums (e.g. ML's \texttt{exn} type),
+as well as assignable references.
 
 In parallel, M.\ Fiore and his collaborators have developed the categorical
-semantics for several variations of second-order algebraic theories
-\cite{fiore:1999, fiore:2005, fiore-hur:2010, fiore-mamoud:2010}; of these, the
-simply sorted variants are equivalent to Harper's abstract binding trees
-augmented with a notion of second-order variable (metavariable).
+semantics for several variations of second-order algebraic
+theories~\cite{fiore:1999, fiore:2005, fiore-hur:2010, fiore-mamoud:2010}; of
+these, the simply sorted variants are equivalent to Harper's abstract binding
+trees augmented with a notion of second-order variable (metavariable).
 
-The contribution of this paper is the development of the syntax and semantics
-of multi-sorted abts, an extension of second order universal
-algebra to support symbol-indexed families of operators. Additionally, we have
-developed the categorical semantics for abts formally in Constructive
-Type Theory using the Agda proof assistant~\cite{norell:2007}.
+The contribution of this paper is the development of the syntax and semantics of
+multi-sorted abts, an extension of second order universal algebra to support
+symbol-indexed families of operators. Additionally, we have developed the
+categorical semantics for abts formally in Constructive Type Theory using the
+Agda proof assistant~\cite{norell:2007}.
 
 \section{Preliminaries}
 
 Fix a set $\Sorts$ of \emph{sorts}. We will say $\IsSort{\tau}$ when
-$\Member{\tau}{\Sorts}$. A valence $\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}$ specifies an
-expression of sort $\tau$ which binds symbols in $\vec{\sigma}$ and variables in
-$\vec{\tau}$.
+$\Member{\tau}{\Sorts}$. A valence $\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}$
+specifies an expression of sort $\tau$ which binds symbols in $\vec{\sigma}$ and
+variables in $\vec{\tau}$.
 
 \[
   \infer{
-    \IsValence{\MkValence{\sigma_0,\dots,\sigma_m}{\tau_0,\dots,\tau_n}{\tau}}
+    \IsValence{
+      \MkValence
+        {\sigma_0,\dots,\sigma_m}
+        {\tau_0,\dots,\tau_n}
+        {\tau}
+    }
   }{
-    \IsSort{\tau} &
-    \HypJ{\IsSort{\sigma_i}}{\Leq{i}{m}} &
-    \HypJ{\IsSort{\tau_i}}{\Leq{i}{n}} &
+    \IsSort{\tau}
+&
+    \HypJ{\IsSort{\sigma_i}}{\Leq{i}{m}}
+&
+    \HypJ{\IsSort{\tau_i}}{\Leq{i}{n}}
   }
 \]
 
@@ -276,10 +283,17 @@ and the set of arities $\Arities$.
 
 \[
   \infer{
-    \IsArity{\MkArity{v_0,\ldots,v_n}{\tau}}
+    \IsArity{
+      \MkArity
+        {v_0,\ldots,v_n}
+        {\tau}
+    }
   }{
-    \IsSort{\tau} &
-    \HypJ{\IsValence{v_i}}{\Leq{i}{n}}
+    \IsSort{\tau}
+&
+    \HypJ
+      {\IsValence{v_i}}
+      {\Leq{i}{n}}
   }
 \]
 
@@ -296,30 +310,38 @@ $(U,\mathfrak{s})$.
 Then, fix a covariant presheaf (copresheaf) of operators
 $\Of{\Operators}{\SCtx\times\Discrete{\Arities}\ra\Sets}$ such that the arrows
 in $\SCtx$ lift to renamings of operators' parameters. Together, $\Sorts$ and
-$\Operators$ form a \emph{signature} $\Define{\Sigma}{\Pair{\Sorts}{\Operators}}$.
+$\Operators$ form a \emph{signature}
+$\Define{\Sigma}{\Pair{\Sorts}{\Operators}}$.
 
 By the Grothendieck construction
-$\Iso{\Grothendieck{}{\Operators}}{\Comma{\mathbb{1}}{\Operators}}$ we have a category of
-elements of $\Operators$ where objects are triples
+$\Iso{\Grothendieck{}{\Operators}}{\Comma{\mathbb{1}}{\Operators}}$ we have a
+category of elements of $\Operators$ where objects are triples
 $\Pair{\Pair{\Upsilon}{a}}{\vartheta}$, interpreted as
 $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are paired
 diagrams:
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\Pair{\Upsilon}{a}}
-      \arrow[r, "\Pair{\rho}{f}", swap]
-    \& {\Pair{\Upsilon'}{a'}}
+      \arrow[r, swap, "\Pair{\rho}{f}"]
+\&
+    {\Pair{\Upsilon'}{a'}}
   \end{tikzcd}
-  \qquad\begin{tikzcd}[cramped, sep = small, ampersand replacement = \&]
-    \& \mathbb{1}
-      \arrow[dl, "\vartheta", swap]
+\qquad
+  \begin{tikzcd}[cramped, sep = small, ampersand replacement = \&]
+    \null
+\&
+    \mathbb{1}
+      \arrow[dl, swap, "\vartheta"]
       \arrow[dr, "\vartheta'"]
-    \&
-    \\
+\&
+    \null
+\\
     {\Operators\Pair{\Upsilon}{a}}
-      \arrow[rr, "\Operators\Pair{\rho}{f}", swap]
-    \&
-    \& {\Operators\Pair{\Upsilon'}{a'}}
+      \arrow[rr, swap, "\Operators\Pair{\rho}{f}"]
+\&
+    \null
+\&
+    {\Operators\Pair{\Upsilon'}{a'}}
   \end{tikzcd}
 \]
 We will write $\IsOperator{\Upsilon}{\vartheta}{a}$ in case
@@ -330,13 +352,24 @@ specifying the fibers of
 $\Of{\pi_{\Operators}}{\Grothendieck{}{\Operators}\ra\SCtx\times\Discrete{\Arities}}$
 in which they reside:
 \begin{alignat*}{3}
-  &\IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}&&\,\mathrel{\ {{:}}}\,&&\IMode{\SCtx\times\Discrete{\Arities}\ra\Sets}\\
-  &\IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}&&\,=\,\ && %
-    \OMode{%
+  \null
+&
+  \IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}
+&&
+  \,\mathrel{\ {{:}}}\,
+&&
+  \IMode{\SCtx\times\Discrete{\Arities}\ra\Sets}
+\\
+  \null
+&
+  \IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}
+&&
+  \,=\,\
+&&
+    \OMode{
       \MkSet{
         \vartheta\in\Pair{\Upsilon}{a}
-        \mid
-        {\pi_{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}} =
+        \mid{\pi_{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}} =
         \Pair{\Upsilon}{a}
       }
     }
@@ -349,8 +382,11 @@ give its signature $\Sigma_{\lambda}$ by asserting the following about its
 operators:
 \begin{gather*}
   \IsOperator{\Upsilon}{\mathtt{lam}}{
-    \MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}
-  }\\
+    \MkArity{
+      \MkValence{}{\SortExp}{\SortExp}
+    }{\SortExp}
+  }
+\\
   \IsOperator{\Upsilon}{\mathtt{ap}}{
     \MkArity{
       \MkValence{}{}{\SortExp},
@@ -358,15 +394,63 @@ operators:
     }{\SortExp}
   }
 \end{gather*}
-These rules correspond to objects of $\Grothendieck{}{{\Operators}_{\lambda}}$ and we
-collect their fibers into sets of operators:
+These rules correspond to objects of $\Grothendieck{}{{\Operators}_{\lambda}}$
+and we collect their fibers into sets of operators:
 \begin{alignat*}{5}
-\IMode{{\pi_{{\Operators}_{\lambda}}}^{-1}}&\IMode{\Pair{\Upsilon}{{\MkArity{\MkValence{}{\SortExp}{\SortExp}}{\SortExp}}}}\quad&&=
-  &&\quad\OMode{\MkSet{\mathtt{lam}}}\\
-\IMode{{\pi_{{\Operators}_{\lambda}}}^{-1}}&\IMode{\Pair{\Upsilon}{\MkArity{\MkValence{}{}{\SortExp},\MkValence{}{}{\SortExp}}{\SortExp}}}\quad&&=
-  &&\quad\OMode{\MkSet{\mathtt{ap}}}\\
-\IMode{{\pi_{{\Sigma}_{\lambda}}}^{-1}}&\triangleq\IMode{\bigcup_{\Pair{\Upsilon}{a}}{{\pi_{{\Operators}_{\lambda}}}^{-1}{\Pair{\Upsilon}{a}}}}\quad&&=
-  &&\quad\OMode{\MkSet{\mathtt{lam},\ \mathtt{ap}}}\\
+  \IMode{{\pi_{{\Operators}_{\lambda}}}^{-1}}
+&
+  \IMode{
+    \Pair{
+      \Upsilon
+    }{
+      \MkArity{
+        \MkValence{}{\SortExp}{\SortExp}
+      }{\SortExp}
+    }
+  }
+\quad
+&&
+  =
+&&
+\quad
+  \OMode{\MkSet{\mathtt{lam}}}
+\\
+  \IMode{{\pi_{{\Operators}_{\lambda}}}^{-1}}
+&
+  \IMode{
+    \Pair{
+      \Upsilon
+    }{
+      \MkArity{
+        \MkValence{}{}{\SortExp},
+        \MkValence{}{}{\SortExp}
+      }{\SortExp}
+    }
+  }
+\quad
+&&
+  =
+&&
+\quad
+  \OMode{\MkSet{\mathtt{ap}}}
+\\
+  \IMode{{\pi_{{\Sigma}_{\lambda}}}^{-1}}
+&
+  \triangleq\IMode{
+    \bigcup_{\Pair{\Upsilon}{a}}{
+      {\pi_{{\Operators}_{\lambda}}}^{-1}
+      \Pair{\Upsilon}{a}
+    }
+  }
+\quad
+&&
+  =
+&&
+\quad
+  \OMode{
+    \MkSet{\mathtt{lam},\ \mathtt{ap}}
+  }
+\\
 \end{alignat*}
 So far, we have made no use of symbols and parameters; however, consider the
 extension of the calculus with assignables (references):
@@ -379,10 +463,12 @@ extension of the calculus with assignables (references):
     }{
       \SortExp
     }
-  }\\
+  }
+\\
   \IsOperator{\Upsilon,u:\SortExp}{\mathtt{get}[u]}{
     \MkArity{}{\SortExp}
-  }\\
+  }
+\\
   \IsOperator{\Upsilon,u:\SortExp}{\mathtt{set}[u]}{
     \MkArity{
       \MkValence{}{}{\SortExp}
@@ -406,22 +492,25 @@ $\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathtt{get}[u]$ to $\mathtt{get}[v]$.
 
 \section{Contexts}
 
-In general, we will have three kinds of context: metavariable contexts,
-variable contexts, and symbol (parameter) contexts. A metavariable context
-$\Omega$ consists of bindings of valences to metavariables; a variable context
-$\Gamma$ is a collection of bindings of sorts to variables, and a parameter
-context $\Upsilon$ is a collection of bindings of sorts to symbols.
+In general, we will have three kinds of context: metavariable contexts, variable
+contexts, and symbol (parameter) contexts. A metavariable context $\Omega$
+consists of bindings of valences to metavariables; a variable context $\Gamma$
+is a collection of bindings of sorts to variables, and a parameter context
+$\Upsilon$ is a collection of bindings of sorts to symbols.
 
 \begin{gather*}
   \infer{
     \IsMetaCtx{\cdot}
   }{
-  }\qquad
+  }
+\qquad
   \infer{
     \IsMetaCtx{\Omega,\MV{m}:v}
   }{
-    \IsMetaCtx{\Omega} &
-    \IsValence{v} &
+    \IsMetaCtx{\Omega}
+&
+    \IsValence{v}
+&
     \NotIn{\MV{m}}{\Dom\Omega}
   }
 \end{gather*}
@@ -430,12 +519,15 @@ context $\Upsilon$ is a collection of bindings of sorts to symbols.
   \infer{
     \IsVarCtx{\cdot}
   }{
-  }\qquad
+  }
+\qquad
   \infer{
     \IsVarCtx{\Gamma,x:\tau}
   }{
-    \IsVarCtx{\Gamma} &
-    \IsSort{\tau} &
+    \IsVarCtx{\Gamma}
+&
+    \IsSort{\tau}
+&
     \NotIn{x}{\Dom\Gamma}
   }
 \end{gather*}
@@ -444,12 +536,15 @@ context $\Upsilon$ is a collection of bindings of sorts to symbols.
   \infer{
     \IsSymCtx{\cdot}
   }{
-  }\qquad
+  }
+\qquad
   \infer{
     \IsSymCtx{\Upsilon,u:\tau}
   }{
-    \IsVarCtx{\Upsilon} &
-    \IsSort{\tau} &
+    \IsVarCtx{\Upsilon}
+&
+    \IsSort{\tau}
+&
     \NotIn{u}{\Dom\Upsilon}
   }
 \end{gather*}
@@ -457,35 +552,44 @@ context $\Upsilon$ is a collection of bindings of sorts to symbols.
 \section{Abstract Binding Trees}
 
 Let the judgment $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$ presuppose
-$\IsMetaCtx{\Omega}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and $\IsSort{\tau}$,
-meaning that $M$ is an abstract binding tree of sort $s$, with metavariables in
-$\Omega$, parameters in $\Upsilon$, and variables in $\Gamma$. Let the judgment
-$\IsBTm{\Omega}{\Upsilon}{\Gamma}{E}{v}$ presuppose $\IsValence{v}$.  Then, the
-syntax of abstract binding trees is inductively defined in four rules:
+$\IsMetaCtx{\Omega}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and
+$\IsSort{\tau}$, meaning that $M$ is an abstract binding tree of sort $s$, with
+metavariables in $\Omega$, parameters in $\Upsilon$, and variables in $\Gamma$.
+Let the judgment $\IsBTm{\Omega}{\Upsilon}{\Gamma}{E}{v}$ presuppose
+$\IsValence{v}$. Then, the syntax of abstract binding trees is inductively
+defined in four rules:
 
 \begin{gather*}
   \infer[\textit{var}]{
     \IsAbt{\Omega}{\Upsilon}{\Gamma}{x}{\tau}
   }{
     \Lookup{\Gamma}{x}{\tau}
-  }\\[6pt]
-  %
+  }
+\\[6pt]
   \infer[\textit{mvar}]{
     \IsAbt{\Omega}{\Upsilon}{\Gamma}{
       \MApp{\MV{m}}{u_0,\dots,u_m}{M_0,\dots,M_n}
     }{\tau}
   }{
     \begin{array}{l}
-      \Lookup{\Omega}{\MV{m}}{\MkValence{\sigma_0,\dots,\sigma_m}{\tau_0,\dots,\tau_n}{\tau}}\\
-      \HypJ{\Lookup{\Upsilon}{u_i}{\sigma_i}}{\Leq{i}{m}}\\
+      \Lookup{\Omega}{\MV{m}}{
+        \MkValence{
+          \sigma_0,\dots,\sigma_m
+        }{
+          \tau_0,\dots,\tau_n
+        }{\tau}
+      }
+\\
+      \HypJ{
+        \Lookup{\Upsilon}{u_i}{\sigma_i}
+      }{\Leq{i}{m}}
+\\
       \HypJ{
         \IsAbt{\Omega}{\Upsilon}{\Gamma}{M_i}{\tau_i}
-      }{
-        \Leq{i}{n}
-      }
+      }{\Leq{i}{n}}
     \end{array}
-  }\\[6pt]
-  %
+  }
+\\[6pt]
   \infer[\textit{app}]{
     \IsAbt{\Omega}{\Upsilon}{\Gamma}{
       \App{\vartheta}{E_0,\dots,E_n}
@@ -494,14 +598,14 @@ syntax of abstract binding trees is inductively defined in four rules:
     \begin{array}{l}
       \IsOperator{\Upsilon}{\vartheta}{
         \MkArity{v_1,\dots,v_n}{\tau}
-      }\\
+      }
+\\
       \HypJ{
         \IsBTm{\Omega}{\Upsilon}{\Gamma}{E_i}{v_i}
-      }{
-        \Leq{i}{n}
-      }
+      }{\Leq{i}{n}}
     \end{array}
-  }\\[6pt]
+  }
+\\[6pt]
   \infer[\textit{abs}]{
     \IsBTm{\Omega}{\Upsilon}{\Gamma}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
@@ -509,11 +613,15 @@ syntax of abstract binding trees is inductively defined in four rules:
       \MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}
     }
   }{
-    \IsAbt{\Omega}{\Upsilon, \vec{u}:\vec{\sigma}}{\Gamma,\vec{x}:{\vec{\tau}}}{
-      M
+    \IsAbt{
+      \Omega
     }{
-      \tau
-    }
+      \Upsilon, \vec{u}:\vec{\sigma}
+    }{
+      \Gamma,\vec{x}:{\vec{\tau}}
+    }{
+      M
+    }{\tau}
   }
 \end{gather*}
 
@@ -523,19 +631,20 @@ $M$. \todo[inline]{actually define these}
 
 \subsection{Renaming of Symbols}
 
-The only place that symbols appear in our calculus is as parameters to
-operators (unlike variables, symbols are not terms). Therefore, the functorial
-action of the operator copresheaf can be lifted into terms by recursion on their
+The only place that symbols appear in our calculus is as parameters to operators
+(unlike variables, symbols are not terms). Therefore, the functorial action of
+the operator copresheaf can be lifted into terms by recursion on their
 structure, via a pair of judgments $\IsRenaming{\varrho}{M}{N}$ and
-$\IsRenaming{\varrho}{E}{F}$, presupposing
-$\Of{\varrho}{\Upsilon\ra\Upsilon'}$, and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$
-and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
+$\IsRenaming{\varrho}{E}{F}$, presupposing $\Of{\varrho}{\Upsilon\ra\Upsilon'}$,
+and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$ and
+$\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
 
 \begin{gather*}
   \infer{
     \IsRenaming{\varrho}{x}{x}
   }{
-  }\\[6pt]
+  }
+\\[6pt]
   \infer{
     \IsRenaming{\varrho}{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
@@ -543,13 +652,15 @@ and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
       \MApp{\MV{m}}{\vec{v}}{N_0,\dots,N_n}
     }
   }{
-    \Match{\varrho(\vec{u})}{\vec{v}} &
+    \Match{\varrho(\vec{u})}{\vec{v}}
+&
     \HypJ{
       \IsRenaming{\varrho}{M_i}{N_i}
     }{
       \Leq{i}{n}
     }
-  }\\[6pt]
+  }
+\\[6pt]
   \infer{
     \IsRenaming{\varrho}{
       \App{\vartheta}{E_0,\dots,E_n}
@@ -557,13 +668,15 @@ and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
       \App{\vartheta'}{F_0,\dots,F_n}
     }
   }{
-    \Match{\FLift{\varrho}{}(\vartheta)}{\vartheta'} &
+    \Match{\FLift{\varrho}{}(\vartheta)}{\vartheta'}
+&
     \HypJ{
       \IsRenaming{\varrho}{E_i}{F_i}
     }{
       \Leq{i}{n}
     }
-  }\\[6pt]
+  }
+\\[6pt]
   \infer{
     \IsRenaming{\varrho}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
@@ -576,29 +689,31 @@ and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
 \end{gather*}
 
 Above, the notation $\varrho\setminus\vec{u}$ means the omission of the
-variables $\vec{u}$ from the renaming $\varrho$. Because terms are identified
-up to $\alpha$-equivalence, the renaming judgment is functional in its input,
-and so we are justified in writing $\Rename{\varrho}{M}$ for $N$ when
+variables $\vec{u}$ from the renaming $\varrho$. Because terms are identified up
+to $\alpha$-equivalence, the renaming judgment is functional in its input, and
+so we are justified in writing $\Rename{\varrho}{M}$ for $N$ when
 $\IsRenaming{\varrho}{M}{N}$.
 
 \todo[inline]{show that renaming preserves wellformedness}
 
 \subsection{Substitution of Variables}
 
-Variable substitution in abts is defined inductively by a
-pair of judgments, $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
+Variable substitution in abts is defined inductively by a pair of judgments,
+$\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
 
 \begin{gather*}
   \infer{
     \IsSubst{N}{x}{y}{N}
   }{
     \IsEq{x}{y}
-  }\qquad
+  }
+\qquad
   \infer{
     \IsSubst{N}{x}{y}{y}
   }{
     \IsApart{x}{y}
-  }\\[6pt]
+  }
+\\[6pt]
   \infer{
     \IsSubst{N}{x}{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
@@ -611,7 +726,8 @@ pair of judgments, $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
     }{
       \Leq{i}{n}
     }
-  }\\[6pt]
+  }
+\\[6pt]
   \infer{
     \IsSubst{N}{x}{
       \App{\vartheta}{E_0,\dots,E_n}
@@ -634,11 +750,15 @@ pair of judgments, $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
       \MkBTm{\vec{u}}{\vec{y}}{M'}
     }
   }{
-    \NotIn{x}{\vec{y}} &
-    \IsApart{\vec{u}}{\FS{N}} &
-    \IsApart{\vec{y}}{\FV{N}} &
+    \NotIn{x}{\vec{y}}
+&
+    \IsApart{\vec{u}}{\FS{N}}
+&
+    \IsApart{\vec{y}}{\FV{N}}
+&
     \IsSubst{N}{x}{M}{M'}
-  }\qquad
+  }
+\qquad
   \infer{
     \IsSubst{N}{x}{
       \MkBTm{\vec{u}}{\vec{y}}{M}
@@ -646,15 +766,17 @@ pair of judgments, $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
       \MkBTm{\vec{u}}{\vec{y}}{M}
     }
   }{
-    \Member{x}{\vec{y}} &
-    \IsApart{\vec{u}}{\FS{N}} &
+    \Member{x}{\vec{y}}
+&
+    \IsApart{\vec{u}}{\FS{N}}
+&
     \IsApart{\vec{y}}{\FV{N}}
   }
 \end{gather*}
 
 Going forward, we will write $\Subst{N}{x}{M}$ for $M'$ when
-$\IsSubst{N}{x}{M}{M'}$, and $\Subst{\vec{N}}{\vec{x}}{M}$ for the
-simultaneous substitution of $\vec{N}$ for $\vec{x}$ in $M$.
+$\IsSubst{N}{x}{M}{M'}$, and $\Subst{\vec{N}}{\vec{x}}{M}$ for the simultaneous
+substitution of $\vec{N}$ for $\vec{x}$ in $M$.
 
 \subsection{Substitution of Metavariables}
 
@@ -668,7 +790,8 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
   \infer{
     \IsSubst{E}{\MV{m}}{x}{x}
   }{
-  }\\[6pt]
+  }
+\\[6pt]
   \infer{
     \IsSubst{E}{\MV{m}}{
       \MApp{\MV{n}}{\vec{u}}{M_0,\dots,M_n}
@@ -676,13 +799,15 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
       \MApp{\MV{n}}{\vec{u}}{N_0,\dots,N_n}
     }
   }{
-    \IsApart{\MV{m}}{\MV{n}} &
+    \IsApart{\MV{m}}{\MV{n}}
+&
     \HypJ{
       \IsSubst{E}{\MV{n}}{M_i}{N_i}
     }{
       \Leq{i}{n}
     }
-  }\\[6pt]
+  }
+\\[6pt]
   \infer{
     \IsSubst{
       \MkBTm{\vec{u}}{\vec{x}}{N}
@@ -692,10 +817,14 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
       N''
     }
   }{
-    \IsEq{\MV{m}}{\MV{n}} &
-    \IsSubst{\vec{M}}{\vec{x}}{N}{N'} &
+    \IsEq{\MV{m}}{\MV{n}}
+&
+    \IsSubst{\vec{M}}{\vec{x}}{N}{N'}
+&
     \IsRenaming{\MkSet{\vec{u}\mapsto\vec{v}}}{N'}{N''}
-  }\\[6pt]
+  }
+\end{gather*}
+\begin{gather*}
   \infer{
     \IsSubst{E}{\MV{m}}{
       \App{\vartheta}{F_0,\dots,F_n}
@@ -708,7 +837,8 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
     }{
       \Leq{i}{n}
     }
-  }\\[6pt]
+  }
+\\[6pt]
   \infer{
     \IsSubst{E}{\MV{m}}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
@@ -716,8 +846,10 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
       \MkBTm{\vec{u}}{\vec{x}}{N}
     }
   }{
-    \IsApart{\vec{u}}{\FS{E}} &
-    \IsApart{\vec{x}}{\FV{E}} &
+    \IsApart{\vec{u}}{\FS{E}}
+&
+    \IsApart{\vec{x}}{\FV{E}}
+&
     \IsSubst{E}{\MV{m}}{M}{N}
   }
 \end{gather*}
@@ -727,17 +859,18 @@ $\IsSubst{E}{\MV{m}}{M}{N}$.
 
 \section{Model Theory}
 
-Let $\FinSets$ be the free cocartesian category on a single object (that is,
-the category of finite cardinals and functions between them); then the comma
+Let $\FinSets$ be the free cocartesian category on a single object (that is, the
+category of finite cardinals and functions between them); then the comma
 construction $\Define{\Ctx}{\Comma{\FinSets}{\Sorts}}$ is the category of
 variable contexts. Let $\Define{\HypCat}{\OpCat{(\SCtx\times\Ctx)}}$; then we
 fix the functor category $\widehat{\HypCat}^\Sorts$ as our semantic universe.
 
 Let $\Define{V_\tau(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid
-\Gamma(x)=\tau}}$ be called the presheaf of variables; additionally, we have a
-presheaf of symbols
+    \Gamma(x)=\tau}}$ be called the presheaf of variables; additionally, we have
+a presheaf of symbols
 $\Define{S_\tau(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
-\Upsilon(x)=\tau}}$. Lastly, we have the presheaf of operators with arity $a$,
+    \Upsilon(x)=\tau}}$. Lastly, we have the presheaf of operators with arity
+$a$,
 $\Define{\Operators_a(\Upsilon\parallel\Gamma)}{\Operators\Pair{\Upsilon}{a}}$
 
 \subsection{Substitution monoidal structures}
@@ -765,7 +898,7 @@ $\Of{P,Q}{\widehat{\HypCat}^\Sorts}$ as follows:
     \Define{{(P\odot Q)}_{\tau}}{
       P_\tau\bullet Q
     }
-    \quad
+\quad
   }{
     \Member{\tau}{\Sorts}
   }
@@ -773,43 +906,34 @@ $\Of{P,Q}{\widehat{\HypCat}^\Sorts}$ as follows:
 
 Then, $V$ is the unit to this tensor. We will say that an object
 $\Of{P}{\widehat{\HypCat}^\Sorts}$ is a $\Sigma$-monoid in case it is equipped
-with the following natural transformations where $\nu$ embeds variables into
-$P$ and $\varsigma$ equips $P$ with an operation for simultaneous substitutions
-of variables. Furthermore, $\nu$ and $\varsigma$ induce maps ${\nu}_{\Gamma}$ and
-${{\varsigma}^{\tau}}_{\Upsilon\parallel\Gamma}$:
-\vspace{-0.5em}
+with the following natural transformations where $\nu$ embeds variables into $P$
+and $\varsigma$ equips $P$ with an operation for simultaneous substitutions of
+variables. Furthermore, $\nu$ and $\varsigma$ induce maps ${\nu}_{\Gamma}$ and
+${{\varsigma}^{\tau}}_{\Upsilon\parallel\Gamma}$: \vspace{-0.5em}
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{V}} \arrow[r, "\IMode\nu"]
-    \& {\IMode{P}}
-    \& {\IMode{P\odot P}}
-    \arrow[l, "\IMode\varsigma", swap]
+\&
+    {\IMode{P}}
+\&
+    {\IMode{P\odot P}}
+      \arrow[l, swap, "\IMode\varsigma"]
   \end{tikzcd}
-  \qquad\begin{tikzcd}[cramped, ampersand replacement = \&]
+\qquad
+  \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{{V}^{[\Gamma]}}}
       \arrow[r, "\IMode{{\nu}_{\Gamma}}"]
-    \& {\IMode{{P}^{[\Gamma]}}}
+\&
+    {\IMode{{P}^{[\Gamma]}}}
   \end{tikzcd}
-  \qquad\begin{tikzcd}[cramped, sep = large, ampersand replacement = \&]
+\qquad
+  \begin{tikzcd}[cramped, sep = large, ampersand replacement = \&]
     {\IMode{{P_\tau^{\Yoneda{\Upsilon\parallel\Gamma}}\times S^{\{\Upsilon\}}\times P^{[\Gamma]}}}}
       \arrow[r, "\IMode{\varsigma^\tau_{\Upsilon\parallel\Gamma}}"]
-    \& {\IMode{P_\tau}}
+\&
+    {\IMode{P_\tau}}
   \end{tikzcd}
 \]
-
-\begin{remark}
-  A presheaf $P$ with a substitution monoidal structure $\Pair{\nu}{\varsigma}$
-  also forms a \emph{relative monad}\footnote{Relative monads are skew-monoids
-    in the skew-monoidal structure induced by a functor category
-    $\mathbf{C}^\mathbf{J}$~\cite{altenkirch-chapman-uustalu:2015}. However,
-    relative monads can also be understood without reference to monoids by
-    viewing them as a generalization of \emph{extension systems} or
-    \emph{Kleisli structures}. This latter presentation of monads, popular in
-    computer science and logic, does not involve iteration of the monad
-    functor.} on the functor $\Of{V}{\widehat{\HypCat}^\Sorts}$ of variables.
-  Consequently, monoid multiplication $\varsigma$ can be replaced with extension
-$\Of{\circledast}{\int_{\Tuple{\tau, (\Upsilon\parallel\Gamma), (\Upsilon'\parallel\Gamma')}}{{{P}_{\tau}(\Upsilon'\parallel\Gamma')}^{{V}_{\tau}(\Upsilon\parallel\Gamma)} \ra {{P}_{\tau}(\Upsilon'\parallel\Gamma')}^{{P}_{\tau}(\Upsilon\parallel\Gamma)}}}$.
-\end{remark}
 
 \subsection{The signature endofunctor and its initial algebras}
 
@@ -819,29 +943,47 @@ $\Of{\SigFun{\Sigma}}{\widehat{\HypCat}^\Sorts\ra\widehat{\HypCat}^\Sorts}$,
 which is defined as follows:
 \begin{align*}
   \IMode{{\SigFun{\Sigma}(X)}_{\tau}}
-    &\triangleq
+&
+    \triangleq
     \OMode{
-      \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{\tau}}}
-      \prod_{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau_i}\in\vec{v}}
+      \coprod_{
+        \vartheta\in \Operators_{\MkArity{\vec{v}}{\tau}}
+      }
+      \prod_{
+        \MkValence
+          {\vec{\sigma}}
+          {\vec{\tau}}
+          {\tau_i}
+        \in\vec{v}
+      }
       X_{\tau_i}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}
     }
 \end{align*}
 
-Then, a $\Sigma$-model is a $\Sigma$-monoid $P$ which is equipped with an initial
-algebra $\Of{\alpha}{\SigFun{\Sigma}(P)\ra P}$, which shall interpret
+Then, a $\Sigma$-model is a $\Sigma$-monoid $P$ which is equipped with an
+initial algebra $\Of{\alpha}{\SigFun{\Sigma}(P)\ra P}$, which shall interpret
 applications of each operator.
 
 \subsection{Interpretation of terms}
 
-The metavariable, symbol and variable contexts are interpreted in a model $P$ as an
-environment presheaf in the following way:
+The metavariable, symbol and variable contexts are interpreted in a model $P$ as
+an environment presheaf in the following way:
 \[
   \Define{
     \SemBrackets{
       \Omega\triangleright\Upsilon\parallel\Gamma
     }_P
   }{
-    \left(\prod_{(m:\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau})\in\Omega}P_{\tau}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}\right)
+    \left(
+      \prod_{
+        (m:%
+        \MkValence
+          {\vec{\sigma}}
+          {\vec{\tau}}
+          {\tau})
+        \in\Omega
+      }{{P_{\tau}}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}}
+    \right)
     \times
     S^{\{\Upsilon\}}
     \times
@@ -851,55 +993,153 @@ environment presheaf in the following way:
 
 Then, the interpretation of a term in a model $P$ is a map from its environment
 to $P$:
-\[%
-  \Of{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash%
-      M:\tau}_P}{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P\ra P_\tau}%
+\[
+  \Of{
+    \SemBrackets{
+      \Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau
+    }_{P}
+  }{
+    \SemBrackets{
+      \Omega\triangleright\Upsilon\parallel\Gamma
+    }_{P}\ra {P}_{\tau}
+  }
 \]
 
 Variables are interpreted by the map
-$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x:\tau}_P$ which
+${\SemBrackets{
+  \Omega\triangleright\Upsilon\parallel\Gamma\vdash x:\tau
+}}_{P}$ which
 projects them from the environment and embeds them into the model. Metavariables
 are resolved by the map
-$\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash\MApp{\MV{m}}{\vec{u}}{\vec{M}}
-  : \tau}_P$ (where
+${\SemBrackets{
+  \Omega\triangleright\Upsilon\parallel\Gamma\vdash\MApp{\MV{m}}{\vec{u}}{\vec{M}}
+  : \tau
+}}_{P}$ (where
 $\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}}$) which
 projects their interpretation from the environment and instantiates it via
 substitution:
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{P_\tau}}
-    \&[8.0em] {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
-      \arrow[rr, dashed, "\OMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash x:\tau}_P}"]
+\&[8.0em]
+    {\IMode{
+      {\SemBrackets{
+        \Omega\triangleright\Upsilon\parallel\Gamma
+      }}_{P}
+    }}
+      \arrow[
+        , rr
+        , dashed
+        , "
+          \OMode{
+            {\SemBrackets{
+              \Omega\triangleright\Upsilon\parallel\Gamma
+              \vdash
+              x:\tau
+            }}_{P}
+          }
+          "
+      ]
       \ar{drr}[
         , rotate = -16.5
         , xshift = +1.5em
         , yshift = -0.2em
         , swap
-      ]{{\nu}_{\Gamma} {\pi}_{3}}
+      ]{
+        {\nu}_{\Gamma} {\pi}_{3}
+      }
       \ar{dl}[
         , rotate = +11.5
         , xshift = -2.75em
-      ]{\IMode{\Tuple{\pi_\MV{m}\,\pi_1, \phi\,\pi_2, \psi}}}
-      \arrow[l, dashed, swap, "\OMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash\MApp{\MV{m}}{\vec{u}}{\vec{M}}: \tau}_P}"]
-    \&[-2.0em]
-    \&[+3.0em]{\IMode{P_\tau}}
-    \\
-    {\IMode{P_{\tau}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}\times S^{\{\vec{\sigma}\}} \times P^{[\vec{\tau}]}}}
-      \arrow[u, "\IMode{\varsigma^\tau_{\vec{\sigma}\parallel\vec{\tau}}}"]
-    \&{}
-    \&{}
-    \& {\IMode{P^{[\Gamma]}}}
-      \arrow[u, swap, "{\pi}_{x}"]
-    \\
+      ]{
+        \IMode{
+          \Tuple{
+            \pi_\MV{m}\,
+            \pi_1,
+            \phi\,
+            \pi_2,
+            \psi
+          }
+        }
+      }
+      \arrow[
+        , l
+        , dashed
+        , swap
+        , "
+          \OMode{
+            {\SemBrackets{
+              \Omega\triangleright\Upsilon\parallel\Gamma
+              \vdash
+              \MApp{\MV{m}}{\vec{u}}{\vec{M}}: \tau
+            }}_{P}
+          }"
+      ]
+\&[-2.0em]
+    \null
+\&[+3.0em]
+    {\IMode{P_\tau}}
+\\
+    {\IMode{
+      {P}_{\tau}^{
+        \Yoneda{\vec{\sigma}\parallel\vec{\tau}}
+      }
+      \times S^{\{\vec{\sigma}\}}
+      \times P^{[\vec{\tau}]}
+    }}
+      \arrow[
+        , u
+        , "
+          \IMode{
+            \varsigma^\tau_{\vec{\sigma}\parallel\vec{\tau}}
+          }
+          "
+        ]
+\&
+    \null
+\&
+    \null
+\&
+    {\IMode{P^{[\Gamma]}}}
+      \arrow[
+        , u
+        , swap
+        , "{\pi}_{x}"
+      ]
+\\
     {\IMode{P^{[\vec{\tau}]}}}
-    \& {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
-      \arrow[l, dashed, swap, "\Define{\psi\,}{\,\Tuple{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau}_P}_{(M,\tau)\in (\vec{M},\vec{\tau})}}"]
-    \& {\IMode{S^{\{\Upsilon\}}}}
-      \arrow[r, dashed, "\Define{\phi\,}{\,\Tuple{\pi_u}_{u\in\vec{u}}}"]
-    \& {\IMode{S^{\{\vec{\sigma}\}}}}
+\&
+    {\IMode{
+      {\SemBrackets{
+        \Omega\triangleright\Upsilon\parallel\Gamma
+      }}_{P}
+    }}
+      \arrow[
+        , dashed
+        , l
+        , swap
+        , "
+          \Define{
+            \psi\,
+          }{
+            \,\Tuple{
+              {\SemBrackets{
+                \Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau
+              }}_{P}
+            }_{(M,\tau)\in (\vec{M},\vec{\tau})}
+          }
+          "]
+\&
+    {\IMode{S^{\{\Upsilon\}}}}
+      \arrow[
+        , dashed
+        , r
+        , "\Define{\phi\,}{\,\Tuple{\pi_u}_{u\in\vec{u}}}"
+      ]
+\&
+    {\IMode{S^{\{\vec{\sigma}\}}}}
   \end{tikzcd}
 \]
-
 Interpretation of operator applications is the most complicated. Recall that,
 unlike in standard treatments of universal algebra, our operators are indexed by
 symbol collections; therefore, operators must pass through suitable renamings in
@@ -910,28 +1150,53 @@ using the environment:
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     |[alias = Src]|
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
-      \arrow[r, swap, "\IMode{\pi_2}"]
-    \&
+    {\IMode{
+      {\SemBrackets{
+        \Omega\triangleright\Upsilon\parallel\Gamma
+      }}_{P}
+    }}
+      \arrow[
+        , r
+        , swap
+        , "\IMode{\pi_2}"
+      ]
+\&
     {\IMode{S^{\{\Upsilon\}}}}
-      \arrow[r, swap, "\IMode{\FLift{\pi_{(-)}}{}}"]
-    \&[1.5em]
+      \arrow[
+        , r
+        , swap
+        , "\IMode{\FLift{\pi_{(-)}}{}}"
+      ]
+\&[1.5em]
     |[alias = Tgt]|
     {\IMode{\Operators_a}}
-    \arrow[from = Src, to = Tgt, bend left, dashed, "\OMode{\SemBrackets{\vartheta}_{P}}"]
+      \arrow[
+        , from = Src
+        , to = Tgt
+        , bend left
+        , dashed
+        , "\OMode{\SemBrackets{\vartheta}_{P}}"
+      ]
   \end{tikzcd}
 \]
 
 We will proceed using the initial $\SigFun{\Sigma}$-algebra $\alpha$, as
 follows, by postcomposing it with a morphism $\beta$ from the environment into
-the signature endofunctor, which interprets the syntax of operator
-applications:
+the signature endofunctor, which interprets the syntax of operator applications:
 \[
-   \begin{tikzcd}[cramped, ampersand replacement = \&]
-     {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}} \arrow[r, "\IMode{\beta}"]
-     \& {\IMode{\SigFun{\Sigma}(P)_\tau}} \arrow[r, "\IMode{\alpha_\tau}"]
-     \& {\IMode{P_\tau}}
-   \end{tikzcd}
+  \begin{tikzcd}[cramped, ampersand replacement = \&]
+    {\IMode{
+      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}}_{P}
+    }}
+      \arrow[r, "\IMode{\beta}"]
+\&
+    {\IMode{
+      {\SigFun{\Sigma}(P)}_{\tau}
+    }}
+      \arrow[r, "\IMode{\alpha_\tau}"]
+\&
+    {\IMode{P_\tau}}
+  \end{tikzcd}
 \]
 
 The construction of $\beta$ proceeds by renaming the parameters of the operator
@@ -939,12 +1204,33 @@ $\vartheta$ and constructing the (bound) exponentiated arguments $\gamma$ of the
 operator.
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P}}
-       \arrow[r, dashed, "\Define{\beta\,}{\,\Tuple{\SemBrackets{\vartheta}_P, \lambda\gamma}}"]
-    \&[4.0em] {\IMode{%
-       \coprod_{\vartheta\in \Operators_{\MkArity{\vec{v}}{\tau}}}%
-       \prod_{\MkValence{\vec{\sigma}_i}{\vec{\tau}_i}{\tau_i}\in\vec{v}}%
-       P_{\tau_i}^{\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}}%
+    {\IMode{
+      {\SemBrackets{
+        \Omega\triangleright\Upsilon\parallel\Gamma
+      }}_{P}
+    }}
+      \arrow[
+        , r
+        , dashed
+        , "
+          \Define{
+            \beta\,
+          }{
+            \,\Tuple{
+              \SemBrackets{\vartheta}_P, \lambda\gamma
+            }
+          }
+          "
+      ]
+\&[4.0em]
+    {\IMode{
+      \coprod_{
+        \vartheta\in \Operators_{\MkArity{\vec{v}}{\tau}}
+      }
+      \prod_{
+        \MkValence{\vec{\sigma}_i}{\vec{\tau}_i}{\tau_i}\in\vec{v}
+      }
+      P_{\tau_i}^{\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}}
     }}
   \end{tikzcd}
 \]
@@ -952,40 +1238,117 @@ Arguments $\lambda\IMode{{\gamma}_{i}}$ are the exponential transposes (curried
 form) of the composites $\IMode{{\gamma}_{i}}$:
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_{P}}}
-      \arrow[d, dashed, swap, "\OMode{\lambda{\gamma}_{i}}"]
-    \&
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_{P}
-       \times\Yoneda{\vec{\sigma}_{i}\parallel\vec{\tau}_{i}}}
+    {\IMode{
+      {\SemBrackets{
+        \Omega\triangleright\Upsilon\parallel\Gamma
+      }}_{P}
+    }}
+      \arrow[
+        , dashed
+        , d
+        , swap
+        , "\OMode{\lambda{\gamma}_{i}}"
+      ]
+\&
+    {\IMode{
+      {\SemBrackets{
+        \Omega\triangleright\Upsilon\parallel\Gamma
+      }}_{P}
+      \times
+      \Yoneda{
+        \vec{\sigma}_{i}\parallel\vec{\tau}_{i}}
+      }
     }
-      \arrow[r, "\IMode{\Tuple{{\pi}_{[1,1]},{\phi}_{i},{\psi}_{i}}}"]
-      \arrow[d, dashed, swap, "\OMode{{\gamma}_{i}}"]
-    \&[3.5em]
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_i\parallel\Gamma,\vec{\tau}_{i}}_{P}}}
+      \arrow[
+        , r
+        , "
+          \IMode{
+            \Tuple{
+              {\pi}_{[1,1]},
+              {\phi}_{i},
+              {\psi}_{i}
+            }
+          }
+          "
+        ]
+      \arrow[
+        , dashed
+        , d
+        , swap
+        , "\OMode{{\gamma}_{i}}"
+      ]
+\&[3.5em]
+    {\IMode{
+      \SemBrackets{
+        \Omega\triangleright\Upsilon,
+        \vec{\sigma}_i\parallel\Gamma,
+        \vec{\tau}_{i}
+      }_{P}
+    }}
       \ar{dl}[
         , rotate = +19.25
         , xshift = -4.5em
         , yshift = -0.2em
       ]{\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_{i}\parallel\Gamma,\vec{\tau}_{i}\vdash M_i:\tau_i}_P}}
-    \\[2.0em]
+\\[2.0em]
     {\IMode{{P}_{{\tau}_{i}}^{\Yoneda{\vec{\sigma}_{i}\parallel\vec{\tau}_{i}}}}}
-    \& {\IMode{P_{{\tau}_{i}}}}
-    \&
+\&
+    {\IMode{P_{{\tau}_{i}}}}
+\&
   \end{tikzcd}
 \]
 where $\phi_i,\psi_i$ are defined as follows:
 \begin{gather*}
   \begin{tikzcd}[cramped, ampersand replacement = \&]
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
-       \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
+    {\IMode{
+      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}}_{P}
+      \times
+      \Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
     }}
-      \arrow[r, dashed, "\Define{\phi_i\,}{\,\Pair{\Tuple{\pi_u\circ\pi_1}_{u\in\Dom{\Upsilon}}}{\,\Tuple{\pi_u\circ\pi_{[2,1]}}_{u\in\Dom{\vec{\sigma}_i}}}}"]
-    \&[12.0em] {\IMode{S^{\{\Upsilon,\vec{\sigma}_i\}}}}\\[-1.0em]
-    {\IMode{\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}_P
-       \times\Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
+      \arrow[
+        , r
+        , dashed
+        , "
+          \Define
+            {
+              \phi_i\,
+            }
+            {
+              \,\Pair{
+                \Tuple{\pi_u\circ\pi_1}_{u\in\Dom{\Upsilon}}
+              }{
+                \,\Tuple{\pi_u\circ\pi_{[2,1]}}_{u\in\Dom{\vec{\sigma}_i}}
+              }
+            }
+          "
+      ]
+\&[12.0em]
+    {\IMode{S^{\{\Upsilon,\vec{\sigma}_i\}}}}
+\\[-1.0em]
+    {\IMode{
+      {\SemBrackets{
+        \Omega\triangleright\Upsilon\parallel\Gamma
+      }}_{P}
+      \times
+      \Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
     }}
-      \arrow[r, dashed, "\Define{\psi_i\,}{\,\Pair{\Tuple{\pi_x\circ\pi_1}_{x\in\Dom{\Gamma}}}{\,\Tuple{\pi_x\circ\pi_{[2,1]}}_{x\in\Dom{\vec{\tau}_i}}}}"]
-    \&[12.0em] {\IMode{V^{[\Gamma,\vec{\tau}_i]}}}
+      \arrow[
+        , r
+        , dashed
+        , "
+          \Define{
+            \psi_i\,
+          }{
+            \,\Pair{
+              \Tuple{\pi_x\circ\pi_1}_{x\in\Dom{\Gamma}}
+            }{
+              \,\Tuple{\pi_x\circ\pi_{[2,1]}}_{x\in\Dom{\vec{\tau}_i}}
+            }
+          }
+          "
+      ]
+\&[12.0em]
+    {\IMode{V^{[\Gamma,\vec{\tau}_i]}}}
   \end{tikzcd}
 \end{gather*}
 
@@ -994,14 +1357,13 @@ This concludes the interpretation of well-sorted terms into any $\Sigma$-model.
 \section{Case Study: Wellformed Sequents}
 
 The representation of telescopes and sequents in a logical framework is
-notoriously difficult; whilst it is possible to use higher-order abstract
-syntax or abts to encode the binding-structure of telescopes
-and sequents, the encoding is sufficiently laborious and obscure that it is not
-used in practice.
+notoriously difficult; whilst it is possible to use higher-order abstract syntax
+or abts to encode the binding-structure of telescopes and sequents, the encoding
+is sufficiently laborious and obscure that it is not used in practice.
 
 Crary has demonstrated a first-order encoding of contexts in the logical
-framework in bijection with actual LF-contexts~\cite{crary:2009}, which has
-been successfully used in large-scale mechanization efforts, including that of
+framework in bijection with actual LF-contexts~\cite{crary:2009}, which has been
+successfully used in large-scale mechanization efforts, including that of
 Standard ML~\cite{lee-crary-harper:2007} and the Edinburgh Logical Framework
 itself~\cite{martens-crary:2012}.
 
@@ -1009,19 +1371,19 @@ itself~\cite{martens-crary:2012}.
 
 We will approach the problem of encoding telescopes and sequents from the
 \emph{refinements} perspective, where a conservative approximation of the
-grammar is first given using the abt logical framework, and then the
-correctness of a code is expressed separately in a judgment that refines the
-existing specification.
+grammar is first given using the abt logical framework, and then the correctness
+of a code is expressed separately in a judgment that refines the existing
+specification.
 
-Because we have not committed to using the built-in binding machinery to
-express the well-scopedness of telescopes and sequents, we are free to use
+Because we have not committed to using the built-in binding machinery to express
+the well-scopedness of telescopes and sequents, we are free to use
 \emph{symbols} in order to model the variables in the context. This is in fact
 quite sensible if we are actually trying to faithfully represent the syntax of
-telescopes and sequents, rather than replace them with their counterparts on
-the meta-level.
+telescopes and sequents, rather than replace them with their counterparts on the
+meta-level.
 
-This insight leads the way to a simple abt signature for the theory of telescopes
-and sequents.
+This insight leads the way to a simple abt signature for the theory of
+telescopes and sequents.
 %
 \newcommand\SortTele{\mathtt{tele}}
 \newcommand\SortJdg{\mathtt{jdg}}
@@ -1031,7 +1393,7 @@ and sequents.
 \newcommand\OpSnoc[1]{\mathtt{snoc}[#1]}
 \newcommand\OpVar[1]{\mathtt{var}[#1]}
 \newcommand\OpSequent{\mathtt{sequent}}
-%
+% %
 \[
   \begin{array}{l}
     \IsSort{\SortTele}\\
@@ -1069,46 +1431,63 @@ Suppose we have encoded a fragment of type theory as well:
   \begin{array}{l}
     \IsOperator{\Upsilon}{\top}{
       \MkArity{}{\SortType}
-    }\\
+    }
+\\
     \IsOperator{\Upsilon}{\bot}{
       \MkArity{}{\SortType}
-    }\\
+    }
+\\
     \IsOperator{\Upsilon}{\OpBool}{
       \MkArity{}{\SortType}
-    }\\
+    }
+\\
     \IsOperator{\Upsilon}{\OpSo}{
       \MkArity{
         \MkValence{}{}{\SortExp}
       }{\SortType}
-    }\\
+    }
+\\
     \IsOperator{\Upsilon}{\OpPi}{
       \MkArity{
         \MkValence{}{}{\SortType},
         \MkValence{}{\SortExp}{\SortType}
       }{\SortType}
-    }\\
+    }
+\\
     \IsOperator{\Upsilon}{\OpSg}{
       \MkArity{
         \MkValence{}{}{\SortType},
         \MkValence{}{\SortExp}{\SortType}
       }{\SortType}
-    }\\
+    }
+\\
   \end{array}
 \]
 
 Terms written using the abstract syntax will be difficult to read, so let us
 define some notation:
 \begin{align*}
-  \IMode{\diamond} &\triangleq \OMode{\OpNil}\\
-  \IMode{H, u:P} &\triangleq \OMode{
+  \IMode{\diamond}
+&
+  \triangleq \OMode{\OpNil}
+\\
+  \IMode{H, u:P}
+&
+  \triangleq \OMode{
     \App{\OpSnoc{u}}{H, P}
-  }\\
-  \IMode{H\gg A} &\triangleq \OMode{
+  }
+\\
+  \IMode{H\gg A}
+&
+  \triangleq \OMode{
     \App{\OpSequent}{
       H, A
     }
-  }\\
-  \IMode{`u} &\triangleq \OMode{\OpVar{u}}
+  }
+\\
+  \IMode{`u}
+&
+  \triangleq \OMode{\OpVar{u}}
 \end{align*}
 
 Now, we have the following well-formed sequent:
@@ -1117,8 +1496,8 @@ Now, we have the following well-formed sequent:
     u:\SortExp,
     v:\SortExp
   }{\cdot}{
-    \diamond,u:\OpBool,v:\App{\OpSo}{`u}%
-    \gg%
+    \diamond,u:\OpBool,v:\App{\OpSo}{`u}
+    \gg
     \App{\OpSo}{`u}
   }{\SortJdg}
 \]
@@ -1141,8 +1520,8 @@ Then, we may write a closed sequent judgment as follows:
   \IsAbt{\cdot}{\cdot}{\cdot}{
     \App{\OpNabla{\SortExp,\SortExp}}{
       \MkBTm{u,v}{}{
-        \diamond,u:\OpBool,v:\App{\OpSo}{`u}%
-        \gg%
+        \diamond,u:\OpBool,v:\App{\OpSo}{`u}
+        \gg
         \App{\OpSo}{`u}
       }
     }
@@ -1153,13 +1532,13 @@ Then, we may write a closed sequent judgment as follows:
 
 Having specified an approximation of the grammar of telescopes and sequents in
 the abt logical framework, we can proceed to define proper wellformedness via
-\emph{inductive refinement}~\cite{harper:2016}. The basic idea is to introduce a new form of
-(meta)-judgment $\IsWf{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$ which expresses the
-extrinsic wellformedness properties we wish to verify, presupposing
-$\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$. Additionally, we introduce an
-analogous judgment on bound terms, $\IsWf{\Omega}{\Upsilon}{\Gamma}{E}{v}$
-presupposing $\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$, defined uniformly as
-follows:
+\emph{inductive refinement}~\cite{harper:2016}. The basic idea is to introduce a
+new form of (meta)-judgment $\IsWf{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$ which
+expresses the extrinsic wellformedness properties we wish to verify,
+presupposing $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$. Additionally, we
+introduce an analogous judgment on bound terms,
+$\IsWf{\Omega}{\Upsilon}{\Gamma}{E}{v}$ presupposing
+$\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$, defined uniformly as follows:
 \[
   \infer{
     \IsWf{\Omega}{\Upsilon}{\Gamma}{
@@ -1177,14 +1556,16 @@ Likewise, wellformedness for variables and metavariables is defined uniformly:
   \infer{
     \IsWf{\Omega}{\Upsilon}{\Gamma}{x}{\tau}
   }{
-  }\qquad
+  }
+\qquad
   \infer{
     \IsWf{\Omega}{\Upsilon}{\Gamma}{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{\tau}
   }{
     \begin{array}{l}
-      \Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\tau_0,\dots,\tau_n}{\tau}}\\
+      \Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\tau_0,\dots,\tau_n}{\tau}}
+\\
       \HypJ{
         \IsWf{\Omega}{\Upsilon}{\Gamma}{M_i}{\tau_i}
       }{
@@ -1200,10 +1581,9 @@ Likewise, wellformedness for variables and metavariables is defined uniformly:
   is satisfied.
 \end{remark}
 
-The remainder of the definition of refinement proceeds by induction on sorts
-and operators. For the sake of this example, we will just stipulate that
-anything of sort $\SortExp$ or $\SortType$ is grammatical if its subterms are
-grammatical:
+The remainder of the definition of refinement proceeds by induction on sorts and
+operators. For the sake of this example, we will just stipulate that anything of
+sort $\SortExp$ or $\SortType$ is grammatical if its subterms are grammatical:
 
 \[
   \infer[
@@ -1218,7 +1598,8 @@ grammatical:
         \MkArity{
           v_0,\dots,v_n
         }{\tau}
-      }\\
+      }
+\\
       \HypJ{
         \IsWf{\Omega}{\Upsilon}{\Gamma}{E_i}{v_i}
       }{
@@ -1239,13 +1620,15 @@ subterms as well:
     }{\SortJdg}
   }{
     \IsWf{\Omega}{\Upsilon,\vec{u}:\vec{\sigma}}{\Gamma}{J}{\SortJdg}
-  }\\[6pt]
+  }
+\\[6pt]
   \infer{
     \IsWf{\Omega}{\Upsilon}{\Gamma}{
       H\gg A
     }{\SortJdg}
   }{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{H}{\SortTele} &
+    \IsWf{\Omega}{\Upsilon}{\Gamma}{H}{\SortTele}
+&
     \IsWf{\Omega}{\Upsilon}{\Gamma}{A}{\SortType}
   }
 \end{gather*}
@@ -1256,12 +1639,13 @@ The refinement for telescopes proceeds by induction:
     \IsWf{\Omega}{\Upsilon}{\Gamma}{\diamond}{\SortTele}
   }{
   }
-  \qquad
+\qquad
   \infer{
     \IsWf{\Omega}{\Upsilon}{\Gamma}{H,u:A}{\SortTele}
   }{
     \begin{array}{l}
-      \IsWf{\Omega}{\Upsilon\setminus\MkSet{u}}{\Gamma}{H}{\SortTele}\\
+      \IsWf{\Omega}{\Upsilon\setminus\MkSet{u}}{\Gamma}{H}{\SortTele}
+\\
       \IsWf{\Omega}{\Upsilon\setminus\MkSet{u}}{\Gamma}{A}{\SortType}
     \end{array}
   }
