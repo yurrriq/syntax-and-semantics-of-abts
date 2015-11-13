@@ -19,6 +19,7 @@
 \usepackage{supertabular}
 \usepackage{tikz-cd}
 \usepackage{tikzpfeile}
+\usepackage{todonotes}
 \usepackage{url}
 
 \definecolor{dark-gray}{gray}{0.20}
@@ -518,7 +519,7 @@ syntax of abstract binding trees is inductively defined in four rules:
 
 Abts are identified up to $\alpha$-equivalence. Let $\FS{M}$ be the collection
 of symbols free in $M$, and let $\FV{M}$ be the collection of variables free in
-$M$. %% TODO: actually define these
+$M$. \todo[inline]{actually define these}
 
 \subsection{Renaming of Symbols}
 
@@ -580,7 +581,7 @@ up to $\alpha$-equivalence, the renaming judgment is functional in its input,
 and so we are justified in writing $\Rename{\varrho}{M}$ for $N$ when
 $\IsRenaming{\varrho}{M}{N}$.
 
-%%% TODO: show that renaming preserves wellformedness
+\todo[inline]{show that renaming preserves wellformedness}
 
 \subsection{Substitution of Variables}
 
@@ -1004,7 +1005,7 @@ been successfully used in large-scale mechanization efforts, including that of
 Standard ML~\cite{lee-crary-harper:2007} and the Edinburgh Logical Framework
 itself~\cite{martens-crary:2012}.
 
-%%% TODO: talk about context encodings in Abella
+\todo[inline]{talk about context encodings in Abella}
 
 We will approach the problem of encoding telescopes and sequents from the
 \emph{refinements} perspective, where a conservative approximation of the
