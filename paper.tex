@@ -120,7 +120,7 @@
 \newcommand\Arities{\mathcal{A}}
 \newcommand\Operators{\mathcal{O}}
 
-\newcommand\Iso[2]{#1\mathrel{{{\cong}}}#2}
+\newcommand\Iso[2]{\IMode{#1}\mathrel{{{\cong}}}\IMode{#2}}
 \newcommand\Cats{\mathbf{Cat}}
 \newcommand\Discrete[1]{#1_{\equiv}}
 \newcommand\Arr[1]{\mathbf{{#1}^{\ra}}}
@@ -321,27 +321,27 @@ $\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are paired
 diagrams:
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
-    {\Pair{\Upsilon}{a}}
-      \arrow[r, swap, "\Pair{\rho}{f}"]
+    \IMode{\Pair{\Upsilon}{a}}
+      \arrow[r, swap, "\IMode{\Pair{\rho}{f}}"]
 \&
-    {\Pair{\Upsilon'}{a'}}
+    \IMode{\Pair{\Upsilon'}{a'}}
   \end{tikzcd}
 \qquad
   \begin{tikzcd}[cramped, sep = small, ampersand replacement = \&]
     \null
 \&
-    \mathbb{1}
-      \arrow[dl, swap, "\vartheta"]
-      \arrow[dr, "\vartheta'"]
+    \IMode{\mathbb{1}}
+      \arrow[dl, swap, "\IMode{\vartheta}"]
+      \arrow[dr, "\IMode{\vartheta'}"]
 \&
     \null
 \\
-    {\Operators\Pair{\Upsilon}{a}}
-      \arrow[rr, swap, "\Operators\Pair{\rho}{f}"]
+    \IMode{\Operators\Pair{\Upsilon}{a}}
+      \arrow[rr, swap, "\IMode{\Operators\Pair{\rho}{f}}"]
 \&
     \null
 \&
-    {\Operators\Pair{\Upsilon'}{a'}}
+    \IMode{\Operators\Pair{\Upsilon'}{a'}}
   \end{tikzcd}
 \]
 We will write $\IsOperator{\Upsilon}{\vartheta}{a}$ in case
@@ -493,7 +493,7 @@ $\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathtt{get}[u]$ to $\mathtt{get}[v]$.
 \section{Contexts}
 
 In general, we will have three kinds of context: metavariable contexts, variable
-contexts, and symbol (parameter) contexts. A metavariable context $\Omega$
+contexts, and symbol (parameter) contexts. A metavariable context $\Theta$
 consists of bindings of valences to metavariables; a variable context $\Gamma$
 is a collection of bindings of sorts to variables, and a parameter context
 $\Upsilon$ is a collection of bindings of sorts to symbols.
@@ -505,13 +505,13 @@ $\Upsilon$ is a collection of bindings of sorts to symbols.
   }
 \qquad
   \infer{
-    \IsMetaCtx{\Omega,\MV{m}:v}
+    \IsMetaCtx{\Theta,\MV{m}:v}
   }{
-    \IsMetaCtx{\Omega}
+    \IsMetaCtx{\Theta}
 &
     \IsValence{v}
 &
-    \NotIn{\MV{m}}{\Dom\Omega}
+    \NotIn{\MV{m}}{\Dom\Theta}
   }
 \end{gather*}
 
@@ -551,28 +551,28 @@ $\Upsilon$ is a collection of bindings of sorts to symbols.
 
 \section{Abstract Binding Trees}
 
-Let the judgment $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$ presuppose
-$\IsMetaCtx{\Omega}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and
+Let the judgment $\IsAbt{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$ presuppose
+$\IsMetaCtx{\Theta}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and
 $\IsSort{\tau}$, meaning that $M$ is an abstract binding tree of sort $s$, with
-metavariables in $\Omega$, parameters in $\Upsilon$, and variables in $\Gamma$.
-Let the judgment $\IsBTm{\Omega}{\Upsilon}{\Gamma}{E}{v}$ presuppose
+metavariables in $\Theta$, parameters in $\Upsilon$, and variables in $\Gamma$.
+Let the judgment $\IsBTm{\Theta}{\Upsilon}{\Gamma}{E}{v}$ presuppose
 $\IsValence{v}$. Then, the syntax of abstract binding trees is inductively
 defined in four rules:
 
 \begin{gather*}
   \infer[\textit{var}]{
-    \IsAbt{\Omega}{\Upsilon}{\Gamma}{x}{\tau}
+    \IsAbt{\Theta}{\Upsilon}{\Gamma}{x}{\tau}
   }{
     \Lookup{\Gamma}{x}{\tau}
   }
 \\[6pt]
   \infer[\textit{mvar}]{
-    \IsAbt{\Omega}{\Upsilon}{\Gamma}{
+    \IsAbt{\Theta}{\Upsilon}{\Gamma}{
       \MApp{\MV{m}}{u_0,\dots,u_m}{M_0,\dots,M_n}
     }{\tau}
   }{
     \begin{array}{l}
-      \Lookup{\Omega}{\MV{m}}{
+      \Lookup{\Theta}{\MV{m}}{
         \MkValence{
           \sigma_0,\dots,\sigma_m
         }{
@@ -585,13 +585,13 @@ defined in four rules:
       }{\Leq{i}{m}}
 \\
       \HypJ{
-        \IsAbt{\Omega}{\Upsilon}{\Gamma}{M_i}{\tau_i}
+        \IsAbt{\Theta}{\Upsilon}{\Gamma}{M_i}{\tau_i}
       }{\Leq{i}{n}}
     \end{array}
   }
 \\[6pt]
   \infer[\textit{app}]{
-    \IsAbt{\Omega}{\Upsilon}{\Gamma}{
+    \IsAbt{\Theta}{\Upsilon}{\Gamma}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{\tau}
   }{
@@ -601,20 +601,20 @@ defined in four rules:
       }
 \\
       \HypJ{
-        \IsBTm{\Omega}{\Upsilon}{\Gamma}{E_i}{v_i}
+        \IsBTm{\Theta}{\Upsilon}{\Gamma}{E_i}{v_i}
       }{\Leq{i}{n}}
     \end{array}
   }
 \\[6pt]
   \infer[\textit{abs}]{
-    \IsBTm{\Omega}{\Upsilon}{\Gamma}{
+    \IsBTm{\Theta}{\Upsilon}{\Gamma}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
       \MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}
     }
   }{
     \IsAbt{
-      \Omega
+      \Theta
     }{
       \Upsilon, \vec{u}:\vec{\sigma}
     }{
@@ -636,8 +636,8 @@ The only place that symbols appear in our calculus is as parameters to operators
 the operator copresheaf can be lifted into terms by recursion on their
 structure, via a pair of judgments $\IsRenaming{\varrho}{M}{N}$ and
 $\IsRenaming{\varrho}{E}{F}$, presupposing $\Of{\varrho}{\Upsilon\ra\Upsilon'}$,
-and $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$ and
-$\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$ respectively:
+and $\IsAbt{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$ and
+$\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
 
 \begin{gather*}
   \infer{
@@ -971,7 +971,7 @@ an environment presheaf in the following way:
 \[
   \Define{
     \SemBrackets{
-      \Omega\triangleright\Upsilon\parallel\Gamma
+      \Theta\triangleright\Upsilon\parallel\Gamma
     }_P
   }{
     \left(
@@ -981,7 +981,7 @@ an environment presheaf in the following way:
           {\vec{\sigma}}
           {\vec{\tau}}
           {\tau})
-        \in\Omega
+        \in\Theta
       }{{P_{\tau}}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}}
     \right)
     \times
@@ -996,26 +996,26 @@ to $P$:
 \[
   \Of{
     \SemBrackets{
-      \Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau
+      \Theta\triangleright\Upsilon\parallel\Gamma\vdash M:\tau
     }_{P}
   }{
     \SemBrackets{
-      \Omega\triangleright\Upsilon\parallel\Gamma
+      \Theta\triangleright\Upsilon\parallel\Gamma
     }_{P}\ra {P}_{\tau}
   }
 \]
 
 Variables are interpreted by the map
 ${\SemBrackets{
-  \Omega\triangleright\Upsilon\parallel\Gamma\vdash x:\tau
+  \Theta\triangleright\Upsilon\parallel\Gamma\vdash x:\tau
 }}_{P}$ which
 projects them from the environment and embeds them into the model. Metavariables
 are resolved by the map
 ${\SemBrackets{
-  \Omega\triangleright\Upsilon\parallel\Gamma\vdash\MApp{\MV{m}}{\vec{u}}{\vec{M}}
+  \Theta\triangleright\Upsilon\parallel\Gamma\vdash\MApp{\MV{m}}{\vec{u}}{\vec{M}}
   : \tau
 }}_{P}$ (where
-$\Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}}$) which
+$\Lookup{\Theta}{\MV{m}}{\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}}$) which
 projects their interpretation from the environment and instantiates it via
 substitution:
 \[
@@ -1024,7 +1024,7 @@ substitution:
 \&[8.0em]
     {\IMode{
       {\SemBrackets{
-        \Omega\triangleright\Upsilon\parallel\Gamma
+        \Theta\triangleright\Upsilon\parallel\Gamma
       }}_{P}
     }}
       \arrow[
@@ -1033,7 +1033,7 @@ substitution:
         , "
           \OMode{
             {\SemBrackets{
-              \Omega\triangleright\Upsilon\parallel\Gamma
+              \Theta\triangleright\Upsilon\parallel\Gamma
               \vdash
               x:\tau
             }}_{P}
@@ -1069,7 +1069,7 @@ substitution:
         , "
           \OMode{
             {\SemBrackets{
-              \Omega\triangleright\Upsilon\parallel\Gamma
+              \Theta\triangleright\Upsilon\parallel\Gamma
               \vdash
               \MApp{\MV{m}}{\vec{u}}{\vec{M}}: \tau
             }}_{P}
@@ -1111,7 +1111,7 @@ substitution:
 \&
     {\IMode{
       {\SemBrackets{
-        \Omega\triangleright\Upsilon\parallel\Gamma
+        \Theta\triangleright\Upsilon\parallel\Gamma
       }}_{P}
     }}
       \arrow[
@@ -1124,7 +1124,7 @@ substitution:
           }{
             \,\Tuple{
               {\SemBrackets{
-                \Omega\triangleright\Upsilon\parallel\Gamma\vdash M:\tau
+                \Theta\triangleright\Upsilon\parallel\Gamma\vdash M:\tau
               }}_{P}
             }_{(M,\tau)\in (\vec{M},\vec{\tau})}
           }
@@ -1152,7 +1152,7 @@ using the environment:
     |[alias = Src]|
     {\IMode{
       {\SemBrackets{
-        \Omega\triangleright\Upsilon\parallel\Gamma
+        \Theta\triangleright\Upsilon\parallel\Gamma
       }}_{P}
     }}
       \arrow[
@@ -1186,7 +1186,7 @@ the signature endofunctor, which interprets the syntax of operator applications:
 \[
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{
-      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}}_{P}
+      {\SemBrackets{\Theta\triangleright\Upsilon\parallel\Gamma}}_{P}
     }}
       \arrow[r, "\IMode{\beta}"]
 \&
@@ -1206,7 +1206,7 @@ operator.
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{
       {\SemBrackets{
-        \Omega\triangleright\Upsilon\parallel\Gamma
+        \Theta\triangleright\Upsilon\parallel\Gamma
       }}_{P}
     }}
       \arrow[
@@ -1240,7 +1240,7 @@ form) of the composites $\IMode{{\gamma}_{i}}$:
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{
       {\SemBrackets{
-        \Omega\triangleright\Upsilon\parallel\Gamma
+        \Theta\triangleright\Upsilon\parallel\Gamma
       }}_{P}
     }}
       \arrow[
@@ -1252,7 +1252,7 @@ form) of the composites $\IMode{{\gamma}_{i}}$:
 \&
     {\IMode{
       {\SemBrackets{
-        \Omega\triangleright\Upsilon\parallel\Gamma
+        \Theta\triangleright\Upsilon\parallel\Gamma
       }}_{P}
       \times
       \Yoneda{
@@ -1280,7 +1280,7 @@ form) of the composites $\IMode{{\gamma}_{i}}$:
 \&[3.5em]
     {\IMode{
       \SemBrackets{
-        \Omega\triangleright\Upsilon,
+        \Theta\triangleright\Upsilon,
         \vec{\sigma}_i\parallel\Gamma,
         \vec{\tau}_{i}
       }_{P}
@@ -1289,7 +1289,7 @@ form) of the composites $\IMode{{\gamma}_{i}}$:
         , rotate = +19.25
         , xshift = -4.5em
         , yshift = -0.2em
-      ]{\IMode{\SemBrackets{\Omega\triangleright\Upsilon,\vec{\sigma}_{i}\parallel\Gamma,\vec{\tau}_{i}\vdash M_i:\tau_i}_P}}
+      ]{\IMode{\SemBrackets{\Theta\triangleright\Upsilon,\vec{\sigma}_{i}\parallel\Gamma,\vec{\tau}_{i}\vdash M_i:\tau_i}_P}}
 \\[2.0em]
     {\IMode{{P}_{{\tau}_{i}}^{\Yoneda{\vec{\sigma}_{i}\parallel\vec{\tau}_{i}}}}}
 \&
@@ -1301,7 +1301,7 @@ where $\phi_i,\psi_i$ are defined as follows:
 \begin{gather*}
   \begin{tikzcd}[cramped, ampersand replacement = \&]
     {\IMode{
-      {\SemBrackets{\Omega\triangleright\Upsilon\parallel\Gamma}}_{P}
+      {\SemBrackets{\Theta\triangleright\Upsilon\parallel\Gamma}}_{P}
       \times
       \Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
     }}
@@ -1327,7 +1327,7 @@ where $\phi_i,\psi_i$ are defined as follows:
 \\[-1.0em]
     {\IMode{
       {\SemBrackets{
-        \Omega\triangleright\Upsilon\parallel\Gamma
+        \Theta\triangleright\Upsilon\parallel\Gamma
       }}_{P}
       \times
       \Yoneda{\vec{\sigma}_i\parallel\vec{\tau}_i}
@@ -1533,41 +1533,41 @@ Then, we may write a closed sequent judgment as follows:
 Having specified an approximation of the grammar of telescopes and sequents in
 the abt logical framework, we can proceed to define proper wellformedness via
 \emph{inductive refinement}~\cite{harper:2016}. The basic idea is to introduce a
-new form of (meta)-judgment $\IsWf{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$ which
+new form of (meta)-judgment $\IsWf{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$ which
 expresses the extrinsic wellformedness properties we wish to verify,
-presupposing $\IsAbt{\Omega}{\Upsilon}{\Gamma}{M}{\tau}$. Additionally, we
+presupposing $\IsAbt{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$. Additionally, we
 introduce an analogous judgment on bound terms,
-$\IsWf{\Omega}{\Upsilon}{\Gamma}{E}{v}$ presupposing
-$\IsAbt{\Omega}{\Upsilon}{\Gamma}{E}{v}$, defined uniformly as follows:
+$\IsWf{\Theta}{\Upsilon}{\Gamma}{E}{v}$ presupposing
+$\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$, defined uniformly as follows:
 \[
   \infer{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{
+    \IsWf{\Theta}{\Upsilon}{\Gamma}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
       \MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}
     }
   }{
-    \IsWf{\Omega}{\Upsilon,\vec{u}:\vec{\sigma}}{\Gamma,\vec{x}:\vec{\tau}}{M}{\tau}
+    \IsWf{\Theta}{\Upsilon,\vec{u}:\vec{\sigma}}{\Gamma,\vec{x}:\vec{\tau}}{M}{\tau}
   }
 \]
 
 Likewise, wellformedness for variables and metavariables is defined uniformly:
 \begin{gather*}
   \infer{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{x}{\tau}
+    \IsWf{\Theta}{\Upsilon}{\Gamma}{x}{\tau}
   }{
   }
 \qquad
   \infer{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{
+    \IsWf{\Theta}{\Upsilon}{\Gamma}{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{\tau}
   }{
     \begin{array}{l}
-      \Lookup{\Omega}{\MV{m}}{\MkValence{\vec{\sigma}}{\tau_0,\dots,\tau_n}{\tau}}
+      \Lookup{\Theta}{\MV{m}}{\MkValence{\vec{\sigma}}{\tau_0,\dots,\tau_n}{\tau}}
 \\
       \HypJ{
-        \IsWf{\Omega}{\Upsilon}{\Gamma}{M_i}{\tau_i}
+        \IsWf{\Theta}{\Upsilon}{\Gamma}{M_i}{\tau_i}
       }{
         \Leq{i}{n}
       }
@@ -1577,7 +1577,7 @@ Likewise, wellformedness for variables and metavariables is defined uniformly:
 
 \begin{remark}
   Note that the refinement for variables $x$ is not trivial, since it is only
-  defined in case the presupposition $\IsAbt{\Omega}{\Upsilon}{\Gamma}{x}{\tau}$
+  defined in case the presupposition $\IsAbt{\Theta}{\Upsilon}{\Gamma}{x}{\tau}$
   is satisfied.
 \end{remark}
 
@@ -1589,7 +1589,7 @@ sort $\SortExp$ or $\SortType$ is grammatical if its subterms are grammatical:
   \infer[
     \text{for $\Member{\tau}{\MkSet{\SortExp,\SortType}}$}
   ]{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{
+    \IsWf{\Theta}{\Upsilon}{\Gamma}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{\tau}
   }{
@@ -1601,7 +1601,7 @@ sort $\SortExp$ or $\SortType$ is grammatical if its subterms are grammatical:
       }
 \\
       \HypJ{
-        \IsWf{\Omega}{\Upsilon}{\Gamma}{E_i}{v_i}
+        \IsWf{\Theta}{\Upsilon}{\Gamma}{E_i}{v_i}
       }{
         \Leq{i}{n}
       }
@@ -1613,40 +1613,40 @@ The refinements for parametric judgment and sequents simply delegate to their
 subterms as well:
 \begin{gather*}
   \infer{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{
+    \IsWf{\Theta}{\Upsilon}{\Gamma}{
       \App{\OpNabla{\vec{\sigma}}}{
         \MkBTm{\vec{u}}{}{J}
       }
     }{\SortJdg}
   }{
-    \IsWf{\Omega}{\Upsilon,\vec{u}:\vec{\sigma}}{\Gamma}{J}{\SortJdg}
+    \IsWf{\Theta}{\Upsilon,\vec{u}:\vec{\sigma}}{\Gamma}{J}{\SortJdg}
   }
 \\[6pt]
   \infer{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{
+    \IsWf{\Theta}{\Upsilon}{\Gamma}{
       H\gg A
     }{\SortJdg}
   }{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{H}{\SortTele}
+    \IsWf{\Theta}{\Upsilon}{\Gamma}{H}{\SortTele}
 &
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{A}{\SortType}
+    \IsWf{\Theta}{\Upsilon}{\Gamma}{A}{\SortType}
   }
 \end{gather*}
 
 The refinement for telescopes proceeds by induction:
 \begin{gather*}
   \infer{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{\diamond}{\SortTele}
+    \IsWf{\Theta}{\Upsilon}{\Gamma}{\diamond}{\SortTele}
   }{
   }
 \qquad
   \infer{
-    \IsWf{\Omega}{\Upsilon}{\Gamma}{H,u:A}{\SortTele}
+    \IsWf{\Theta}{\Upsilon}{\Gamma}{H,u:A}{\SortTele}
   }{
     \begin{array}{l}
-      \IsWf{\Omega}{\Upsilon\setminus\MkSet{u}}{\Gamma}{H}{\SortTele}
+      \IsWf{\Theta}{\Upsilon\setminus\MkSet{u}}{\Gamma}{H}{\SortTele}
 \\
-      \IsWf{\Omega}{\Upsilon\setminus\MkSet{u}}{\Gamma}{A}{\SortType}
+      \IsWf{\Theta}{\Upsilon\setminus\MkSet{u}}{\Gamma}{A}{\SortType}
     \end{array}
   }
 \end{gather*}
