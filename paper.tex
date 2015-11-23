@@ -1,6 +1,10 @@
 \documentclass[11pt]{article}
 
-\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{notation/modes}
+\usepackage{notation/judgments}
+\usepackage{notation/abts}
+\usepackage{notation/common}
+
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
@@ -71,150 +75,29 @@
 \theoremstyle{remark}
 \newtheorem{remark}[thm]{Remark}
 \numberwithin{equation}{section}
-
-\def\IModeColorName{MidnightBlue}
-\def\OModeColorName{Maroon}
-
 %% Euler doesn't have \varsigma and \varrho
 \DeclareSymbolFont{greekletters}{OML}{cmr}{m}{it}
 \DeclareMathSymbol{\varrho}{\mathalpha}{greekletters}{"25}
 \DeclareMathSymbol{\varsigma}{\mathalpha}{greekletters}{"26}
 
-\newcommand\IMode[1]{{\color{\IModeColorName}{#1}}}
-\newcommand\OMode[1]{{\color{\OModeColorName}{#1}}}
-
-\newcommand\HypJ[2]{#1\ \ (#2)}
-\newcommand\GenJ[2]{\vert_{\IMode{#1}}\; #2}
-
-\newcommand\IsTac[1]{\IMode{#1}\ \textit{tactic}}
-
-\newcommand\MkSet[1]{\left\{\,#1\,\right\}}
-\newcommand\Member[2]{\IMode{#1}\in\IMode{#2}}
-\newcommand\EqMember[3]{\IMode{#1}=\IMode{#2}\in\IMode{#3}}
-\newcommand\Of[2]{\IMode{#1}: \IMode{#2}}
-
-\newcommand\MkValence[3]{%
-  \ifthenelse{\equal{#1}{}}{}{%
-    \{#1\}%
-  }%
-  \ifthenelse{\equal{#2}{}}{}{%
-    [#2]%
-  }.\, #3%
-}
-\newcommand\MkBTm[3]{\mathbb{\lambda}\{#1\}[#2].\, #3}
-\newcommand\MkArity[2]{(#1)\, #2}
-\newcommand\IsArity[1]{\IMode{#1}\ \textit{arity}}
-\newcommand\IsValence[1]{\IMode{#1}\ \textit{valence}}
-\newcommand\IsSort[1]{\IMode{#1}\ \textit{sort}}
-\newcommand\Leq[2]{\IMode{#1}\leq\IMode{#2}}
-
-\newcommand\ArrId[1]{1_{#1}}
-\newcommand\Shriek[1]{\,{{{\mathexclam}}}_{#1}}
-\newcommand\Match[2]{\IMode{#1}\equiv\OMode{#2}}
-
 \newcommand\Symbols{\mathbf{I}}
 \newcommand\SymSets{\mathbb{F}_\Symbols}
 \newcommand\FinSets{\mathbb{F}}
-\newcommand\Sorts{\mathcal{S}}
-\newcommand\Valences{\mathcal{V}}
-\newcommand\Arities{\mathcal{A}}
-\newcommand\Operators{\mathcal{O}}
-
-\newcommand\Iso[2]{\IMode{#1}\mathrel{{{\cong}}}\IMode{#2}}
-\newcommand\Cats{\mathbf{Cat}}
-\newcommand\Discrete[1]{#1_{\equiv}}
-\newcommand\Arr[1]{\mathbf{{#1}^{\ra}}}
-\newcommand\Sets{\mathbf{Set}}
-\newcommand\SCtx{\mathbf{SCtx}}
-\newcommand\Ctx{\mathbf{Ctx}}
-\newcommand\Seq{\mathbf{Seq}}
 \newcommand\HypCat{\mathbf{H}}
 
-\newcommand\OpCat[1]{#1^{\mathtt{op}}}
-
-\newcommand\IsOperator[3]{
-  \IMode{#1}\,{\Vdash}\,\IMode{#2}: \OMode{#3}
-}
-
-\newcommand\IsMetaCtx[1]{\IMode{#1}\ \textit{mctx}}
-\newcommand\IsVarCtx[1]{\IMode{#1}\ \textit{vctx}}
-\newcommand\IsSymCtx[1]{\IMode{#1}\ \textit{sctx}}
-
-\newcommand\Lookup[3]{\IMode{#1}\ni\IMode{#2}:\OMode{#3}}
-
-\newcommand\Grothendieck[2]{\oint^{#1} #2#1}
-\newcommand\Pair[2]{\left\langle\,#1,#2\,\right\rangle}
-\newcommand\Tuple[1]{\left\langle#1 \right\rangle}
 \newcommand\FLift[2]{
   \Operators\langle#1%
   \ifthenelse{\equal{#2}{}}{}{, #2}\rangle%
 }
-\newcommand\PairTimes[2]{\langle#1\, {\scriptstyle{{\times}}}\, #2 \rangle}
-\newcommand\SSingleton{\bullet}
-\newcommand\Forget[1]{|\, #1\, |}
 
-\newcommand\Comma[2]{#1 \downarrow#2}
-\newcommand\Coslice[2]{#1\, /\, #2}
+\newcommand\SortExp{\mathtt{exp}}
 
-\newcommand\IsAbt[5]{%
-  \IMode{#1}\triangleright%
-  \IMode{#2}\parallel%
-  \,{\IMode{#3}\vdash}\,%
-  \IMode{#4}:\OMode{#5}%
-}
 \newcommand\IsWf[5]{%
   \IMode{#1}\triangleright%
   \IMode{#2}\parallel%
   \IMode{#3}\vdash%
   \IMode{#4}\in_{\mathbf{wf}}\IMode{#5}%
 }
-
-\newcommand\IsBTm[5]{%
-  \IMode{#1}\triangleright%
-  \IMode{#2}\parallel%
-  \,{\IMode{#3}\vdash}\,%
-  \IMode{#4}:\IMode{#5}%
-}
-
-\newcommand\MV[1]{\mathfrak{#1}}
-\newcommand\MApp[3]{#1\{#2\}(#3)}
-\newcommand\App[2]{#1(#2)}
-\newcommand\Dom[1]{\left\vert#1\right\vert}
-\newcommand\FV[1]{\mathbf{FV}\left(#1\right)}
-\newcommand\FS[1]{\mathbf{FS}\left(#1\right)}
-\newcommand\NotIn[2]{\IMode{#1}\notin\IMode{#2}}
-\newcommand\SortExp{\mathtt{exp}}
-
-\newcommand\Hom[3]{#1\left[#2,#3\right]}
-
-\newcommand\Rename[2]{%
-  #2\{#1\}%
-}
-
-\newcommand\IsRenaming[3]{%
-  \Rename{\IMode{#1}}{\IMode{#2}}%
-  \leadsto\OMode{#3}%
-}
-
-\newcommand\Subst[3]{%
-  \left[#1\, /\, #2\right]#3%
-}
-
-\newcommand\IsSubst[4]{%
-  \Subst{\IMode{#1}}{\IMode{#2}}{\IMode{#3}}%
-  \leadsto\OMode{#4}%
-}
-
-\newcommand\IsEq[2]{\IMode{#1} = \IMode{#2}}
-\newcommand\IsApart[2]{\IMode{#1} \mathrel{\#} \IMode{#2}}
-
-\newcommand\Define[2]{\IMode{#1}\triangleq\OMode{#2}}
-\newcommand\ADefine[2]{\IMode{#1}&\triangleq\OMode{#2}}
-
-\newcommand\SigFun[1]{\mathcal{F}_{#1}}
-
-\newcommand\SemBrackets[1]{\left\llbracket#1\right\rrbracket}
-\newcommand\Yoneda[1]{\boldsymbol{y} (#1)}
 
 \begin{document}
 
