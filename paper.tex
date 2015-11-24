@@ -55,8 +55,7 @@
 \DeclareMathSymbol{\varrho}{\mathalpha}{greekletters}{"25}
 \DeclareMathSymbol{\varsigma}{\mathalpha}{greekletters}{"26}
 
-\newcommand\Symbols{\mathbf{I}}
-\newcommand\SymSets{\mathbb{F}_\Symbols}
+\newcommand\SymSets{\mathbb{I}}
 \newcommand\FinSets{\mathbb{F}}
 \newcommand\HypCat{\mathbf{H}}
 
@@ -73,6 +72,8 @@
   \IMode{#3}\vdash%
   \IMode{#4}\in_{\mathbf{wf}}\IMode{#5}%
 }
+
+\newcommand\Sheaves[1]{\mathbf{Sh}(#1)}
 
 \begin{document}
 
@@ -155,21 +156,57 @@ and the set of arities $\Arities$.
   }
 \]
 
+\subsection{Symbols, contexts and their sheaves}
 
-Let $\Symbols$ be an infinite set of symbols. Let $\SymSets$ be the category of
-finite subsets of $\Symbols$ and their injective maps; then the comma
-construction $\Define{\SCtx}{\Comma{\SymSets}{\Discrete{\Sorts}}}$, with
-$\Discrete{\Sorts}$ the discrete category on the set $\mathcal{S}$, is the
-category of contexts of symbols, whose objects are finite sets of symbols $U$
-and sort-assignments
+Let $\SymSets$ be the category of finite cardinals and their injective maps;
+the the comma construction
+$\Define{\SCtx}{\Comma{\SymSets}{\Discrete{\Sorts}}}$, with $\Discrete{\Sorts}$
+the discrete category on the set $\Sorts$, is the category of contexts of
+symbols whose objects are finite sets of symbols $U$ and sort-assignments
 \begin{tikzcd}[cramped]
   \IMode{U}\arrow[r, "\IMode{\mathfrak{s}}"] &\IMode{\Sorts}
 \end{tikzcd}, and whose morphisms are
 sort-preserving renamings; we will write $\Upsilon$ for a symbol context
 $(U,\mathfrak{s})$.
 
-Then, fix a covariant presheaf of operators
-$\Of{\Operators}{\SCtx\times\Discrete{\Arities}\ra\Sets}$ such that the arrows
+Now, a covariant presheaf $X$ on $\SCtx$ is an intensional set which is subject to
+renamings
+\begin{tikzcd}[cramped]
+  \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
+\end{tikzcd};
+that is, each element $\Member{m}{X(\Upsilon)}$ can be mapped to a unique
+element $\Member{m\varrho}{X(\Upsilon')}$.
+
+\begin{definition}[Support]
+  For a presheaf $\Of{X}{\Sets^\SCtx}$, when
+  \begin{tikzcd}[cramped]
+    \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
+  \end{tikzcd},
+  we say that $\Upsilon$ supports $\Member{m}{\Upsilon'}$ when, for all
+  \begin{tikzcd}[cramped]
+    \IMode{\Upsilon'}\arrow[r, hook, "\IMode{\varrho_1}{,} \IMode{\varrho_2}"] & \IMode{\Upsilon''}
+  \end{tikzcd},
+  if $\IsEq{\varrho_1\circ\varrho}{\varrho_2\circ\varrho}$ then $\IsEq{m\varrho_1}{m\varrho_2}$.
+\end{definition}
+
+Intuitively, when $\Upsilon$ supports $\Member{m}{X(\Upsilon')}$, we would
+expect that we can work backward to a unique $\Of{m'}{\Upsilon}$ such that
+$\IsEq{m'\varrho}{m}$; whilst this is not in general the case for presheaves
+$X$, it is precisely the glueing condition for covariant sheaves on $\SCtx$
+under the atomic topology. The sheaf condition, then, ensures that the notion
+of support is well-behaved.
+
+\begin{remark}
+  The presentation we have given above is related both to the Schanuel topos
+  and, equivalently, Pitts' category of nominal sets; we differ only in
+  discussing sheaves on the category of symbol contexts $\SCtx$, as opposed to
+  sheaves on finite sets of symbols $\SymSets$ (i.e.\ unisorted contexts).
+\end{remark}
+
+\subsection{Operators and signatures}
+
+Fix a sheaf of operators
+$\Of{\Operators}{\Sheaves{\OpCat{\SCtx}\times\Discrete{\Arities}}}$ such that the arrows
 in $\SCtx$ lift to renamings of operators' parameters. Together, $\Sorts$ and
 $\Operators$ form a \emph{signature}
 $\Define{\Sigma}{\Pair{\Sorts}{\Operators}}$.
