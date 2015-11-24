@@ -58,6 +58,9 @@
 \newcommand\SymSets{\mathbb{I}}
 \newcommand\FinSets{\mathbb{F}}
 \newcommand\HypCat{\mathbf{H}}
+\newcommand\Supp[1]{\mathbf{supp}(#1)}
+\newcommand\SupportsUnmoded[3]{#1 \blacktriangleright_{#2} #3}
+\newcommand\Supports[3]{\SupportsUnmoded{\IMode{#1}}{\IMode{#2}}{\IMode{#3}}}
 
 \newcommand\FLift[2]{
   \Operators\langle#1%
@@ -182,7 +185,8 @@ element $\Member{m\varrho}{X(\Upsilon')}$.
   \begin{tikzcd}[cramped]
     \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
   \end{tikzcd},
-  we say that $\Upsilon$ supports $\Member{m}{\Upsilon'}$ when, for all
+  we say that $\Upsilon$ supports $\Member{m}{\Upsilon'}$ (written
+  $\Supports{\Upsilon}{\varrho}{m}$) when, for all
   \begin{tikzcd}[cramped]
     \IMode{\Upsilon'}\arrow[r, hook, "\IMode{\varrho_1}{,} \IMode{\varrho_2}"] & \IMode{\Upsilon''}
   \end{tikzcd},
@@ -195,6 +199,19 @@ $\IsEq{m'\varrho}{m}$; whilst this is not in general the case for presheaves
 $X$, it is precisely the glueing condition for covariant sheaves on $\SCtx$
 under the atomic topology. The sheaf condition, then, ensures that the notion
 of support is well-behaved.
+
+Let $\Supp{m}$ be the \emph{least support} of $\Member{m}{X(\Upsilon')}$:
+\[
+  \Define{\Supp{m}}{
+    \bigcap_{
+      \begin{tikzcd}[cramped, ampersand replacement = \&]
+        \Upsilon\arrow[r, hook, "\varrho"] \& \Upsilon'
+      \end{tikzcd}
+    }
+    \SupportsUnmoded{\Upsilon}{\varrho}{m}
+  }
+\]
+Intuitively, $\Supp{m}$ is the exact symbol context that $m$ depends on.
 
 \begin{remark}
   The presentation we have given above is related both to the Schanuel topos
@@ -525,15 +542,16 @@ defined in four rules:
   }
 \end{gather*}
 
-Abts are identified up to $\alpha$-equivalence. Let $\FS{M}$ be the collection
-of symbols free in $M$, and let $\FV{M}$ be the collection of variables free in
-$M$. \todo[inline]{actually define these}
+Abts are identified up to $\alpha$-equivalence. Let $\FV{M}$ be the collection
+of variables free in $M$, which is easily calculated by recursion on the
+structure of $M$. We also intend to calculate the collection $\FS{M}$ of
+symbols free in $M$, but this is more involved.
 
 \subsection{Renaming of Symbols}
 
 The only place that symbols appear in our calculus is as parameters to operators
 (unlike variables, symbols are not terms). Therefore, the functorial action of
-the operator presheaf can be lifted into terms by recursion on their
+the operator sheaf can be lifted into terms by recursion on their
 structure, via a pair of judgments $\IsRenaming{\varrho}{M}{N}$ and
 $\IsRenaming{\varrho}{E}{F}$, presupposing $\Of{\varrho}{\Upsilon\inj\Upsilon'}$,
 and $\IsAbt{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$ and
