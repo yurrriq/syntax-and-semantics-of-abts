@@ -66,6 +66,10 @@
   \FV{\IMode{#1}}\leadsto \OMode{#2}
 }
 
+\newcommand\CalcFS[2]{
+  \FS{\IMode{#1}}\leadsto \OMode{#2}
+}
+
 \newcommand\FLift[2]{
   \Operators\langle#1%
   \ifthenelse{\equal{#2}{}}{}{, #2}\rangle%
@@ -550,8 +554,8 @@ Abts are identified up to $\alpha$-equivalence.
 
 \subsection{Calculating free variables}
 
-Let $\FV{M}$ be the collection of variables free in $M$, which is easily
-calculated by recursion on the structure of $M$, as follows:
+We can easily calculate the variables free in an expression by recursion on its
+structure:
 
 \begin{gather*}
   \infer[\textit{var}]{
@@ -600,6 +604,61 @@ calculated by recursion on the structure of $M$, as follows:
 
 Because this is a total relation, henceforth we will write $\FV{M}$ for
 $\vec{x}$ when $\CalcFV{M}{x}$.
+
+\subsection{Calculating free symbols}
+
+Whereas the calculation of free variables pivoted on the \emph{var} rule, the
+calculation of free symbols will pivot on the \emph{app} rule, because the only
+place a symbol can be introduced is as a parameter to an operator.
+
+\begin{gather*}
+  \infer[\textit{var}]{
+    \CalcFS{x}{\MkSet{}}
+  }{
+  }\\[6pt]
+  %
+  \infer[\textit{mvar}]{
+    \CalcFS{
+      \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
+    }{
+      \bigcup_{i\leq n} \vec{u}_i
+    }
+  }{
+    \HypJ{
+      \CalcFS{M_i}{\vec{u}_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  %
+  \infer[\textit{app}]{
+    \CalcFS{
+      \App{\vartheta}{E_0,\dots,E_n}
+    }{
+      \Dom{\Supp{\vartheta}} \cup \bigcup_{i\leq n} \vec{u}_i
+    }
+  }{
+    \HypJ{
+      \CalcFS{E_i}{\vec{u}_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  %
+  \infer[\textit{abs}]{
+    \CalcFS{
+      \MkBTm{\vec{v}}{\vec{x}}{M}
+    }{
+      \vec{u}\setminus\vec{v}
+    }
+  }{
+    \CalcFS{M}{\vec{u}}
+  }
+\end{gather*}
+
+Because this is a total relation, henceforth we will write $\FS{M}$ for
+$\vec{u}$ when $\CalcFS{M}{u}$.
+
 
 \subsection{Renaming of symbols}
 
