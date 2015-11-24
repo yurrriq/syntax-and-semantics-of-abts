@@ -62,6 +62,10 @@
 \newcommand\SupportsUnmoded[3]{#1 \blacktriangleright_{#2} #3}
 \newcommand\Supports[3]{\SupportsUnmoded{\IMode{#1}}{\IMode{#2}}{\IMode{#3}}}
 
+\newcommand\CalcFV[2]{
+  \FV{\IMode{#1}}\leadsto \OMode{#2}
+}
+
 \newcommand\FLift[2]{
   \Operators\langle#1%
   \ifthenelse{\equal{#2}{}}{}{, #2}\rangle%
@@ -542,12 +546,62 @@ defined in four rules:
   }
 \end{gather*}
 
-Abts are identified up to $\alpha$-equivalence. Let $\FV{M}$ be the collection
-of variables free in $M$, which is easily calculated by recursion on the
-structure of $M$. We also intend to calculate the collection $\FS{M}$ of
-symbols free in $M$, but this is more involved.
+Abts are identified up to $\alpha$-equivalence.
 
-\subsection{Renaming of Symbols}
+\subsection{Calculating free variables}
+
+Let $\FV{M}$ be the collection of variables free in $M$, which is easily
+calculated by recursion on the structure of $M$, as follows:
+
+\begin{gather*}
+  \infer[\textit{var}]{
+    \CalcFV{x}{\MkSet{x}}
+  }{
+  }\\[6pt]
+  %
+  \infer[\textit{mvar}]{
+    \CalcFV{
+      \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
+    }{
+      \bigcup_{i\leq n} \vec{x}_i
+    }
+  }{
+    \HypJ{
+      \CalcFV{M_i}{\vec{x}_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  %
+  \infer[\textit{app}]{
+    \CalcFV{
+      \App{\vartheta}{E_0,\dots,E_n}
+    }{
+      \bigcup_{i\leq n} \vec{x}_i
+    }
+  }{
+    \HypJ{
+      \CalcFV{E_i}{\vec{x}_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  %
+  \infer[\textit{abs}]{
+    \CalcFV{
+      \MkBTm{\vec{u}}{\vec{y}}{M}
+    }{
+      \vec{x}\setminus\vec{y}
+    }
+  }{
+    \CalcFV{M}{\vec{x}}
+  }
+\end{gather*}
+
+Because this is a total relation, henceforth we will write $\FV{M}$ for
+$\vec{x}$ when $\CalcFV{M}{x}$.
+
+\subsection{Renaming of symbols}
 
 The only place that symbols appear in our calculus is as parameters to operators
 (unlike variables, symbols are not terms). Therefore, the functorial action of
@@ -614,7 +668,7 @@ $\IsRenaming{\varrho}{M}{N}$.
 
 \todo[inline]{show that renaming preserves wellformedness}
 
-\subsection{Substitution of Variables}
+\subsection{Substitution of variables}
 
 Variable substitution in abts is defined inductively by a pair of judgments,
 $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
@@ -696,7 +750,7 @@ Going forward, we will write $\Subst{N}{x}{M}$ for $M'$ when
 $\IsSubst{N}{x}{M}{M'}$, and $\Subst{\vec{N}}{\vec{x}}{M}$ for the simultaneous
 substitution of $\vec{N}$ for $\vec{x}$ in $M$.
 
-\subsection{Substitution of Metavariables}
+\subsection{Substitution of metavariables}
 
 Metavariables are substituted by bound terms; since a metavariable may only
 appear in an application expression $\MApp{\MV{m}}{\cdots}{\cdots}$, we will
