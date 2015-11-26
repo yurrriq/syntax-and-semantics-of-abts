@@ -415,29 +415,35 @@ $\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathtt{get}[u]$ to $\mathtt{get}[v]$.
 
 \section{Contexts}
 
-In general, we will have three kinds of context: metavariable contexts, variable
-contexts, and symbol (parameter) contexts. A metavariable context $\Theta$
-consists of bindings of valences to metavariables; a variable context $\Gamma$
-is a collection of bindings of sorts to variables, and a parameter context
-$\Upsilon$ is a collection of bindings of sorts to symbols.
-
+In general, we will have three kinds of context: symbolic (parameter) contexts,
+variable contexts, and metavaraible contexts The symbol contexts have already
+been defined via the comma construction $\SCtx$, but they also admit a
+syntactic characterization,
 \begin{gather*}
   \infer{
-    \IsMetaCtx{\cdot}
+    \IsSymCtx{\cdot}
   }{
   }
 \qquad
   \infer{
-    \IsMetaCtx{\Theta,\MV{m}:v}
+    \IsSymCtx{\Upsilon,u:\tau}
   }{
-    \IsMetaCtx{\Theta}
+    \IsSymCtx{\Upsilon}
 &
-    \IsValence{v}
+    \IsSort{\tau}
 &
-    \NotIn{\MV{m}}{\Dom\Theta}
+    \NotIn{u}{\Dom\Upsilon}
   }
 \end{gather*}
+%
+Because, modulo notation, we have $\Member{\Upsilon}{\SCtx}$ just when
+$\IsSymCtx{\Upsilon}$, we will use the syntactic view when it is convenient.
 
+Contexts of variables are similar to contexts of symbols, except that they
+admit \emph{any} renamings, not just the injective ones. As such, when
+$\FinSets$ is the category of finite cardinals and all functions between them, the
+comma construction $\Ctx$ is the category of variable contexts. As above, we
+can give them an equivalent syntactic treatment:
 \begin{gather*}
   \infer{
     \IsVarCtx{\cdot}
@@ -455,22 +461,28 @@ $\Upsilon$ is a collection of bindings of sorts to symbols.
   }
 \end{gather*}
 
+A metavariable context consists of bindings of \emph{valences} to
+metavariables; let $\Define{\Valences}{\MkSet{v\mid \IsValenceUnmoded{v}}}$ be the set
+of valences. Then, the category of metavariable contexts is the comma
+construction $\MCtx$, which likewise admits an equivalent inductive definition:
 \begin{gather*}
   \infer{
-    \IsSymCtx{\cdot}
+    \IsMetaCtx{\cdot}
   }{
   }
 \qquad
   \infer{
-    \IsSymCtx{\Upsilon,u:\tau}
+    \IsMetaCtx{\Theta,\MV{m}:v}
   }{
-    \IsSymCtx{\Upsilon}
+    \IsMetaCtx{\Theta}
 &
-    \IsSort{\tau}
+    \IsValence{v}
 &
-    \NotIn{u}{\Dom\Upsilon}
+    \NotIn{\MV{m}}{\Dom\Theta}
   }
 \end{gather*}
+
+
 
 \section{Abstract Binding Trees}
 
@@ -723,8 +735,6 @@ to $\alpha$-equivalence, the renaming judgment is functional in its input, and
 so we are justified in writing $\Rename{\varrho}{M}$ for $N$ when
 $\IsRenaming{\varrho}{M}{N}$.
 
-\todo[inline]{show that renaming preserves wellformedness}
-
 \subsection{Substitution of variables}
 
 Variable substitution in abts is defined inductively by a pair of judgments,
@@ -850,10 +860,9 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
 &
     \IsSubst{\vec{M}}{\vec{x}}{N}{N'}
 &
-    \IsRenaming{\MkSet{\vec{u}\mapsto\vec{v}}}{N'}{N''}
-  }
-\end{gather*}
-\begin{gather*}
+    \IsRenaming{\vec{u}\mapsto\vec{v}}{N'}{N''}
+  }\\[6pt]
+  %
   \infer{
     \IsSubst{E}{\MV{m}}{
       \App{\vartheta}{F_0,\dots,F_n}
@@ -888,8 +897,6 @@ $\IsSubst{E}{\MV{m}}{M}{N}$.
 
 \section{Model Theory}
 
-Let $\FinSets$ be category of finite cardinals and \emph{any} functions between
-them; then the comma construction $\Ctx$ is the category of variable contexts.
 Let $\Define{\HypCat}{\OpCat{(\SCtx\times\Ctx)}}$; then we fix the functor
 category $\widehat{\HypCat}^\Sorts$ as our semantic universe.
 
