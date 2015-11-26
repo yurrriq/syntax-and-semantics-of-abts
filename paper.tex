@@ -909,10 +909,12 @@ $a$,
 $\Define{\Operators_a(\Upsilon\parallel\Gamma)}{\Operators\Pair{\Upsilon}{a}}$
 
 \subsection{Substitution monoidal structures}
+\newcommand\SymPsh{\mathbf{S}}
+\newcommand\VarPsh{\mathbf{V}}
 
 For an object $\Of{P}{\widehat{\HypCat}^\Sorts}$, we will use the notation
 $P^{[\Gamma]}$ to mean $\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}$; likewise,
-$S^{\{\Upsilon\}}$ shall mean $\prod_{u\in\Dom\Upsilon}S_{\Upsilon(u)}$. For a
+$\SymPsh^{\{\Upsilon\}}$ shall mean $\prod_{u\in\Dom\Upsilon}S_{\Upsilon(u)}$. For a
 presheaf $\Of{A}{\widehat{\HypCat}}$ and a sort-indexed family of presheaves
 $\Of{P}{\widehat{\HypCat}^\Sorts}$, we have an operation $A\bullet P$, defined
 as a coend in the following way:
@@ -920,7 +922,7 @@ as a coend in the following way:
   \Define{(A\bullet P)(\Upsilon\parallel\Gamma)}{
     \int^{(\Upsilon'\parallel\Delta)\in\HypCat}
       A(\Upsilon'\parallel\Delta)
-      \times S^{\{\Upsilon'\}}(\Upsilon\parallel\Gamma)
+      \times \SymPsh^{\{\Upsilon'\}}(\Upsilon\parallel\Gamma)
       \times P^{[\Delta]}(\Upsilon\parallel\Gamma)
   }
 \]
@@ -962,7 +964,7 @@ ${\varsigma}^{\tau}_{\Upsilon\parallel\Gamma}$:
   \end{tikzcd}
   \qquad
   \begin{tikzcd}[cramped, sep = large, ampersand replacement = \&]
-    {\IMode{{P_\tau^{\Yoneda{\Upsilon\parallel\Gamma}}\times S^{\{\Upsilon\}}\times P^{[\Gamma]}}}}
+    {\IMode{{P_\tau^{\Yoneda{\Upsilon\parallel\Gamma}}\times \SymPsh^{\{\Upsilon\}}\times P^{[\Gamma]}}}}
       \arrow[r, "\IMode{\varsigma^\tau_{\Upsilon\parallel\Gamma}}"]
     \&
     {\IMode{P_\tau}}
@@ -1019,9 +1021,9 @@ an environment presheaf in the following way:
       }{{P_{\tau}}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}}
     \right)
     \times
-    S^{\{\Upsilon\}}
+    \SymPsh^{\{\Upsilon\}}
     \times
-    V^{[\Gamma]}
+    \VarPsh^{[\Gamma]}
   }
 \]
 
@@ -1118,7 +1120,7 @@ substitution:
       {P}_{\tau}^{
         \Yoneda{\vec{\sigma}\parallel\vec{\tau}}
       }
-      \times S^{\{\vec{\sigma}\}}
+      \times \SymPsh^{\{\vec{\sigma}\}}
       \times P^{[\vec{\tau}]}
     }}
       \arrow[
@@ -1164,14 +1166,14 @@ substitution:
           }
           "]
 \&
-    {\IMode{S^{\{\Upsilon\}}}}
+    {\IMode{\SymPsh^{\{\Upsilon\}}}}
       \arrow[
         , dashed
         , r
         , "\Define{\phi\,}{\,\Tuple{\pi_u}_{u\in\vec{u}}}"
       ]
 \&
-    {\IMode{S^{\{\vec{\sigma}\}}}}
+    {\IMode{\SymPsh^{\{\vec{\sigma}\}}}}
   \end{tikzcd}
 \]
 
@@ -1196,7 +1198,7 @@ using the environment:
         , "\IMode{\pi_2}"
       ]
 \&
-    {\IMode{S^{\{\Upsilon\}}}}
+    {\IMode{\SymPsh^{\{\Upsilon\}}}}
       \arrow[
         , r
         , swap
@@ -1358,7 +1360,7 @@ where $\phi_i,\psi_i$ are defined as follows:
           "
       ]
 \&[12.0em]
-    {\IMode{S^{\{\Upsilon,\vec{\sigma}_i\}}}}
+    {\IMode{\SymPsh^{\{\Upsilon,\vec{\sigma}_i\}}}}
 \\[-1.0em]
     {\IMode{
       {\SemBrackets{
@@ -1383,7 +1385,7 @@ where $\phi_i,\psi_i$ are defined as follows:
           "
       ]
 \&[12.0em]
-    {\IMode{V^{[\Gamma,\vec{\tau}_i]}}}
+    {\IMode{\VarPsh^{[\Gamma,\vec{\tau}_i]}}}
   \end{tikzcd}
 \end{gather*}
 
