@@ -55,8 +55,6 @@
 \DeclareMathSymbol{\varrho}{\mathalpha}{greekletters}{"25}
 \DeclareMathSymbol{\varsigma}{\mathalpha}{greekletters}{"26}
 
-\newcommand\SymSets{\mathbb{I}}
-\newcommand\FinSets{\mathbb{F}}
 \newcommand\HypCat{\mathbf{H}}
 \newcommand\Supp[1]{\mathbf{supp}(#1)}
 \newcommand\SupportsUnmoded[3]{#1 \blacktriangleright_{#2} #3}
@@ -170,8 +168,7 @@ and the set of arities $\Arities$.
 \subsection{Symbols, contexts and their sheaves}
 
 Let $\SymSets$ be the category of finite cardinals and their injective maps;
-the the comma construction
-$\Define{\SCtx}{\Comma{\SymSets}{\Discrete{\Sorts}}}$, with $\Discrete{\Sorts}$
+then the comma construction $\SCtx$, with $\Discrete{\Sorts}$
 the discrete category on the set $\Sorts$, is the category of contexts of
 symbols whose objects are finite sets of symbols $U$ and sort-assignments
 \begin{tikzcd}[cramped]
@@ -224,16 +221,17 @@ Intuitively, $\Supp{m}$ is the exact symbol context that $m$ depends on.
 \begin{remark}
   The presentation we have given above is related both to the Schanuel topos
   and, equivalently, Pitts' category of nominal sets; we differ only in
-  discussing sheaves on the category of symbol contexts $\SCtx$, as opposed to
-  sheaves on finite sets of symbols $\SymSets$ (i.e.\ unisorted contexts).
+  discussing covariant sheaves on the category of symbol contexts $\SCtx$, as
+  opposed to covariant sheaves on finite sets of symbols $\SymSets$ (i.e.\
+  unisorted contexts).
 \end{remark}
 
 \subsection{Operators and signatures}
 
 Fix a sheaf of operators
-$\Of{\Operators}{\Sheaves{\OpCat{\SCtx}\times\Discrete{\Arities}}}$ such that the arrows
-in $\SCtx$ lift to renamings of operators' parameters. Together, $\Sorts$ and
-$\Operators$ form a \emph{signature}
+$\Of{\Operators}{\Sheaves{\OpCat{\left(\SCtx\right)}\times\Discrete{\Arities}}}$
+such that the arrows in $\SCtx$ lift to renamings of operators' parameters.
+Together, $\Sorts$ and $\Operators$ form a \emph{signature}
 $\Define{\Sigma}{\Pair{\Sorts}{\Operators}}$.
 
 By the Grothendieck construction
@@ -890,11 +888,10 @@ $\IsSubst{E}{\MV{m}}{M}{N}$.
 
 \section{Model Theory}
 
-Let $\FinSets$ be the free cocartesian category on a single object (that is, the
-category of finite cardinals and functions between them); then the comma
-construction $\Define{\Ctx}{\Comma{\FinSets}{\Sorts}}$ is the category of
-variable contexts. Let $\Define{\HypCat}{\OpCat{(\SCtx\times\Ctx)}}$; then we
-fix the functor category $\widehat{\HypCat}^\Sorts$ as our semantic universe.
+Let $\FinSets$ be category of finite cardinals and \emph{any} functions between
+them; then the comma construction $\Ctx$ is the category of variable contexts.
+Let $\Define{\HypCat}{\OpCat{(\SCtx\times\Ctx)}}$; then we fix the functor
+category $\widehat{\HypCat}^\Sorts$ as our semantic universe.
 
 Let $\Define{V_\tau(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid
     \Gamma(x)=\tau}}$ be called the presheaf of variables; additionally, we have
