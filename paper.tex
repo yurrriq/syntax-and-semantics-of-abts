@@ -407,11 +407,12 @@ Note that the functoriality of $\Operators$ guarantees for any renaming
 $\Of{\varrho}{\Upsilon\inj\Upsilon'}$ and $\Of{f}{a\ra a'}$, a lifted map
 $\Of{\FLift{\varrho}{f}}{\Operators\Pair{\Upsilon}{a}\inj\Operators\Pair{\Upsilon'}{a'}}$
 such that $\IsOperator{\Upsilon'}{\FLift{\varrho}{f}(\vartheta)}{a'}$ when
-$\IsOperator{\Upsilon}{\vartheta}{a}$. Because the category
-$\Discrete{\Arities}$ is discrete and has only identity arrows, through an abuse
-of notation we will often write $\FLift{\varrho}{}$ to mean
-$\FLift{\varrho}{\ArrId{}}$. In particular, the renaming
-$\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathtt{get}[u]$ to $\mathtt{get}[v]$.
+$\IsOperator{\Upsilon}{\vartheta}{a}$. In particular, the renaming
+$\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathtt{get}[u]$ to
+$\mathtt{get}[v]$. Because the category $\Discrete{\Arities}$ is discrete and
+has only identity arrows, through an abuse of notation we will often write
+$\vartheta\varrho$ to mean $\FLift{\varrho}{\ArrId{}}(\vartheta)$.
+
 
 \section{Contexts}
 
@@ -706,11 +707,9 @@ $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
     \IsRenaming{\varrho}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
-      \App{\vartheta'}{F_0,\dots,F_n}
+      \App{\vartheta\varrho}{F_0,\dots,F_n}
     }
   }{
-    \Match{\FLift{\varrho}{}(\vartheta)}{\vartheta'}
-&
     \HypJ{
       \IsRenaming{\varrho}{E_i}{F_i}
     }{
@@ -1202,7 +1201,7 @@ using the environment:
       \arrow[
         , r
         , swap
-        , "\IMode{\FLift{\pi_{(-)}}{}}"
+        , "\IMode{\FLift{\pi_{(-)}}{\ArrId{}}}"
       ]
 \&[1.5em]
     |[alias = Tgt]|
