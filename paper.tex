@@ -1458,43 +1458,16 @@ telescopes and sequents.
   \end{array}
 \]
 
-\newcommand\OpPi{\mathtt{pi}}
-\newcommand\OpSg{\mathtt{sg}}
-\newcommand\OpBool{\mathtt{bool}}
-\newcommand\OpSo{\mathtt{isTrue}}
-
 Suppose we have encoded a fragment of type theory as well:
 \[
   \begin{array}{l}
-    \IsOperator{\Upsilon}{\top}{
+    \IsOperator{\Upsilon}{\mathtt{A}}{
       \MkArity{}{\SortType}
     }
 \\
-    \IsOperator{\Upsilon}{\bot}{
-      \MkArity{}{\SortType}
-    }
-\\
-    \IsOperator{\Upsilon}{\OpBool}{
-      \MkArity{}{\SortType}
-    }
-\\
-    \IsOperator{\Upsilon}{\OpSo}{
+    \IsOperator{\Upsilon}{\mathtt{pred}}{
       \MkArity{
         \MkValence{}{}{\SortExp}
-      }{\SortType}
-    }
-\\
-    \IsOperator{\Upsilon}{\OpPi}{
-      \MkArity{
-        \MkValence{}{}{\SortType},
-        \MkValence{}{\SortExp}{\SortType}
-      }{\SortType}
-    }
-\\
-    \IsOperator{\Upsilon}{\OpSg}{
-      \MkArity{
-        \MkValence{}{}{\SortType},
-        \MkValence{}{\SortExp}{\SortType}
       }{\SortType}
     }
 \\
@@ -1533,9 +1506,9 @@ Now, we have the following well-formed sequent:
     u:\SortExp,
     v:\SortExp
   }{\cdot}{
-    \diamond,u:\OpBool,v:\App{\OpSo}{`u}
+    \diamond,u:\mathtt{A},v:\App{\mathtt{pred}}{`u}
     \gg
-    \App{\OpSo}{`u}
+    \App{\mathtt{pred}}{`u}
   }{\SortJdg}
 \]
 
@@ -1557,9 +1530,9 @@ Then, we may write a closed sequent judgment as follows:
   \IsAbt{\cdot}{\cdot}{\cdot}{
     \App{\OpNabla{\SortExp,\SortExp}}{
       \MkBTm{u,v}{}{
-        \diamond,u:\OpBool,v:\App{\OpSo}{`u}
+        \diamond,u:\mathtt{A},v:\App{\mathtt{pred}}{`u}
         \gg
-        \App{\OpSo}{`u}
+        \App{\mathtt{pred}}{`u}
       }
     }
   }{\SortJdg}
