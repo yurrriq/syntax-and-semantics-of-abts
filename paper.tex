@@ -219,8 +219,8 @@ Let $\Supp{m}$ be the \emph{least support} of $\Member{m}{X(\Upsilon')}$:
 Intuitively, $\Supp{m}$ is the exact symbol context that $m$ depends on.
 
 Going forward, we will write $\SCtxSite$ for the Grothendieck site
-$\Pair{\OpCat{\left(\SCtx\right)}}{A}$, where $A$ is the atomic coverage (sc.\
-every non-empty family covers).
+$\Pair{\OpCat{\left(\SCtx\right)}}{J_\mathsf{atm}}$, where $J_\mathsf{atm}$
+is the atomic coverage (sc.\ every non-empty family covers).
 
 \begin{remark}
   The presentation we have given above is related both to the Schanuel topos
@@ -237,7 +237,37 @@ sheaves into presheaves has a left adjoint
 $\IMode{\Sheafify{(-)}}\dashv\IMode{\iota}$, which takes any presheaf
 $\Of{X}{\Presheaves{\mathcal{C}}}$ to a unique sheaf
 $\Of{\Sheafify{X}}{\Sheaves{\mathfrak{S}}}$, called the \emph{sheafification}
-of $X$.
+of $X$. Sheafification is the twice-iterated application of the
+\emph{+-construction} $X^+$, which turns a presheaf into a separated presheaf,
+and a separated presheaf into a sheaf:
+\begin{align*}
+  \ADefine{
+    X^+(C)
+  }{
+    \int^{S\in J(C)}
+    \Hom{\Presheaves{\mathcal{C}}}{S}{X}
+  }\\
+  \ADefine{
+    \Sheafify{X}
+  }{
+    X^{++}
+  }
+\end{align*}
+
+We also have a canonical map $\Of{\eta}{X\ra X^+}$, defined
+using the maximal sieve $\Define{t_C}{\Yoneda{C}}$:
+\[
+  \HypJ{
+    \Define{\eta_C(m)}{
+      \Pair{t_C}{
+        X(-)(m)
+      }
+    }
+  }{
+    \Member{m}{X(C)}
+  }
+\]
+
 
 Every category of sheaves on a site gives rise to a topos, which equips us with
 a number of standard constructions, including (among other things) the disjoint
