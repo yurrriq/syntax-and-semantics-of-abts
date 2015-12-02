@@ -1429,7 +1429,7 @@ telescopes and sequents.
 %
 \newcommand\SortTele{\mathtt{tele}}
 \newcommand\SortJdg{\mathtt{jdg}}
-\newcommand\SortType{\mathtt{type}}
+\newcommand\SortProp{\mathtt{type}}
 \newcommand\SortExpr{\mathtt{exp}}
 \newcommand\OpNil{\mathtt{nil}}
 \newcommand\OpSnoc[1]{\mathtt{snoc}[#1]}
@@ -1437,11 +1437,11 @@ telescopes and sequents.
 \newcommand\OpSequent{\mathtt{sequent}}
 % %
 \[
-  \begin{array}{l}
-    \IsSort{\SortTele}\\
-    \IsSort{\SortExpr}\\
-    \IsSort{\SortType}\\
-    \IsSort{\SortJdg}\\\\
+  \begin{array}{lr}
+    \IsSort{\SortTele}&\textit{telescopes}\\
+    \IsSort{\SortExpr}&\textit{expressions}\\
+    \IsSort{\SortProp}&\textit{propositions}\\
+    \IsSort{\SortJdg}&\textit{judgments}\\\\
     \IsOperator{\Upsilon, u:\SortExpr}{\OpHyp{u}}{
       \MkArity{}{\SortExpr}
     }\\\\
@@ -1451,13 +1451,13 @@ telescopes and sequents.
     \IsOperator{\Upsilon, u:\SortExpr}{\OpSnoc{u}}{
       \MkArity{
         \MkValence{}{}{\SortTele},
-        \MkValence{}{}{\SortType}
+        \MkValence{}{}{\SortProp}
       }{\SortTele}
     }\\\\
     \IsOperator{\Upsilon}{\OpSequent}{
       \MkArity{
         \MkValence{}{}{\SortTele},
-        \MkValence{}{}{\SortType}
+        \MkValence{}{}{\SortProp}
       }{\SortJdg}
     }
   \end{array}
@@ -1467,13 +1467,13 @@ Suppose we have encoded a fragment of type theory as well:
 \[
   \begin{array}{l}
     \IsOperator{\Upsilon}{\mathtt{A}}{
-      \MkArity{}{\SortType}
+      \MkArity{}{\SortProp}
     }
 \\
     \IsOperator{\Upsilon}{\mathtt{pred}}{
       \MkArity{
         \MkValence{}{}{\SortExp}
-      }{\SortType}
+      }{\SortProp}
     }
 \\
   \end{array}
@@ -1598,11 +1598,11 @@ Likewise, wellformedness for variables and metavariables is defined uniformly:
 
 The remainder of the definition of refinement proceeds by induction on sorts and
 operators. For the sake of this example, we will just stipulate that anything of
-sort $\SortExp$ or $\SortType$ is grammatical if its subterms are grammatical:
+sort $\SortExp$ or $\SortProp$ is grammatical if its subterms are grammatical:
 
 \[
   \infer[
-    \text{for $\Member{\tau}{\MkSet{\SortExp,\SortType}}$}
+    \text{for $\Member{\tau}{\MkSet{\SortExp,\SortProp}}$}
   ]{
     \IsWf{\Theta}{\Upsilon}{\Gamma}{
       \App{\vartheta}{E_0,\dots,E_n}
@@ -1644,7 +1644,7 @@ subterms as well:
   }{
     \IsWf{\Theta}{\Upsilon}{\Gamma}{H}{\SortTele}
 &
-    \IsWf{\Theta}{\Upsilon}{\Gamma}{A}{\SortType}
+    \IsWf{\Theta}{\Upsilon}{\Gamma}{A}{\SortProp}
   }
 \end{gather*}
 
@@ -1661,7 +1661,7 @@ The refinement for telescopes proceeds by induction:
     \begin{array}{l}
       \IsWf{\Theta}{\Upsilon\setminus\MkSet{u}}{\Gamma}{H}{\SortTele}
 \\
-      \IsWf{\Theta}{\Upsilon\setminus\MkSet{u}}{\Gamma}{A}{\SortType}
+      \IsWf{\Theta}{\Upsilon\setminus\MkSet{u}}{\Gamma}{A}{\SortProp}
     \end{array}
   }
 \end{gather*}
