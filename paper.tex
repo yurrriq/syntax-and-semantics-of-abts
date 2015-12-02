@@ -1428,7 +1428,7 @@ telescopes and sequents.
 \newcommand\SortExpr{\mathtt{exp}}
 \newcommand\OpNil{\mathtt{nil}}
 \newcommand\OpSnoc[1]{\mathtt{snoc}[#1]}
-\newcommand\OpVar[1]{\mathtt{var}[#1]}
+\newcommand\OpHyp[1]{\mathtt{hyp}[#1]}
 \newcommand\OpSequent{\mathtt{sequent}}
 % %
 \[
@@ -1437,7 +1437,7 @@ telescopes and sequents.
     \IsSort{\SortExpr}\\
     \IsSort{\SortType}\\
     \IsSort{\SortJdg}\\\\
-    \IsOperator{\Upsilon, u:\SortExpr}{\OpVar{u}}{
+    \IsOperator{\Upsilon, u:\SortExpr}{\OpHyp{u}}{
       \MkArity{}{\SortExpr}
     }\\\\
     \IsOperator{\Upsilon}{\OpNil}{
@@ -1497,7 +1497,7 @@ define some notation:
 \\
   \IMode{`u}
 &
-  \triangleq \OMode{\OpVar{u}}
+  \triangleq \OMode{\OpHyp{u}}
 \end{align*}
 
 Now, we have the following well-formed sequent:
