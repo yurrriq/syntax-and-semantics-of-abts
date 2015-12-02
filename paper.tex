@@ -68,11 +68,6 @@
   \FS{\IMode{#1}}\leadsto \OMode{#2}
 }
 
-\newcommand\FLift[2]{
-  \Operators\langle#1%
-  \ifthenelse{\equal{#2}{}}{}{, #2}\rangle%
-}
-
 \newcommand\SortExp{\mathtt{exp}}
 
 \newcommand\IsWf[5]{%
@@ -82,7 +77,12 @@
   \IMode{#4}\in_{\mathbf{wf}}\IMode{#5}%
 }
 
-\newcommand\Sheaves[1]{\mathbf{Sh}(#1)}
+\newcommand\Sheaves[1]{\mathbf{Sh}\left(#1\right)}
+\newcommand\Presheaves[1]{\mathbf{Psh}\left(#1\right)}
+\newcommand\Sheafify[1]{#1^{\#}}
+\newcommand\ConstPsh[1]{\Delta[#1]}
+\newcommand\ConstSh[1]{\Delta^\#[#1]}
+\newcommand\SCtxSite{\SymSets[\Sorts]}
 
 \begin{document}
 
@@ -177,8 +177,8 @@ symbols whose objects are finite sets of symbols $U$ and sort-assignments
 sort-preserving renamings; we will write $\Upsilon$ for a symbol context
 $(U,\mathfrak{s})$.
 
-Now, a covariant presheaf $X$ on $\SCtx$ is an intensional set which is subject to
-renamings
+Now, a covariant presheaf $X$ on $\SCtx$ is an intensional set which is subject
+to renamings
 \begin{tikzcd}[cramped]
   \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
 \end{tikzcd};
@@ -201,9 +201,9 @@ element $\Member{m\varrho}{X(\Upsilon')}$.
 Intuitively, when $\Upsilon$ supports $\Member{m}{X(\Upsilon')}$, we would
 expect that we can work backward to a unique $\Of{m'}{\Upsilon}$ such that
 $\IsEq{m'\varrho}{m}$; whilst this is not in general the case for presheaves
-$X$, it is precisely the sheaf condition for covariant presheafs on $\SCtx$
-under the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}. The sheaf condition, then, ensures that the notion
-of support is well-behaved.
+$X$, it is precisely the sheaf condition for covariant presheaves on $\SCtx$
+under the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}. The sheaf
+condition, then, ensures that the notion of support is well-behaved.
 
 Let $\Supp{m}$ be the \emph{least support} of $\Member{m}{X(\Upsilon')}$:
 \[
@@ -218,88 +218,54 @@ Let $\Supp{m}$ be the \emph{least support} of $\Member{m}{X(\Upsilon')}$:
 \]
 Intuitively, $\Supp{m}$ is the exact symbol context that $m$ depends on.
 
+Going forward, we will write $\SCtxSite$ for the Grothendieck site
+$\Pair{\OpCat{\left(\SCtx\right)}}{A}$, where $A$ is the atomic coverage (sc.\
+every non-empty family covers).
+
 \begin{remark}
   The presentation we have given above is related both to the Schanuel topos
   and, equivalently, Pitts' category of nominal sets \cite{fiore-staton:2006}; we differ only in
-  discussing covariant sheaves on the category of symbol contexts $\SCtx$, as
-  opposed to covariant sheaves on finite sets of symbols $\SymSets$ (i.e.\
-  unisorted contexts).
+  discussing sheaves on $\SCtxSite$, as
+  opposed to sheaves on $\OpCat{\SymSets}$ (i.e.\ unisorted contexts).
 \end{remark}
+
+\subsubsection{Constructions on sheaves}
+
+For any Grothendieck site $\Match{\mathfrak{S}}{\Pair{\mathcal{C}}{J}}$, the
+inclusion $\Of{\iota}{\Sheaves{\mathfrak{S}}\ra\Presheaves{\mathcal{C}}}$ of
+sheaves into presheaves has a left adjoint
+$\IMode{\Sheafify{(-)}}\dashv\IMode{\iota}$, which takes any presheaf
+$\Of{X}{\Presheaves{\mathcal{C}}}$ to a unique sheaf
+$\Of{\Sheafify{X}}{\Sheaves{\mathfrak{S}}}$, called the \emph{sheafification}
+of $X$.
+
+Every category of sheaves on a site gives rise to a topos, which equips us with
+a number of standard constructions, including (among other things) the disjoint
+union of sheaves $X\oplus Y$, the product of sheaves $X\otimes Y$, and the terminal sheaf $\mathbb{1}$.
+
+Returning to the site $\SCtxSite$, we will write $\mathbf{S}_\tau$ for the sheaf
+of symbols of sort $\tau$, a subobject of the Yoneda embedding of the empty
+symbol context, $\Yoneda{\cdot}$.
 
 \subsection{Operators and signatures}
 
-Fix a sheaf of operators
-$\Of{\Operators}{\Sheaves{\OpCat{\left(\SCtx\right)}\times\Discrete{\Arities}}}$
-such that the arrows in $\SCtx$ lift to renamings of operators' parameters.
-Together, $\Sorts$ and $\Operators$ form a \emph{signature}
+Fix a family of sheaves of operators
+$\Member{\Operators_a}{\Sheaves{\SCtxSite}}$, indexed by arities
+$\Member{a}{\Arities}$; for each $\Operators_a$, arrows in $\SCtx$ will lift to
+renamings in operators' symbolic parameters. Together, $\Sorts$ and $\Operators$ are said to form a \emph{signature}
 $\Define{\Sigma}{\Pair{\Sorts}{\Operators}}$.
 
-By the Grothendieck construction
-$\Iso{\Grothendieck{}{\Operators}}{\Comma{\mathbb{1}}{\Operators}}$ we have a
-category of elements of $\Operators$ where objects are triples
-$\Pair{\Pair{\Upsilon}{a}}{\vartheta}$, interpreted as
-$\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are paired
-diagrams:
-\[
-  \begin{tikzcd}[cramped, ampersand replacement = \&]
-    \IMode{\Pair{\Upsilon}{a}}
-      \arrow[r, swap, "\IMode{\Pair{\rho}{f}}"]
-\&
-    \IMode{\Pair{\Upsilon'}{a'}}
-  \end{tikzcd}
-\qquad
-  \begin{tikzcd}[cramped, sep = small, ampersand replacement = \&]
-    \null
-\&
-    \IMode{\mathbb{1}}
-      \arrow[dl, swap, "\IMode{\vartheta}"]
-      \arrow[dr, "\IMode{\vartheta'}"]
-\&
-    \null
-\\
-    \IMode{\Operators\Pair{\Upsilon}{a}}
-      \arrow[rr, swap, "\IMode{\Operators\Pair{\rho}{f}}"]
-\&
-    \null
-\&
-    \IMode{\Operators\Pair{\Upsilon'}{a'}}
-  \end{tikzcd}
-\]
-
 We will write $\IsOperator{\Upsilon}{\vartheta}{a}$ in case
-$\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and note that this judgment
-enjoys the structural properties of weakening and exchange via functoriality of
-$\Operators$. Operators $\vartheta_{0}, \ldots, \vartheta_{n}$ are defined by
-specifying the fibers of
-$\Of{\pi_{\Operators}}{\Grothendieck{}{\Operators}\ra\SCtx\times\Discrete{\Arities}}$
-in which they reside, such that the glueing condition is satisfied:
-\begin{alignat*}{3}
-  \null
-&
-  \IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}
-&&
-  \,\mathrel{\ {{:}}}\,
-&&
-  \IMode{\SCtx\times\Discrete{\Arities}\ra\Sets}
-\\
-  \null
-&
-  \IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}
-&&
-  \,=\,\
-&&
-    \OMode{
-      \MkSet{
-        \vartheta\in\Pair{\Upsilon}{a}
-        \mid{\pi_{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}} =
-        \Pair{\Upsilon}{a}
-      }
-    }
-\end{alignat*}
+$\Member{\vartheta}{\Operators_a(\Upsilon)}$; note that this judgment enjoys
+the structural properties of weakening and exchange via functoriality of
+$\Operators$. An operator signature is defined by specifying, for each arity
+$a$, the sheaf $\Operators_a$, whose ``elements'' are the operators of arity
+$a$.
+
 
 \paragraph{Examples}
 
-For instance, consider the $\lambda$-calculus with a single sort, $\SortExp$; we
+For instance, consider a $\lambda$-calculus with a single sort, $\SortExp$; we
 give its signature $\Sigma_{\lambda}$ by asserting the following about its
 operators:
 \begin{gather*}
@@ -307,8 +273,12 @@ operators:
     \MkArity{
       \MkValence{}{\SortExp}{\SortExp}
     }{\SortExp}
-  }
-\\
+  }\\
+  \IsOperator{\Upsilon}{\mathtt{fix}}{
+    \MkArity{
+      \MkValence{}{\SortExp}{\SortExp}
+    }{\SortExp}
+  }\\
   \IsOperator{\Upsilon}{\mathtt{ap}}{
     \MkArity{
       \MkValence{}{}{\SortExp},
@@ -316,68 +286,35 @@ operators:
     }{\SortExp}
   }
 \end{gather*}
-These rules correspond to objects of $\Grothendieck{}{{\Operators}_{\lambda}}$
-and we collect their fibers into sets of operators:
-\begin{alignat*}{5}
-  \IMode{{\pi_{{\Operators}_{\lambda}}}^{-1}}
-&
-  \IMode{
-    \Pair{
-      \Upsilon
-    }{
-      \MkArity{
+
+These rules correspond to the following definition of $\Operators$:
+\begin{align*}
+  \ADefine{
+    \Operators_{
+       \MkArity{
         \MkValence{}{\SortExp}{\SortExp}
       }{\SortExp}
     }
+  }{
+    \mathbb{1}\oplus\mathbb{1}
   }
-\quad
-&&
-  =
-&&
-\quad
-  \OMode{\MkSet{\mathtt{lam}}}
-\\
-  \IMode{{\pi_{{\Operators}_{\lambda}}}^{-1}}
-&
-  \IMode{
-    \Pair{
-      \Upsilon
-    }{
+  \\
+  %
+  \ADefine{
+    \Operators_{
       \MkArity{
         \MkValence{}{}{\SortExp},
         \MkValence{}{}{\SortExp}
       }{\SortExp}
     }
+  }{
+    \mathbb{1}
   }
-\quad
-&&
-  =
-&&
-\quad
-  \OMode{\MkSet{\mathtt{ap}}}
-\\
-  \IMode{{\pi_{{\Sigma}_{\lambda}}}^{-1}}
-&
-  \triangleq\IMode{
-    \bigcup_{\Pair{\Upsilon}{a}}{
-      {\pi_{{\Operators}_{\lambda}}}^{-1}
-      \Pair{\Upsilon}{a}
-    }
-  }
-\quad
-&&
-  =
-&&
-\quad
-  \OMode{
-    \MkSet{\mathtt{lam},\ \mathtt{ap}}
-  }
-\\
-\end{alignat*}
+\end{align*}
 
 So far, we have made no use of symbols and parameters; however, consider the
 extension of the calculus with assignables (references):
-
+%
 \begin{gather*}
   \IsOperator{\Upsilon}{\mathtt{decl}}{
     \MkArity{
@@ -401,17 +338,40 @@ extension of the calculus with assignables (references):
   }
 \end{gather*}
 
+These rules correspond to the following family of sheaves:
+\begin{align*}
+  \ADefine{
+    \Operators_{
+      \MkArity{
+        \MkValence{}{}{\SortExp},
+        \MkValence{\SortExp}{}{\SortExp}
+      }{
+        \SortExp
+      }
+    }
+  }{
+    \mathbb{1}
+  }\\
+  \ADefine{
+    \Operators_{
+      \MkArity{}{\SortExp}
+    }
+  }{
+    \mathbf{S}_\SortExp
+  }
+\end{align*}
+
 Declaring a new assignable consists in providing an initial value, and an
 expression binding a symbol (which shall represent the assignable in scope).
 Note that the functoriality of $\Operators$ guarantees for any renaming
-$\Of{\varrho}{\Upsilon\inj\Upsilon'}$ and $\Of{f}{a\ra a'}$, a lifted map
-$\Of{\FLift{\varrho}{f}}{\Operators\Pair{\Upsilon}{a}\inj\Operators\Pair{\Upsilon'}{a'}}$
-such that $\IsOperator{\Upsilon'}{\FLift{\varrho}{f}(\vartheta)}{a'}$ when
+$\Of{\varrho}{\Upsilon\inj\Upsilon'}$, a family of lifted maps
+$\Of{\Operators_a(\varrho)}{\Operators_a(\Upsilon)\inj\Operators_a(\Upsilon')}$
+natural in $a$, such that
+$\IsOperator{\Upsilon'}{\Operators_a(\varrho)(\vartheta)}{a}$ when
 $\IsOperator{\Upsilon}{\vartheta}{a}$. In particular, the renaming
 $\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathtt{get}[u]$ to
-$\mathtt{get}[v]$. Because the category $\Discrete{\Arities}$ is discrete and
-has only identity arrows, through an abuse of notation we will often write
-$\vartheta\varrho$ to mean $\FLift{\varrho}{\ArrId{}}(\vartheta)$.
+$\mathtt{get}[v]$. Going forward, we will write $\vartheta\varrho$ for
+$\Operators_a(\varrho)$.
 
 
 \section{Contexts}
@@ -1184,7 +1144,7 @@ operator $\IsOperator{\Upsilon}{\vartheta}{a}$ the morphism
 $\SemBrackets{\vartheta}_P$ which shall rename the parameters of the operator
 using the environment:
 \[
-  \begin{tikzcd}[cramped, ampersand replacement = \&]
+  \begin{tikzcd}[cramped, ampersand replacement = \&, sep = huge]
     |[alias = Src]|
     {\IMode{
       {\SemBrackets{
@@ -1201,7 +1161,7 @@ using the environment:
       \arrow[
         , r
         , swap
-        , "\IMode{\FLift{\pi_{(-)}}{\ArrId{}}}"
+        , "\IMode{\Operators_a(\pi_{(-)})(\vartheta)}"
       ]
 \&[1.5em]
     |[alias = Tgt]|
