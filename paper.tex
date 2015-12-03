@@ -1429,7 +1429,7 @@ telescopes and sequents.
 %
 \newcommand\SortTele{\mathtt{tele}}
 \newcommand\SortJdg{\mathtt{jdg}}
-\newcommand\SortProp{\mathtt{type}}
+\newcommand\SortProp{\mathtt{prop}}
 \newcommand\SortExpr{\mathtt{exp}}
 \newcommand\OpNil{\mathtt{nil}}
 \newcommand\OpSnoc[1]{\mathtt{snoc}[#1]}
@@ -1466,7 +1466,7 @@ telescopes and sequents.
 Suppose we have encoded a fragment of type theory as well:
 \[
   \begin{array}{l}
-    \IsOperator{\Upsilon}{\mathtt{A}}{
+    \IsOperator{\Upsilon}{\mathtt{P}}{
       \MkArity{}{\SortProp}
     }
 \\
@@ -1511,7 +1511,7 @@ Now, we have the following well-formed sequent:
     u:\SortExp,
     v:\SortExp
   }{\cdot}{
-    \diamond,u:\mathtt{A},v:\App{\mathtt{pred}}{`u}
+    \diamond,u:\mathtt{P},v:\App{\mathtt{pred}}{`u}
     \gg
     \App{\mathtt{pred}}{`u}
   }{\SortJdg}
@@ -1535,7 +1535,7 @@ Then, we may write a closed sequent judgment as follows:
   \IsAbt{\cdot}{\cdot}{\cdot}{
     \App{\OpNabla{\SortExp,\SortExp}}{
       \MkBTm{u,v}{}{
-        \diamond,u:\mathtt{A},v:\App{\mathtt{pred}}{`u}
+        \diamond,u:\mathtt{P},v:\App{\mathtt{pred}}{`u}
         \gg
         \App{\mathtt{pred}}{`u}
       }
