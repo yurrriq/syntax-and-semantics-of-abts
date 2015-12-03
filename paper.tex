@@ -55,14 +55,17 @@
 \DeclareMathSymbol{\varrho}{\mathalpha}{greekletters}{"25}
 \DeclareMathSymbol{\varsigma}{\mathalpha}{greekletters}{"26}
 
-\newcommand\Symbols{\mathbf{I}}
-\newcommand\SymSets{\mathbb{F}_\Symbols}
-\newcommand\FinSets{\mathbb{F}}
 \newcommand\HypCat{\mathbf{H}}
+\newcommand\Supp[1]{\mathbf{supp}(#1)}
+\newcommand\SupportsUnmoded[3]{#1 \blacktriangleright_{#2} #3}
+\newcommand\Supports[3]{\SupportsUnmoded{\IMode{#1}}{\IMode{#2}}{\IMode{#3}}}
 
-\newcommand\FLift[2]{
-  \Operators\langle#1%
-  \ifthenelse{\equal{#2}{}}{}{, #2}\rangle%
+\newcommand\CalcFV[2]{
+  \FV{\IMode{#1}}\leadsto \OMode{#2}
+}
+
+\newcommand\CalcFS[2]{
+  \FS{\IMode{#1}}\leadsto \OMode{#2}
 }
 
 \newcommand\SortExp{\mathtt{exp}}
@@ -73,6 +76,13 @@
   \IMode{#3}\vdash%
   \IMode{#4}\in_{\mathbf{wf}}\IMode{#5}%
 }
+
+\newcommand\Sheaves[1]{\mathbf{Sh}\left(#1\right)}
+\newcommand\Presheaves[1]{\mathbf{Psh}\left(#1\right)}
+\newcommand\Sheafify[1]{#1^{\#}}
+\newcommand\ConstPsh[1]{\Delta[#1]}
+\newcommand\ConstSh[1]{\Delta^\#[#1]}
+\newcommand\SCtxSite{\SymSets[\Sorts]}
 
 \begin{document}
 
@@ -105,11 +115,11 @@ theories~\cite{fiore:1999, fiore:2005, fiore-hur:2010, fiore-mamoud:2010}; of
 these, the simply sorted variants are equivalent to Harper's abstract binding
 trees augmented with a notion of second-order variable (metavariable).
 
-The contribution of this paper is the development of the syntax and semantics of
-multi-sorted abts, an extension of second order universal algebra to support
-symbol-indexed families of operators. Additionally, we have developed the
-categorical semantics for abts formally in Constructive Type Theory using the
-Agda proof assistant~\cite{norell:2007}.
+The contribution of this paper is the development of the syntax and semantics
+of multi-sorted nominal abts, an extension of second order universal algebra to
+support symbol-indexed families of operators. Additionally, we have developed
+the categorical semantics for abts formally in Constructive Type Theory using
+the Agda proof assistant~\cite{norell:2007}.
 
 \section{Preliminaries}
 
@@ -155,91 +165,137 @@ and the set of arities $\Arities$.
   }
 \]
 
+\subsection{Symbols, contexts and their sheaves}
 
-Let $\Symbols$ be an infinite set of symbols. Let $\SymSets$ be the category of
-finite subsets of $\Symbols$ and their injective maps; then the comma
-construction $\Define{\SCtx}{\Comma{\SymSets}{\Discrete{\Sorts}}}$, with
-$\Discrete{\Sorts}$ the discrete category on the set $\mathcal{S}$, is the
-category of contexts of symbols, whose objects are finite sets of symbols $U$
-and sort-assignments
+Let $\SymSets$ be the category of finite cardinals and their injective maps;
+then the comma construction $\SCtx$, with $\Discrete{\Sorts}$
+the discrete category on the set $\Sorts$, is the category of contexts of
+symbols whose objects are finite sets of symbols $U$ and sort-assignments
 \begin{tikzcd}[cramped]
   \IMode{U}\arrow[r, "\IMode{\mathfrak{s}}"] &\IMode{\Sorts}
 \end{tikzcd}, and whose morphisms are
 sort-preserving renamings; we will write $\Upsilon$ for a symbol context
 $(U,\mathfrak{s})$.
 
-Then, fix a covariant presheaf of operators
-$\Of{\Operators}{\SCtx\times\Discrete{\Arities}\ra\Sets}$ such that the arrows
-in $\SCtx$ lift to renamings of operators' parameters. Together, $\Sorts$ and
-$\Operators$ form a \emph{signature}
-$\Define{\Sigma}{\Pair{\Sorts}{\Operators}}$.
+Now, a covariant presheaf $X$ on $\SCtx$ is an intensional set which is subject
+to renamings
+\begin{tikzcd}[cramped]
+  \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
+\end{tikzcd};
+that is, each element $\Member{m}{X(\Upsilon)}$ can be mapped to a unique
+element $\Member{m\varrho}{X(\Upsilon')}$.
 
-By the Grothendieck construction
-$\Iso{\Grothendieck{}{\Operators}}{\Comma{\mathbb{1}}{\Operators}}$ we have a
-category of elements of $\Operators$ where objects are triples
-$\Pair{\Pair{\Upsilon}{a}}{\vartheta}$, interpreted as
-$\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$, and morphisms are paired
-diagrams:
+\begin{definition}[Support]
+  For a presheaf $\Of{X}{\Sets^\SCtx}$, when
+  \begin{tikzcd}[cramped]
+    \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
+  \end{tikzcd},
+  we say that $\Upsilon$ supports $\Member{m}{\Upsilon'}$ (written
+  $\Supports{\Upsilon}{\varrho}{m}$) when, for all
+  \begin{tikzcd}[cramped]
+    \IMode{\Upsilon'}\arrow[r, hook, "\IMode{\varrho_1}{,} \IMode{\varrho_2}"] & \IMode{\Upsilon''}
+  \end{tikzcd},
+  if $\IsEq{\varrho_1\circ\varrho}{\varrho_2\circ\varrho}$ then $\IsEq{m\varrho_1}{m\varrho_2}$.
+\end{definition}
+
+Intuitively, when $\Upsilon$ supports $\Member{m}{X(\Upsilon')}$, we would
+expect that we can work backward to a unique $\Of{m'}{\Upsilon}$ such that
+$\IsEq{m'\varrho}{m}$; whilst this is not in general the case for presheaves
+$X$, it is precisely the sheaf condition for covariant presheaves on $\SCtx$
+under the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}. The sheaf
+condition, then, ensures that the notion of support is well-behaved.
+
+Let $\Supp{m}$ be the \emph{least support} of $\Member{m}{X(\Upsilon')}$:
 \[
-  \begin{tikzcd}[cramped, ampersand replacement = \&]
-    \IMode{\Pair{\Upsilon}{a}}
-      \arrow[r, swap, "\IMode{\Pair{\rho}{f}}"]
-\&
-    \IMode{\Pair{\Upsilon'}{a'}}
-  \end{tikzcd}
-\qquad
-  \begin{tikzcd}[cramped, sep = small, ampersand replacement = \&]
-    \null
-\&
-    \IMode{\mathbb{1}}
-      \arrow[dl, swap, "\IMode{\vartheta}"]
-      \arrow[dr, "\IMode{\vartheta'}"]
-\&
-    \null
-\\
-    \IMode{\Operators\Pair{\Upsilon}{a}}
-      \arrow[rr, swap, "\IMode{\Operators\Pair{\rho}{f}}"]
-\&
-    \null
-\&
-    \IMode{\Operators\Pair{\Upsilon'}{a'}}
-  \end{tikzcd}
+  \Define{\Supp{m}}{
+    \bigcap_{
+      \begin{tikzcd}[cramped, ampersand replacement = \&]
+        \Upsilon\arrow[r, hook, "\varrho"] \& \Upsilon'
+      \end{tikzcd}
+    }
+    \SupportsUnmoded{\Upsilon}{\varrho}{m}
+  }
 \]
+Intuitively, $\Supp{m}$ is the exact symbol context that $m$ depends on.
 
-We will write $\IsOperator{\Upsilon}{\vartheta}{a}$ in case
-$\Member{\vartheta}{\Operators\Pair{\Upsilon}{a}}$ and note that this judgment
-enjoys the structural properties of weakening and exchange via functoriality of
-$\Operators$. Operators $\vartheta_{0}, \ldots, \vartheta_{n}$ are defined by
-specifying the fibers of
-$\Of{\pi_{\Operators}}{\Grothendieck{}{\Operators}\ra\SCtx\times\Discrete{\Arities}}$
-in which they reside:
-\begin{alignat*}{3}
-  \null
-&
-  \IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}
-&&
-  \,\mathrel{\ {{:}}}\,
-&&
-  \IMode{\SCtx\times\Discrete{\Arities}\ra\Sets}
-\\
-  \null
-&
-  \IMode{{\pi_{\Operators}}^{-1}{\Pair{\Upsilon}{a}}}
-&&
-  \,=\,\
-&&
-    \OMode{
-      \MkSet{
-        \vartheta\in\Pair{\Upsilon}{a}
-        \mid{\pi_{\Operators}}{\Pair{\Pair{\Upsilon}{a}}{\vartheta}} =
-        \Pair{\Upsilon}{a}
+Going forward, we will write $\SCtxSite$ for the Grothendieck site
+$\Pair{\OpCat{\left(\SCtx\right)}}{J_\mathsf{atm}}$, where $J_\mathsf{atm}$
+is the atomic coverage (sc.\ every non-empty family covers).
+
+\begin{remark}
+  The presentation we have given above is related both to the Schanuel topos
+  and, equivalently, Pitts' category of nominal sets \cite{fiore-staton:2006,
+  pitts:2013}; we differ only in discussing sheaves on $\SCtxSite$, as opposed
+  to sheaves on $\OpCat{\SymSets}$ (i.e.\ unisorted contexts).
+\end{remark}
+
+\subsubsection{Constructions on sheaves}
+
+For any Grothendieck site $\Match{\mathfrak{S}}{\Pair{\mathcal{C}}{J}}$, the
+inclusion $\Of{\iota}{\Sheaves{\mathfrak{S}}\ra\Presheaves{\mathcal{C}}}$ of
+sheaves into presheaves has a left adjoint
+$\IMode{\Sheafify{(-)}}\dashv\IMode{\iota}$, which takes any presheaf
+$\Of{X}{\Presheaves{\mathcal{C}}}$ to a unique sheaf
+$\Of{\Sheafify{X}}{\Sheaves{\mathfrak{S}}}$, called the \emph{sheafification}
+of $X$. Sheafification is the twice-iterated application of the
+\emph{+-construction} $X^+$, which turns a presheaf into a separated presheaf,
+and a separated presheaf into a sheaf \cite{mac-lane-moerdijk:1992}:
+\begin{align*}
+  \ADefine{
+    X^+(C)
+  }{
+    \int^{S\in J(C)}
+    \Hom{\Presheaves{\mathcal{C}}}{S}{X}
+  }\\
+  \ADefine{
+    \Sheafify{X}
+  }{
+    X^{++}
+  }
+\end{align*}
+
+We also have a canonical map $\Of{\eta}{X\ra X^+}$, defined
+using the maximal sieve $\Define{t_C}{\Yoneda{C}}$:
+\[
+  \HypJ{
+    \Define{\eta_C(m)}{
+      \Pair{t_C}{
+        X(-)(m)
       }
     }
-\end{alignat*}
+  }{
+    \Member{m}{X(C)}
+  }
+\]
+
+
+Every category of sheaves on a site gives rise to a topos, which equips us with
+a number of standard constructions, including (among other things) the disjoint
+union of sheaves $X\oplus Y$, the product of sheaves $X\otimes Y$, and the terminal sheaf $\mathbb{1}$.
+
+Returning to the site $\SCtxSite$, we will write $\mathbf{S}_\tau$ for the sheaf
+of symbols of sort $\tau$, a subobject of the Yoneda embedding of the empty
+symbol context, $\Yoneda{\cdot}$.
+
+\subsection{Operators and signatures}
+
+Fix a family of sheaves of operators
+$\Member{\Operators_a}{\Sheaves{\SCtxSite}}$, indexed by arities
+$\Member{a}{\Arities}$; for each $\Operators_a$, arrows in $\SCtx$ will lift to
+renamings in operators' symbolic parameters. Together, $\Sorts$ and $\Operators$ are said to form a \emph{signature}
+$\Define{\Sigma}{\Pair{\Sorts}{\Operators}}$.
+
+We will write $\IsOperator{\Upsilon}{\vartheta}{a}$ in case
+$\Member{\vartheta}{\Operators_a(\Upsilon)}$; note that this judgment enjoys
+the structural properties of weakening and exchange via functoriality of
+$\Operators$. An operator signature is defined by specifying, for each arity
+$a$, the sheaf $\Operators_a$, whose ``elements'' are the operators of arity
+$a$.
+
 
 \paragraph{Examples}
 
-For instance, consider the $\lambda$-calculus with a single sort, $\SortExp$; we
+For instance, consider a $\lambda$-calculus with a single sort, $\SortExp$; we
 give its signature $\Sigma_{\lambda}$ by asserting the following about its
 operators:
 \begin{gather*}
@@ -247,8 +303,12 @@ operators:
     \MkArity{
       \MkValence{}{\SortExp}{\SortExp}
     }{\SortExp}
-  }
-\\
+  }\\
+  \IsOperator{\Upsilon}{\mathtt{fix}}{
+    \MkArity{
+      \MkValence{}{\SortExp}{\SortExp}
+    }{\SortExp}
+  }\\
   \IsOperator{\Upsilon}{\mathtt{ap}}{
     \MkArity{
       \MkValence{}{}{\SortExp},
@@ -256,68 +316,35 @@ operators:
     }{\SortExp}
   }
 \end{gather*}
-These rules correspond to objects of $\Grothendieck{}{{\Operators}_{\lambda}}$
-and we collect their fibers into sets of operators:
-\begin{alignat*}{5}
-  \IMode{{\pi_{{\Operators}_{\lambda}}}^{-1}}
-&
-  \IMode{
-    \Pair{
-      \Upsilon
-    }{
-      \MkArity{
+
+These rules correspond to the following definition of $\Operators$:
+\begin{align*}
+  \ADefine{
+    \Operators_{
+       \MkArity{
         \MkValence{}{\SortExp}{\SortExp}
       }{\SortExp}
     }
+  }{
+    \mathbb{1}\oplus\mathbb{1}
   }
-\quad
-&&
-  =
-&&
-\quad
-  \OMode{\MkSet{\mathtt{lam}}}
-\\
-  \IMode{{\pi_{{\Operators}_{\lambda}}}^{-1}}
-&
-  \IMode{
-    \Pair{
-      \Upsilon
-    }{
+  \\
+  %
+  \ADefine{
+    \Operators_{
       \MkArity{
         \MkValence{}{}{\SortExp},
         \MkValence{}{}{\SortExp}
       }{\SortExp}
     }
+  }{
+    \mathbb{1}
   }
-\quad
-&&
-  =
-&&
-\quad
-  \OMode{\MkSet{\mathtt{ap}}}
-\\
-  \IMode{{\pi_{{\Sigma}_{\lambda}}}^{-1}}
-&
-  \triangleq\IMode{
-    \bigcup_{\Pair{\Upsilon}{a}}{
-      {\pi_{{\Operators}_{\lambda}}}^{-1}
-      \Pair{\Upsilon}{a}
-    }
-  }
-\quad
-&&
-  =
-&&
-\quad
-  \OMode{
-    \MkSet{\mathtt{lam},\ \mathtt{ap}}
-  }
-\\
-\end{alignat*}
+\end{align*}
 
 So far, we have made no use of symbols and parameters; however, consider the
 extension of the calculus with assignables (references):
-
+%
 \begin{gather*}
   \IsOperator{\Upsilon}{\mathtt{decl}}{
     \MkArity{
@@ -341,43 +368,84 @@ extension of the calculus with assignables (references):
   }
 \end{gather*}
 
+These rules correspond to the following family of sheaves:
+\begin{align*}
+  \ADefine{
+    \Operators_{
+      \MkArity{
+        \MkValence{}{}{\SortExp},
+        \MkValence{\SortExp}{}{\SortExp}
+      }{
+        \SortExp
+      }
+    }
+  }{
+    \mathbb{1}
+  }\\
+  \ADefine{
+    \Operators_{
+      \MkArity{}{\SortExp}
+    }
+  }{
+    \mathbf{S}_\SortExp
+  }\\
+  \ADefine{
+    \Operators_{
+      \MkArity{
+        \MkValence{}{}{\SortExp}
+      }{
+        \SortExp
+      }
+    }
+  }{
+    \mathbf{S}_\SortExp
+  }
+\end{align*}
+
 Declaring a new assignable consists in providing an initial value, and an
 expression binding a symbol (which shall represent the assignable in scope).
 Note that the functoriality of $\Operators$ guarantees for any renaming
-$\Of{\varrho}{\Upsilon\inj\Upsilon'}$ and $\Of{f}{a\ra a'}$, a lifted map
-$\Of{\FLift{\varrho}{f}}{\Operators\Pair{\Upsilon}{a}\inj\Operators\Pair{\Upsilon'}{a'}}$
-such that $\IsOperator{\Upsilon'}{\FLift{\varrho}{f}(\vartheta)}{a'}$ when
-$\IsOperator{\Upsilon}{\vartheta}{a}$. Because the category
-$\Discrete{\Arities}$ is discrete and has only identity arrows, through an abuse
-of notation we will often write $\FLift{\varrho}{}$ to mean
-$\FLift{\varrho}{\ArrId{}}$. In particular, the renaming
-$\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathtt{get}[u]$ to $\mathtt{get}[v]$.
+$\Of{\varrho}{\Upsilon\inj\Upsilon'}$, a family of lifted maps
+$\Of{\Operators_a(\varrho)}{\Operators_a(\Upsilon)\inj\Operators_a(\Upsilon')}$
+natural in $a$, such that
+$\IsOperator{\Upsilon'}{\Operators_a(\varrho)(\vartheta)}{a}$ when
+$\IsOperator{\Upsilon}{\vartheta}{a}$. In particular, the renaming
+$\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathtt{get}[u]$ to
+$\mathtt{get}[v]$. Going forward, we will write $\vartheta\varrho$ for
+$\Operators_a(\varrho)$.
+
 
 \section{Contexts}
 
-In general, we will have three kinds of context: metavariable contexts, variable
-contexts, and symbol (parameter) contexts. A metavariable context $\Theta$
-consists of bindings of valences to metavariables; a variable context $\Gamma$
-is a collection of bindings of sorts to variables, and a parameter context
-$\Upsilon$ is a collection of bindings of sorts to symbols.
-
+In general, we will have three kinds of context: symbolic (parameter) contexts,
+variable contexts, and metavaraible contexts The symbol contexts have already
+been defined via the comma construction $\SCtx$, but they also admit a
+syntactic characterization,
 \begin{gather*}
   \infer{
-    \IsMetaCtx{\cdot}
+    \IsSymCtx{\cdot}
   }{
   }
 \qquad
   \infer{
-    \IsMetaCtx{\Theta,\MV{m}:v}
+    \IsSymCtx{\Upsilon,u:\tau}
   }{
-    \IsMetaCtx{\Theta}
+    \IsSymCtx{\Upsilon}
 &
-    \IsValence{v}
+    \IsSort{\tau}
 &
-    \NotIn{\MV{m}}{\Dom\Theta}
+    \NotIn{u}{\Dom\Upsilon}
   }
 \end{gather*}
+%
+Because, modulo notation, we have $\Member{\Upsilon}{\SCtx}$ just when
+$\IsSymCtx{\Upsilon}$, we will use the syntactic view when it is convenient.
 
+Contexts of variables are similar to contexts of symbols, except that they
+admit \emph{any} renamings, not just the injective ones. As such, when
+$\FinSets$ is the category of finite cardinals and all functions between them, the
+comma construction $\Ctx$ is the category of variable contexts. As above, we
+can give them an equivalent syntactic treatment:
 \begin{gather*}
   \infer{
     \IsVarCtx{\cdot}
@@ -395,24 +463,30 @@ $\Upsilon$ is a collection of bindings of sorts to symbols.
   }
 \end{gather*}
 
+A metavariable context consists of bindings of \emph{valences} to
+metavariables; let $\Define{\Valences}{\MkSet{v\mid \IsValenceUnmoded{v}}}$ be the set
+of valences. Then, the category of metavariable contexts is the comma
+construction $\MCtx$, which likewise admits an equivalent inductive definition:
 \begin{gather*}
   \infer{
-    \IsSymCtx{\cdot}
+    \IsMetaCtx{\cdot}
   }{
   }
 \qquad
   \infer{
-    \IsSymCtx{\Upsilon,u:\tau}
+    \IsMetaCtx{\Theta,\MV{m}:v}
   }{
-    \IsVarCtx{\Upsilon}
+    \IsMetaCtx{\Theta}
 &
-    \IsSort{\tau}
+    \IsValence{v}
 &
-    \NotIn{u}{\Dom\Upsilon}
+    \NotIn{\MV{m}}{\Dom\Theta}
   }
 \end{gather*}
 
-\section{Abstract Binding Trees}
+
+
+\section{Nominal Abstract Binding Trees}
 
 Let the judgment $\IsAbt{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$ presuppose
 $\IsMetaCtx{\Theta}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and
@@ -488,15 +562,121 @@ defined in four rules:
   }
 \end{gather*}
 
-Abts are identified up to $\alpha$-equivalence. Let $\FS{M}$ be the collection
-of symbols free in $M$, and let $\FV{M}$ be the collection of variables free in
-$M$. \todo[inline]{actually define these}
+Abts are identified up to $\alpha$-equivalence.
 
-\subsection{Renaming of Symbols}
+\subsection{Calculating free variables}
+
+We can easily calculate the variables free in an expression by recursion on its
+structure:
+
+\begin{gather*}
+  \infer[\textit{var}]{
+    \CalcFV{x}{\MkSet{x}}
+  }{
+  }\\[6pt]
+  %
+  \infer[\textit{mvar}]{
+    \CalcFV{
+      \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
+    }{
+      \bigcup_{i\leq n} \vec{x}_i
+    }
+  }{
+    \HypJ{
+      \CalcFV{M_i}{\vec{x}_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  %
+  \infer[\textit{app}]{
+    \CalcFV{
+      \App{\vartheta}{E_0,\dots,E_n}
+    }{
+      \bigcup_{i\leq n} \vec{x}_i
+    }
+  }{
+    \HypJ{
+      \CalcFV{E_i}{\vec{x}_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  %
+  \infer[\textit{abs}]{
+    \CalcFV{
+      \MkBTm{\vec{u}}{\vec{y}}{M}
+    }{
+      \vec{x}\setminus\vec{y}
+    }
+  }{
+    \CalcFV{M}{\vec{x}}
+  }
+\end{gather*}
+
+Because this is a total relation, henceforth we will write $\FV{M}$ for
+$\vec{x}$ when $\CalcFV{M}{x}$.
+
+\subsection{Calculating free symbols}
+
+Whereas the calculation of free variables pivoted on the \emph{var} rule, the
+calculation of free symbols will pivot on the \emph{app} rule, because the only
+place a symbol can be introduced is as a parameter to an operator.
+
+\begin{gather*}
+  \infer[\textit{var}]{
+    \CalcFS{x}{\MkSet{}}
+  }{
+  }\\[6pt]
+  %
+  \infer[\textit{mvar}]{
+    \CalcFS{
+      \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
+    }{
+      \bigcup_{i\leq n} \vec{u}_i
+    }
+  }{
+    \HypJ{
+      \CalcFS{M_i}{\vec{u}_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  %
+  \infer[\textit{app}]{
+    \CalcFS{
+      \App{\vartheta}{E_0,\dots,E_n}
+    }{
+      \Dom{\Supp{\vartheta}} \cup \bigcup_{i\leq n} \vec{u}_i
+    }
+  }{
+    \HypJ{
+      \CalcFS{E_i}{\vec{u}_i}
+    }{
+      \Leq{i}{n}
+    }
+  }\\[6pt]
+  %
+  \infer[\textit{abs}]{
+    \CalcFS{
+      \MkBTm{\vec{v}}{\vec{x}}{M}
+    }{
+      \vec{u}\setminus\vec{v}
+    }
+  }{
+    \CalcFS{M}{\vec{u}}
+  }
+\end{gather*}
+
+Because this is a total relation, henceforth we will write $\FS{M}$ for
+$\vec{u}$ when $\CalcFS{M}{u}$.
+
+
+\subsection{Renaming of symbols}
 
 The only place that symbols appear in our calculus is as parameters to operators
 (unlike variables, symbols are not terms). Therefore, the functorial action of
-the operator presheaf can be lifted into terms by recursion on their
+the operator sheaf can be lifted into terms by recursion on their
 structure, via a pair of judgments $\IsRenaming{\varrho}{M}{N}$ and
 $\IsRenaming{\varrho}{E}{F}$, presupposing $\Of{\varrho}{\Upsilon\inj\Upsilon'}$,
 and $\IsAbt{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$ and
@@ -528,11 +708,9 @@ $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
     \IsRenaming{\varrho}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
-      \App{\vartheta'}{F_0,\dots,F_n}
+      \App{\vartheta\varrho}{F_0,\dots,F_n}
     }
   }{
-    \Match{\FLift{\varrho}{}(\vartheta)}{\vartheta'}
-&
     \HypJ{
       \IsRenaming{\varrho}{E_i}{F_i}
     }{
@@ -557,9 +735,7 @@ to $\alpha$-equivalence, the renaming judgment is functional in its input, and
 so we are justified in writing $\Rename{\varrho}{M}$ for $N$ when
 $\IsRenaming{\varrho}{M}{N}$.
 
-\todo[inline]{show that renaming preserves wellformedness}
-
-\subsection{Substitution of Variables}
+\subsection{Substitution of variables}
 
 Variable substitution in abts is defined inductively by a pair of judgments,
 $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
@@ -641,7 +817,7 @@ Going forward, we will write $\Subst{N}{x}{M}$ for $M'$ when
 $\IsSubst{N}{x}{M}{M'}$, and $\Subst{\vec{N}}{\vec{x}}{M}$ for the simultaneous
 substitution of $\vec{N}$ for $\vec{x}$ in $M$.
 
-\subsection{Substitution of Metavariables}
+\subsection{Substitution of metavariables}
 
 Metavariables are substituted by bound terms; since a metavariable may only
 appear in an application expression $\MApp{\MV{m}}{\cdots}{\cdots}$, we will
@@ -684,10 +860,9 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
 &
     \IsSubst{\vec{M}}{\vec{x}}{N}{N'}
 &
-    \IsRenaming{\MkSet{\vec{u}\mapsto\vec{v}}}{N'}{N''}
-  }
-\end{gather*}
-\begin{gather*}
+    \IsRenaming{\vec{u}\mapsto\vec{v}}{N'}{N''}
+  }\\[6pt]
+  %
   \infer{
     \IsSubst{E}{\MV{m}}{
       \App{\vartheta}{F_0,\dots,F_n}
@@ -722,11 +897,8 @@ $\IsSubst{E}{\MV{m}}{M}{N}$.
 
 \section{Model Theory}
 
-Let $\FinSets$ be the free cocartesian category on a single object (that is, the
-category of finite cardinals and functions between them); then the comma
-construction $\Define{\Ctx}{\Comma{\FinSets}{\Sorts}}$ is the category of
-variable contexts. Let $\Define{\HypCat}{\OpCat{(\SCtx\times\Ctx)}}$; then we
-fix the functor category $\widehat{\HypCat}^\Sorts$ as our semantic universe.
+Let $\Define{\HypCat}{\OpCat{(\SCtx\times\Ctx)}}$; then we fix the functor
+category $\widehat{\HypCat}^\Sorts$ as our semantic universe.
 
 Let $\Define{V_\tau(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid
     \Gamma(x)=\tau}}$ be called the presheaf of variables; additionally, we have
@@ -737,10 +909,12 @@ $a$,
 $\Define{\Operators_a(\Upsilon\parallel\Gamma)}{\Operators\Pair{\Upsilon}{a}}$
 
 \subsection{Substitution monoidal structures}
+\newcommand\SymPsh{\mathbf{S}}
+\newcommand\VarPsh{\mathbf{V}}
 
 For an object $\Of{P}{\widehat{\HypCat}^\Sorts}$, we will use the notation
 $P^{[\Gamma]}$ to mean $\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}$; likewise,
-$S^{\{\Upsilon\}}$ shall mean $\prod_{u\in\Dom\Upsilon}S_{\Upsilon(u)}$. For a
+$\SymPsh^{\{\Upsilon\}}$ shall mean $\prod_{u\in\Dom\Upsilon}S_{\Upsilon(u)}$. For a
 presheaf $\Of{A}{\widehat{\HypCat}}$ and a sort-indexed family of presheaves
 $\Of{P}{\widehat{\HypCat}^\Sorts}$, we have an operation $A\bullet P$, defined
 as a coend in the following way:
@@ -748,7 +922,7 @@ as a coend in the following way:
   \Define{(A\bullet P)(\Upsilon\parallel\Gamma)}{
     \int^{(\Upsilon'\parallel\Delta)\in\HypCat}
       A(\Upsilon'\parallel\Delta)
-      \times S^{\{\Upsilon'\}}(\Upsilon\parallel\Gamma)
+      \times \SymPsh^{\{\Upsilon'\}}(\Upsilon\parallel\Gamma)
       \times P^{[\Delta]}(\Upsilon\parallel\Gamma)
   }
 \]
@@ -790,7 +964,7 @@ ${\varsigma}^{\tau}_{\Upsilon\parallel\Gamma}$:
   \end{tikzcd}
   \qquad
   \begin{tikzcd}[cramped, sep = large, ampersand replacement = \&]
-    {\IMode{{P_\tau^{\Yoneda{\Upsilon\parallel\Gamma}}\times S^{\{\Upsilon\}}\times P^{[\Gamma]}}}}
+    {\IMode{{P_\tau^{\Yoneda{\Upsilon\parallel\Gamma}}\times \SymPsh^{\{\Upsilon\}}\times P^{[\Gamma]}}}}
       \arrow[r, "\IMode{\varsigma^\tau_{\Upsilon\parallel\Gamma}}"]
     \&
     {\IMode{P_\tau}}
@@ -847,9 +1021,9 @@ an environment presheaf in the following way:
       }{{P_{\tau}}^{\Yoneda{\vec{\sigma}\parallel\vec{\tau}}}}
     \right)
     \times
-    S^{\{\Upsilon\}}
+    \SymPsh^{\{\Upsilon\}}
     \times
-    V^{[\Gamma]}
+    \VarPsh^{[\Gamma]}
   }
 \]
 
@@ -946,7 +1120,7 @@ substitution:
       {P}_{\tau}^{
         \Yoneda{\vec{\sigma}\parallel\vec{\tau}}
       }
-      \times S^{\{\vec{\sigma}\}}
+      \times \SymPsh^{\{\vec{\sigma}\}}
       \times P^{[\vec{\tau}]}
     }}
       \arrow[
@@ -992,14 +1166,14 @@ substitution:
           }
           "]
 \&
-    {\IMode{S^{\{\Upsilon\}}}}
+    {\IMode{\SymPsh^{\{\Upsilon\}}}}
       \arrow[
         , dashed
         , r
         , "\Define{\phi\,}{\,\Tuple{\pi_u}_{u\in\vec{u}}}"
       ]
 \&
-    {\IMode{S^{\{\vec{\sigma}\}}}}
+    {\IMode{\SymPsh^{\{\vec{\sigma}\}}}}
   \end{tikzcd}
 \]
 
@@ -1011,7 +1185,7 @@ operator $\IsOperator{\Upsilon}{\vartheta}{a}$ the morphism
 $\SemBrackets{\vartheta}_P$ which shall rename the parameters of the operator
 using the environment:
 \[
-  \begin{tikzcd}[cramped, ampersand replacement = \&]
+  \begin{tikzcd}[cramped, ampersand replacement = \&, sep = huge]
     |[alias = Src]|
     {\IMode{
       {\SemBrackets{
@@ -1024,11 +1198,11 @@ using the environment:
         , "\IMode{\pi_2}"
       ]
 \&
-    {\IMode{S^{\{\Upsilon\}}}}
+    {\IMode{\SymPsh^{\{\Upsilon\}}}}
       \arrow[
         , r
         , swap
-        , "\IMode{\FLift{\pi_{(-)}}{}}"
+        , "\IMode{\Operators_a(\pi_{(-)})(\vartheta)}"
       ]
 \&[1.5em]
     |[alias = Tgt]|
@@ -1186,7 +1360,7 @@ where $\phi_i,\psi_i$ are defined as follows:
           "
       ]
 \&[12.0em]
-    {\IMode{S^{\{\Upsilon,\vec{\sigma}_i\}}}}
+    {\IMode{\SymPsh^{\{\Upsilon,\vec{\sigma}_i\}}}}
 \\[-1.0em]
     {\IMode{
       {\SemBrackets{
@@ -1211,7 +1385,7 @@ where $\phi_i,\psi_i$ are defined as follows:
           "
       ]
 \&[12.0em]
-    {\IMode{V^{[\Gamma,\vec{\tau}_i]}}}
+    {\IMode{\VarPsh^{[\Gamma,\vec{\tau}_i]}}}
   \end{tikzcd}
 \end{gather*}
 
@@ -1220,50 +1394,55 @@ This concludes the interpretation of well-sorted terms into any $\Sigma$-model.
 \section{Case Study: Wellformed Sequents}
 
 The representation of telescopes and sequents in a logical framework is
-notoriously difficult; whilst it is possible to use higher-order abstract syntax
-or abts to encode the binding-structure of telescopes and sequents, the encoding
-is sufficiently laborious and obscure that it is not used in practice.
-
+notoriously difficult; whilst it is possible to use higher-order abstract
+syntax or abts to encode the binding-structure of telescopes and sequents, the
+encoding is sufficiently laborious and obscure that it is not used in practice.
 Crary has demonstrated a first-order encoding of contexts in the logical
-framework in bijection with actual LF-contexts~\cite{crary:2009}, which has been
-successfully used in large-scale mechanization efforts, including that of
+framework in bijection with actual LF-contexts~\cite{crary:2009}, which has
+been successfully used in large-scale mechanization efforts, including that of
 Standard ML~\cite{lee-crary-harper:2007} and the Edinburgh Logical Framework
 itself~\cite{martens-crary:2012}.
 
-\todo[inline]{talk about context encodings in Abella}
-
 We will approach the problem of encoding telescopes and sequents from the
 \emph{refinements} perspective, where a conservative approximation of the
-grammar is first given using the abt logical framework, and then the correctness
-of a code is expressed separately in a judgment that refines the existing
-specification.
+grammar is first given using the abt logical framework, and then the
+correctness of a code is expressed separately in a judgment that refines the
+existing specification.  Because we have not committed to using the built-in
+binding machinery to express the well-scopedness of telescopes and sequents, we
+are free to use \emph{symbols} in order to model the variables in the context.
+This is in fact quite sensible if we are actually trying to faithfully
+represent the syntax of telescopes and sequents, rather than replace them with
+their counterparts on the meta-level.
 
-Because we have not committed to using the built-in binding machinery to express
-the well-scopedness of telescopes and sequents, we are free to use
-\emph{symbols} in order to model the variables in the context. This is in fact
-quite sensible if we are actually trying to faithfully represent the syntax of
-telescopes and sequents, rather than replace them with their counterparts on the
-meta-level.
+The approach outlined above is actually quite similar to the standard practice
+in the Abella proof assistant \cite{gacek:2008}; in Abella, in addition to the
+canonical forms, each type is inhabited by an infinite collection of nominal
+constants or symbols, which can be used in the syntax of contexts. In order to
+specify where such symbols are allowed to occur, a wellformedness predicate (a
+``scheme'') is separately defined. Our setting is similar in that we may also
+use symbols to encode the syntax of contexts, except that here, we have better
+control over their proliferation because, contrary to the state of
+affairs in Abella, symbols are \emph{not} terms.
 
 This insight leads the way to a simple abt signature for the theory of
 telescopes and sequents.
 %
 \newcommand\SortTele{\mathtt{tele}}
 \newcommand\SortJdg{\mathtt{jdg}}
-\newcommand\SortType{\mathtt{type}}
+\newcommand\SortProp{\mathtt{prop}}
 \newcommand\SortExpr{\mathtt{exp}}
 \newcommand\OpNil{\mathtt{nil}}
 \newcommand\OpSnoc[1]{\mathtt{snoc}[#1]}
-\newcommand\OpVar[1]{\mathtt{var}[#1]}
+\newcommand\OpHyp[1]{\mathtt{hyp}[#1]}
 \newcommand\OpSequent{\mathtt{sequent}}
 % %
 \[
-  \begin{array}{l}
-    \IsSort{\SortTele}\\
-    \IsSort{\SortExpr}\\
-    \IsSort{\SortType}\\
-    \IsSort{\SortJdg}\\\\
-    \IsOperator{\Upsilon, u:\SortExpr}{\OpVar{u}}{
+  \begin{array}{lr}
+    \IsSort{\SortTele}&\textit{telescopes}\\
+    \IsSort{\SortExpr}&\textit{expressions}\\
+    \IsSort{\SortProp}&\textit{propositions}\\
+    \IsSort{\SortJdg}&\textit{judgments}\\\\
+    \IsOperator{\Upsilon, u:\SortExpr}{\OpHyp{u}}{
       \MkArity{}{\SortExpr}
     }\\\\
     \IsOperator{\Upsilon}{\OpNil}{
@@ -1272,56 +1451,29 @@ telescopes and sequents.
     \IsOperator{\Upsilon, u:\SortExpr}{\OpSnoc{u}}{
       \MkArity{
         \MkValence{}{}{\SortTele},
-        \MkValence{}{}{\SortType}
+        \MkValence{}{}{\SortProp}
       }{\SortTele}
     }\\\\
     \IsOperator{\Upsilon}{\OpSequent}{
       \MkArity{
         \MkValence{}{}{\SortTele},
-        \MkValence{}{}{\SortType}
+        \MkValence{}{}{\SortProp}
       }{\SortJdg}
     }
   \end{array}
 \]
 
-\newcommand\OpPi{\mathtt{pi}}
-\newcommand\OpSg{\mathtt{sg}}
-\newcommand\OpBool{\mathtt{bool}}
-\newcommand\OpSo{\mathtt{isTrue}}
-
 Suppose we have encoded a fragment of type theory as well:
 \[
   \begin{array}{l}
-    \IsOperator{\Upsilon}{\top}{
-      \MkArity{}{\SortType}
+    \IsOperator{\Upsilon}{\mathtt{P}}{
+      \MkArity{}{\SortProp}
     }
 \\
-    \IsOperator{\Upsilon}{\bot}{
-      \MkArity{}{\SortType}
-    }
-\\
-    \IsOperator{\Upsilon}{\OpBool}{
-      \MkArity{}{\SortType}
-    }
-\\
-    \IsOperator{\Upsilon}{\OpSo}{
+    \IsOperator{\Upsilon}{\mathtt{pred}}{
       \MkArity{
         \MkValence{}{}{\SortExp}
-      }{\SortType}
-    }
-\\
-    \IsOperator{\Upsilon}{\OpPi}{
-      \MkArity{
-        \MkValence{}{}{\SortType},
-        \MkValence{}{\SortExp}{\SortType}
-      }{\SortType}
-    }
-\\
-    \IsOperator{\Upsilon}{\OpSg}{
-      \MkArity{
-        \MkValence{}{}{\SortType},
-        \MkValence{}{\SortExp}{\SortType}
-      }{\SortType}
+      }{\SortProp}
     }
 \\
   \end{array}
@@ -1350,7 +1502,7 @@ define some notation:
 \\
   \IMode{`u}
 &
-  \triangleq \OMode{\OpVar{u}}
+  \triangleq \OMode{\OpHyp{u}}
 \end{align*}
 
 Now, we have the following well-formed sequent:
@@ -1359,9 +1511,9 @@ Now, we have the following well-formed sequent:
     u:\SortExp,
     v:\SortExp
   }{\cdot}{
-    \diamond,u:\OpBool,v:\App{\OpSo}{`u}
+    \diamond,u:\mathtt{P},v:\App{\mathtt{pred}}{`u}
     \gg
-    \App{\OpSo}{`u}
+    \App{\mathtt{pred}}{`u}
   }{\SortJdg}
 \]
 
@@ -1383,9 +1535,9 @@ Then, we may write a closed sequent judgment as follows:
   \IsAbt{\cdot}{\cdot}{\cdot}{
     \App{\OpNabla{\SortExp,\SortExp}}{
       \MkBTm{u,v}{}{
-        \diamond,u:\OpBool,v:\App{\OpSo}{`u}
+        \diamond,u:\mathtt{P},v:\App{\mathtt{pred}}{`u}
         \gg
-        \App{\OpSo}{`u}
+        \App{\mathtt{pred}}{`u}
       }
     }
   }{\SortJdg}
@@ -1446,11 +1598,11 @@ Likewise, wellformedness for variables and metavariables is defined uniformly:
 
 The remainder of the definition of refinement proceeds by induction on sorts and
 operators. For the sake of this example, we will just stipulate that anything of
-sort $\SortExp$ or $\SortType$ is grammatical if its subterms are grammatical:
+sort $\SortExp$ or $\SortProp$ is grammatical if its subterms are grammatical:
 
 \[
   \infer[
-    \text{for $\Member{\tau}{\MkSet{\SortExp,\SortType}}$}
+    \text{for $\Member{\tau}{\MkSet{\SortExp,\SortProp}}$}
   ]{
     \IsWf{\Theta}{\Upsilon}{\Gamma}{
       \App{\vartheta}{E_0,\dots,E_n}
@@ -1492,7 +1644,7 @@ subterms as well:
   }{
     \IsWf{\Theta}{\Upsilon}{\Gamma}{H}{\SortTele}
 &
-    \IsWf{\Theta}{\Upsilon}{\Gamma}{A}{\SortType}
+    \IsWf{\Theta}{\Upsilon}{\Gamma}{A}{\SortProp}
   }
 \end{gather*}
 
@@ -1509,7 +1661,7 @@ The refinement for telescopes proceeds by induction:
     \begin{array}{l}
       \IsWf{\Theta}{\Upsilon\setminus\MkSet{u}}{\Gamma}{H}{\SortTele}
 \\
-      \IsWf{\Theta}{\Upsilon\setminus\MkSet{u}}{\Gamma}{A}{\SortType}
+      \IsWf{\Theta}{\Upsilon\setminus\MkSet{u}}{\Gamma}{A}{\SortProp}
     \end{array}
   }
 \end{gather*}
