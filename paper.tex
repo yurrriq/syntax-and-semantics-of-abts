@@ -50,9 +50,8 @@
 \theoremstyle{remark}
 \newtheorem{remark}[thm]{Remark}
 \numberwithin{equation}{section}
-%% Euler doesn't have \varsigma and \varrho
+%% Euler doesn't have \varsigma
 \DeclareSymbolFont{greekletters}{OML}{cmr}{m}{it}
-\DeclareMathSymbol{\varrho}{\mathalpha}{greekletters}{"25}
 \DeclareMathSymbol{\varsigma}{\mathalpha}{greekletters}{"26}
 
 \newcommand\HypCat{\mathbf{H}}
@@ -274,7 +273,7 @@ $\Sets^\SCtx$ which contains just the pullbacks-preserving functors.
   give a slightly more detailed version here. The presheaf $X$ is a sheaf on the
   atomic site $\SCtxSite$ just when, for any renaming
   $\Of{\varrho}{C\inj D}$ and any $\Member{n}{X(D)}$ if
-  $\IsEq{n\varrho_0}{n\varrho_1}$ for all diagrams
+  $\IsEq{X(\varrho_0)(n)}{X(\varrho_1)(n)}$ for all diagrams
   \[
     \begin{tikzcd}[sep=large]
       \IMode{C} \arrow[r, hook, "\IMode{\varrho}"] &
@@ -286,7 +285,7 @@ $\Sets^\SCtx$ which contains just the pullbacks-preserving functors.
     \end{tikzcd}
   \]
   such that $\IsEq{\varrho_0\circ\varrho}{\varrho_1\circ\varrho}$, then there
-  exists a unique $\Member{m}{X(C)}$ such that $\IsEq{m\varrho}{n}$. In other
+  exists a unique $\Member{m}{X(C)}$ such that $\IsEq{X(\varrho)(n)}{n}$. In other
   words, the arrow $X(\varrho)$ is an equalizer, as in the following:
   \[
     \begin{tikzcd}[sep=large]
