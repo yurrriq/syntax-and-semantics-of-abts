@@ -715,8 +715,9 @@ $\vec{x}$ when $\CalcFV{M}{x}$.
 \subsection{Calculating free symbols}
 
 Whereas the calculation of free variables pivoted on the \emph{var} rule, the
-calculation of free symbols will pivot on the \emph{app} rule, because the only
-place a symbol can be introduced is as a parameter to an operator.
+calculation of free symbols will pivot on the \emph{app} and \emph{mvar} rule,
+because the only way a symbol can be introduced is as a parameter to an
+operator or as a parameter to a metavariable.
 
 \begin{gather*}
   \infer[\textit{var}]{
@@ -728,7 +729,7 @@ place a symbol can be introduced is as a parameter to an operator.
     \CalcFS{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{
-      \bigcup_{i\leq n} \vec{u}_i
+      \vec{u} \cup \bigcup_{i\leq n} \vec{u}_i
     }
   }{
     \HypJ{
