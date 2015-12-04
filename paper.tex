@@ -317,10 +317,50 @@ $\Sets^\SCtx$ which contains just the pullbacks-preserving functors.
       \IMode{B}
     \end{tikzcd}
   \]
-  is a pullback. Because $X$ preserves monomorphisms, and all arrows in $\SCtx$
-  are monic, then $X(\varrho)$ is monic. Hence, $X$ is a sheaf.
+  is a pullback \cite[p.\ 16]{mac-lane-moerdijk:1992}. Because $X$ preserves
+  monomorphisms, and all arrows in $\SCtx$ are monic, then $X(\varrho)$ is
+  monic. Hence, $X$ is a sheaf.
 
-  \todo[inline]{prove the other direction}
+  Next, we must show that if $X$ is a sheaf, then it preserves pullbacks; we
+  will loosely track the proof of Proposition~2.6.15 in \cite{biering:2004}.
+  Fix the following diagram such that it is a pullback square in $\SCtx$:
+  \[
+    \begin{tikzcd}[sep=large]
+      \IMode{C}
+        \arrow[r, "\IMode{f_j}"]
+        \arrow[d, "\IMode{f_i}"] &
+      \IMode{C_j} \arrow[d, "\IMode{s_j}"]\\
+      \IMode{C_i} \arrow[r, "\IMode{s_i}"] &
+      \IMode{D}
+    \end{tikzcd}
+  \]
+
+  Then it suffices to show that the following diagram is also pullback square
+  in $\Sets$:
+  \[
+    \begin{tikzcd}[sep=large]
+      \IMode{X(C)}
+        \arrow[r, "\IMode{X(f_j)}"]
+        \arrow[d, "\IMode{X(f_i)}"] &
+      \IMode{X(C_j)} \arrow[d, "\IMode{X(s_j)}"]\\
+      \IMode{X(C_i)} \arrow[r, "\IMode{X(s_i)}"] &
+      \IMode{X(D)}
+    \end{tikzcd}
+  \]
+
+  To prove that the above diagram is a pullback, it suffices to show that for
+  any $\Member{m_i}{X(C_i)}$ and $\Member{m_j}{X(C_j)}$ such that
+  $\IsEq{X(s_i)(m_i)}{X(s_j)(m_j)}$, we have a unique $\Member{m}{X(C)}$; the
+  universal property of the pullback follows immediately from this.
+
+  Consider the singleton cover on $C$ that contains $\Define{h}{s_i\circ
+  f_i}=\OMode{s_j\circ f_j}$; a matching family $\phi$ for the cover
+  $\MkSet{h}$ is a map that takes $h$ to an object in $X(D)$, and an
+  amalgamation for $\phi$ consists in an object $\Member{m}{X(C)}$ such that
+  $\IsEq{\phi(h)}{X(h)(m)}$. Now recall that $X$ is a sheaf on $\SCtxSite$ if
+  and only if every matching family has a unique amalgamation; for the matching
+  family $\Define{\phi(h)}{X(s_i)(m_i)}$, then, we must have a unique amalgamation
+  $\Member{m}{X(C)}$ since $X$ is a sheaf. Therefore, $X$ preserves pullbacks.
 
 \end{proof}
 
