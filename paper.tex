@@ -202,10 +202,10 @@ element $\Member{m\varrho}{X(\Upsilon')}$.
 
 Intuitively, when $\Upsilon$ supports $\Member{m}{X(\Upsilon')}$, we would
 expect that we can work backward to a unique $\Of{m'}{\Upsilon}$ such that
-$\IsEq{m'\varrho}{m}$; whilst this is not in general the case for presheaves
-$X$, it is precisely the sheaf condition for covariant presheaves on $\SCtx$
-under the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}. The sheaf
-condition, then, ensures that the notion of support is well-behaved.
+$\IsEq{m'\varrho}{m}$; whilst it is not in general the case for presheaves $X$,
+this is precisely the sheaf condition for covariant presheaves on $\SCtx$ under
+the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}. The sheaf condition,
+then, ensures that the notion of support is well-behaved.
 
 Let $\Supp{m}$ be the \emph{least support} of $\Member{m}{X(\Upsilon')}$:
 \[
@@ -215,7 +215,11 @@ Let $\Supp{m}$ be the \emph{least support} of $\Member{m}{X(\Upsilon')}$:
         \Upsilon\arrow[r, hook, "\varrho"] \& \Upsilon'
       \end{tikzcd}
     }
-    \SupportsUnmoded{\Upsilon}{\varrho}{m}
+    \MkSet{
+      \Upsilon
+      \mid
+      \SupportsUnmoded{\Upsilon}{\varrho}{m}
+    }
   }
 \]
 Intuitively, $\Supp{m}$ is the exact symbol context that $m$ depends on.
@@ -250,8 +254,9 @@ infinite set of atoms $\mathbb{A}$ is equipped with a sort assignment
 $\Of{\mathfrak{s}}{\mathbb{A}\to\Sorts}$ such that all the fibres of
 $\mathfrak{s}$ are countably infinite; then, he defines for any such assignment
 the category $\mathbf{Nom}_\mathfrak{s}$ of $\mathfrak{s}$-sorted nominal sets
-as the category of presheaves on the group of $\mathfrak{s}$-respecting
-permutations on $\mathbb{A}$, $\Perm_\mathfrak{s}\mathbb{A}$.
+as a subcategory of the category of presheaves on the group of
+$\mathfrak{s}$-respecting permutations on $\mathbb{A}$,
+$\Perm_\mathfrak{s}\mathbb{A}$.
 
 In the same way as the Schanuel topos is equivalent to the unisorted nominal
 sets, we expect to find an equivalence between $\Sheaves{\SCtxSite}$ and the
@@ -750,7 +755,7 @@ structure:
 \end{gather*}
 
 Because this is a total relation, henceforth we will write $\FV{M}$ for
-$\vec{x}$ when $\CalcFV{M}{x}$.
+$\vec{x}$ when $\CalcFV{M}{\vec{x}}$.
 
 \subsection{Calculating free symbols}
 
@@ -805,7 +810,7 @@ operator or as a parameter to a metavariable.
 \end{gather*}
 
 Because this is a total relation, henceforth we will write $\FS{M}$ for
-$\vec{u}$ when $\CalcFS{M}{u}$.
+$\vec{u}$ when $\CalcFS{M}{\vec{u}}$.
 
 
 \subsection{Renaming of symbols}
@@ -819,12 +824,12 @@ and $\IsAbt{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$ and
 $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
 
 \begin{gather*}
-  \infer{
+  \infer[\textit{var}]{
     \IsRenaming{\varrho}{x}{x}
   }{
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{mvar}]{
     \IsRenaming{\varrho}{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{
@@ -840,7 +845,7 @@ $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
     }
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{app}]{
     \IsRenaming{\varrho}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
@@ -854,7 +859,7 @@ $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
     }
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{abs}]{
     \IsRenaming{\varrho}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
@@ -877,19 +882,19 @@ Variable substitution in abts is defined inductively by a pair of judgments,
 $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
 
 \begin{gather*}
-  \infer{
+  \infer[\textit{var}_1]{
     \IsSubst{N}{x}{y}{N}
   }{
     \IsEq{x}{y}
   }
 \qquad
-  \infer{
+  \infer[\textit{var}_2]{
     \IsSubst{N}{x}{y}{y}
   }{
     \IsApart{x}{y}
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{mvar}]{
     \IsSubst{N}{x}{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{
@@ -903,7 +908,7 @@ $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
     }
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{app}]{
     \IsSubst{N}{x}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
@@ -918,7 +923,7 @@ $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
   }
 \end{gather*}
 \begin{gather*}
-  \infer{
+  \infer[\textit{abs}_1]{
     \IsSubst{N}{x}{
       \MkBTm{\vec{u}}{\vec{y}}{M}
     }{
@@ -933,8 +938,8 @@ $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
 &
     \IsSubst{N}{x}{M}{M'}
   }
-\qquad
-  \infer{
+\\[6pt]
+  \infer[\textit{abs}_2]{
     \IsSubst{N}{x}{
       \MkBTm{\vec{u}}{\vec{y}}{M}
     }{
@@ -962,12 +967,12 @@ Substitution for metavariables is defined inductively by the judgments
 $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
 
 \begin{gather*}
-  \infer{
+  \infer[\textit{var}]{
     \IsSubst{E}{\MV{m}}{x}{x}
   }{
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{mvar}_1]{
     \IsSubst{E}{\MV{m}}{
       \MApp{\MV{n}}{\vec{u}}{M_0,\dots,M_n}
     }{
@@ -983,7 +988,7 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
     }
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{mvar}_2]{
     \IsSubst{
       \MkBTm{\vec{u}}{\vec{x}}{N}
     }{\MV{m}}{
@@ -999,7 +1004,7 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
     \IsRenaming{\vec{u}\mapsto\vec{v}}{N'}{N''}
   }\\[6pt]
   %
-  \infer{
+  \infer[\textit{app}]{
     \IsSubst{E}{\MV{m}}{
       \App{\vartheta}{F_0,\dots,F_n}
     }{
@@ -1013,7 +1018,7 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
     }
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{abs}]{
     \IsSubst{E}{\MV{m}}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
