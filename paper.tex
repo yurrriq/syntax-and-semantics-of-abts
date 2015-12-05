@@ -258,15 +258,15 @@ one amalgamation $\Member{m}{X(C)}$ for $\phi$. Additionally, $X$ is called a
 \paragraph{The atomic coverage}
 
 The atomic coverage $J_\mathsf{atm}$ is the one in which all non-empty sieves
-cover. A sieve $S\sqsubseteq\Yoneda{C}$ is non-empty when the collection
-$\bigcup_D S(D)$ of all its arrows is non-empty.
+cover. A sieve $\IMode{S}\sqsubseteq\IMode{\Yoneda{C}}$ is non-empty when the
+collection $\bigcup_D S(D)$ of all its arrows is non-empty.
 
 In the future, we will write $\SCtxSite$ for the Grothendieck site
 $\Pair{\OpCat{\left(\SCtx\right)}}{J_\mathsf{atm}}$, where $J_\mathsf{atm}$ is
 the atomic coverage. Sheafhood on the atomic site $\SCtxSite$ amounts to the
 following condition, using Definition~\ref{def:support}:
 \begin{quote}
-  A presheaf $X:\Sets^\SCtx$ is a sheaf on $\SCtxSite$ just when, for all $\Member{n}{X(\Upsilon')}$, if we have
+  A presheaf $\Of{X}{\Sets^\SCtx}$ is a sheaf on $\SCtxSite$ just when, for all $\Member{n}{X(\Upsilon')}$, if we have
   \begin{tikzcd}[cramped]
     \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
   \end{tikzcd}
