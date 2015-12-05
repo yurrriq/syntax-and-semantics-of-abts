@@ -123,72 +123,76 @@ support symbol-indexed families of operators. Additionally, we have developed
 the categorical semantics for abts formally in Constructive Type Theory using
 the Agda proof assistant~\cite{norell:2007}.
 
-\section{Preliminaries}
+\section{Categorical Preliminaries}
 
-Fix a set $\Sorts$ of \emph{sorts}. We will say $\IsSort{\tau}$ when
-$\Member{\tau}{\Sorts}$. A valence $\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}$
-specifies an expression of sort $\tau$ which binds symbols in $\vec{\sigma}$ and
-variables in $\vec{\tau}$.
-
-\[
-  \infer{
-    \IsValence{
-      \MkValence
-        {\sigma_0,\dots,\sigma_m}
-        {\tau_0,\dots,\tau_n}
-        {\tau}
-    }
-  }{
-    \IsSort{\tau}
-&
-    \HypJ{\IsSort{\sigma_i}}{\Leq{i}{m}}
-&
-    \HypJ{\IsSort{\tau_i}}{\Leq{i}{n}}
-  }
-\]
-
-An arity $\MkArity{\vec{v}}{\tau}$ specifies an operator of sort $\tau$ with
-arguments of valences $\vec{v}$. We will call the set of valences $\Valences$,
-and the set of arities $\Arities$.
-
-\[
-  \infer{
-    \IsArity{
-      \MkArity
-        {v_0,\ldots,v_n}
-        {\tau}
-    }
-  }{
-    \IsSort{\tau}
-&
-    \HypJ
-      {\IsValence{v_i}}
-      {\Leq{i}{n}}
-  }
-\]
-
-\subsection{Symbols, contexts and their sheaves}
+Fix a set $\Sorts$ of \emph{sorts}; we will say $\IsSort{\tau}$ when
+$\Member{\tau}{\Sorts}$. In this section, we will develop a theory of sets
+varying over collections of $\Sorts$-sorted symbols.
 
 Let $\SymSets$ be the category of finite cardinals and their injective maps;
-then the comma construction $\SCtx$, with $\Discrete{\Sorts}$
-the discrete category on the set $\Sorts$, is the category of contexts of
-symbols whose objects are finite sets of symbols $U$ and sort-assignments
+then the comma construction $\SCtx$, is the category of contexts of symbols
+whose objects are finite sets of symbols $U$ and sort-assignments
 \begin{tikzcd}[cramped]
   \IMode{U}\arrow[r, "\IMode{\mathfrak{s}}"] &\IMode{\Sorts}
 \end{tikzcd}, and whose morphisms are
 sort-preserving renamings; we will write $\Upsilon$ for a symbol context
 $(U,\mathfrak{s})$.
 
-Now, a covariant presheaf $X$ on $\SCtx$ is an intensional set which is subject
-to renamings
+\begin{remark}
+
+  To be precise, $\SCtx$ is an abuse of notation for the comma category
+  $\Dom{-}_\SymSets\downarrow \Delta[\Sorts]$, with $\Dom{-}_\SymSets$ the
+  forgetful functor from $\SymSets$ to $\Sets$, and
+  $\Define{\Delta[\Sorts](*)}{\Sorts}$ a constant functor from $\mathbb{1}$ to $\Sets$.
+  Formally, an object of $\SCtx$ is, then, a triple $\Tuple{U, *,
+  \mathfrak{s}}$ with $U$ an object in $\SymSets$, $*$ the unique object in
+  $\mathbb{1}$, and $\mathfrak{s}$ a function $\Dom{U}_\SymSets\ra
+  \Sorts$; an arrow $\Of{\varrho}{\Tuple{U,*,\mathfrak{s}}\ra
+  \Tuple{V,*,\mathfrak{t}}}$ is a commuting triangle like the following:
+  \[
+    \begin{tikzcd}[cramped]
+      \IMode{\Dom{U}_\SymSets}
+        \arrow[rr, "\IMode{\Dom{\rho}_\SymSets}"]
+        \arrow[dr, swap, "\IMode{\mathfrak{s}}"] &&
+      \IMode{\Dom{V}_\SymSets}
+      \arrow[dl, "\IMode{\mathfrak{t}}"] \\
+      &\IMode{\Sorts}
+    \end{tikzcd}
+  \]
+
+  Because the object $\Of{*}{\mathbb{1}}$ is unique, we will always omit it
+  from the data of an object in $\SCtx$.
+\end{remark}
+
+\paragraph{Presheaves on $\SCtx$}
+
+A presheaf on a category $\mathcal{C}$ is a contravariant functor
+$\OpCat{\mathcal{C}}\ra\Sets$; when $\Match{\mathcal{C}}{\OpCat{\mathcal{D}}}$,
+we call this a \emph{copresheaf} (covariant presheaf) on $\mathcal{D}$.
+Therefore, a copresheaf on $\SCtx$ is a functor $\SCtx\ra\Sets$; colloquially,
+such a copresheaf can be thought of as a set that \emph{varies over} symbol
+contexts.
+
+This leads to a very intuitive setting in which to consider sets
+that vary over collections of $\Sorts$-sorted symbols. In particular, for any
+morphism
+%
 \begin{tikzcd}[cramped]
   \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
-\end{tikzcd};
-that is, each element $\Member{m}{X(\Upsilon)}$ can be mapped to a unique
-element $\Member{m\varrho}{X(\Upsilon')}$.
+\end{tikzcd}
+%
+in $\SCtx$, we have a corresponding functorial renaming action on any
+copresheaf $\Of{X}{\Sets^\SCtx}$, namely $\Of{X(\varrho)}{X(\Upsilon)\ra
+X(\Upsilon')}$. When the copresheaf $X$ is clear from context, we will write
+$m\cdot\varrho$ for $X(\varrho)(m)$.
+
+Now, when $\Member{m}{X(\Upsilon)}$ for a copresheaf $\Of{X}{\Sets^\SCtx}$, we
+can define the notion that $m$ depends on \emph{at most} a subcontext
+$\Upsilon'$ of $\Upsilon$; this is called \emph{support}.
 
 \begin{definition}[Support]
-  For a presheaf $\Of{X}{\Sets^\SCtx}$, when
+  \label{def:support}
+  When
   \begin{tikzcd}[cramped]
     \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
   \end{tikzcd},
@@ -197,17 +201,11 @@ element $\Member{m\varrho}{X(\Upsilon')}$.
   \begin{tikzcd}[cramped]
     \IMode{\Upsilon'}\arrow[r, hook, "\IMode{\varrho_1}{,} \IMode{\varrho_2}"] & \IMode{\Upsilon''}
   \end{tikzcd},
-  if $\IsEq{\varrho_1\circ\varrho}{\varrho_2\circ\varrho}$ then $\IsEq{m\varrho_1}{m\varrho_2}$.
+  if $\IsEq{\varrho_1\circ\varrho}{\varrho_2\circ\varrho}$ then $\IsEq{m\cdot\varrho_1}{m\cdot\varrho_2}$.
 \end{definition}
 
-Intuitively, when $\Upsilon$ supports $\Member{m}{X(\Upsilon')}$, we would
-expect that we can work backward to a unique $\Of{m'}{\Upsilon}$ such that
-$\IsEq{m'\varrho}{m}$; whilst it is not in general the case for presheaves $X$,
-this is precisely the sheaf condition for covariant presheaves on $\SCtx$ under
-the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}. The sheaf condition,
-then, ensures that the notion of support is well-behaved.
-
-Let $\Supp{m}$ be the \emph{least support} of $\Member{m}{X(\Upsilon')}$:
+We can also always calculate the \emph{least support} of a term
+$\Member{m}{X(\Upsilon')}$, written $\Supp{m}$:
 \[
   \Define{\Supp{m}}{
     \bigcap_{
@@ -224,11 +222,113 @@ Let $\Supp{m}$ be the \emph{least support} of $\Member{m}{X(\Upsilon')}$:
 \]
 Intuitively, $\Supp{m}$ is the exact symbol context that $m$ depends on.
 
-In the future, we will write $\SCtxSite$ for the Grothendieck site
-$\Pair{\OpCat{\left(\SCtx\right)}}{J_\mathsf{atm}}$, where $J_\mathsf{atm}$
-is the atomic coverage (sc.\ every non-empty family covers).
+\subsection{Sheaves on the atomic site}
 
-\subsubsection{Relation to Nominal Sets and the Schanuel Topos}
+Intuitively, when $\Upsilon$ supports $\Member{m}{X(\Upsilon')}$, we would
+expect that we can work backward to a unique $\Of{m'}{\Upsilon}$ such that
+$\IsEq{m'\cdot\varrho}{m}$; whilst it is not in general the case for presheaves
+$X$, this is precisely the sheaf condition for covariant presheaves on $\SCtx$
+under the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}. The sheaf
+condition, then, ensures that the notion of support is well-behaved.
+
+\paragraph{Sites and coverages}
+
+We will briefly discuss the basics of sheaves on a site. A \emph{site} is a
+pair $\Pair{\mathcal{C}}{J}$, with $\mathcal{C}$ a category of ``worlds'' and
+$J$ a Grothendieck topology (or ``coverage''). A coverage is a predicate that
+picks out for each object $\Of{C}{\mathcal{C}}$, the \emph{covering sieves} of
+$C$, subject to several axioms (see \cite{mac-lane-moerdijk:1992} for details).
+
+\paragraph{Covering sieves and matching families}
+
+A \emph{sieve} on an object $C$ is a subfunctor of the Yoneda embedding
+$\Define{\Yoneda{C}}{\Hom{\mathcal{C}}{-}{C}}$. We say that such a sieve $S$
+covers $C$ just when $\Member{S}{J(C)}$.  For a presheaf $X$ on the site
+$\Pair{\mathcal{C}}{J}$, a \emph{matching family} for the sieve $S$ is a
+natural transformation $\Of{\phi}{S\ra X}$. An \emph{amalgamation} for $\phi$
+is an object $\Member{m}{X(C)}$ such that $\IsEq{m\cdot f}{\phi_D(f)}$ for each
+$\Member{f}{S(D)}$, for all objects $D$.
+
+\paragraph{Separation and sheafhood}
+Then, we say that the presheaf $X$ is \emph{separated} in case for every sieve
+$\Member{S}{J(C)}$ and matching family $\Of{\phi}{S\ra X}$, there is at most
+one amalgamation $\Member{m}{X(C)}$ for $\phi$. Additionally, $X$ is called a
+\emph{sheaf} when there is \emph{exactly one} such amalgamation.
+
+\paragraph{The atomic coverage}
+
+The atomic coverage $J_\mathsf{atm}$ is the one in which all non-empty sieves
+cover. A sieve $S\sqsubseteq\Yoneda{C}$ is non-empty when the collection
+$\bigcup_D S(D)$ of all its arrows is non-empty.
+
+In the future, we will write $\SCtxSite$ for the Grothendieck site
+$\Pair{\OpCat{\left(\SCtx\right)}}{J_\mathsf{atm}}$, where $J_\mathsf{atm}$ is
+the atomic coverage. Sheafhood on the atomic site $\SCtxSite$ amounts to the
+following condition, using Definition~\ref{def:support}:
+\begin{quote}
+  A presheaf $X:\Sets^\SCtx$ is a sheaf on $\SCtxSite$ just when, for all $\Member{n}{X(\Upsilon')}$, if we have
+  \begin{tikzcd}[cramped]
+    \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
+  \end{tikzcd}
+  and $\Supports{\Upsilon}{\varrho}{n}$, then there is a unique
+  $\Member{m}{X(\Upsilon)}$ such that $\IsEq{m\cdot\varrho}{n}$.
+\end{quote}
+
+Therefore, a sheaf on $\SCtxSite$ is a set that varies over $\Sorts$-sorted
+symbols, which has a well-behaved notion of support. Another way to put it is,
+if $\Member{m}{X(\Upsilon)}$ only ``uses'' some of the symbols available at
+world $\Upsilon$, there's a canonical way to restrict $m$ to a term in the
+world which contains \emph{only} the symbols that it uses.
+
+\subsubsection{Constructions on sheaves}
+
+For any Grothendieck site $\Match{\mathfrak{S}}{\Pair{\mathcal{C}}{J}}$, the
+inclusion $\Of{\iota}{\Sheaves{\mathfrak{S}}\ra\Presheaves{\mathcal{C}}}$ of
+sheaves into presheaves has a left adjoint
+$\IMode{\Sheafify{(-)}}\dashv\IMode{\iota}$, which takes any presheaf
+$\Of{X}{\Presheaves{\mathcal{C}}}$ to a unique sheaf
+$\Of{\Sheafify{X}}{\Sheaves{\mathfrak{S}}}$, called the \emph{sheafification}
+of $X$. Sheafification is the twice-iterated application of the
+\emph{+-construction} $X^+$, which turns a presheaf into a separated presheaf,
+and a separated presheaf into a sheaf \cite{mac-lane-moerdijk:1992}:
+\begin{align*}
+  \ADefine{
+    X^+(C)
+  }{
+    \int^{S\in J(C)}
+    \Hom{\Presheaves{\mathcal{C}}}{S}{X}
+  }\\
+  \ADefine{
+    \Sheafify{X}
+  }{
+    X^{++}
+  }
+\end{align*}
+
+We also have a canonical map $\Of{\eta}{X\ra X^+}$, defined
+using the maximal sieve $\Define{t_C}{\Yoneda{C}}$:
+\[
+  \HypJ{
+    \Define{\eta_C(m)}{
+      \Pair{t_C}{
+        X(-)(m)
+      }
+    }
+  }{
+    \Member{m}{X(C)}
+  }
+\]
+
+
+Every category of sheaves on a site gives rise to a topos, which equips us with
+a number of standard constructions, including (among other things) the disjoint
+union of sheaves $X\oplus Y$, the product of sheaves $X\otimes Y$, and the terminal sheaf $\mathbb{1}$.
+
+Returning to the site $\SCtxSite$, we will write $\mathbf{S}_\tau$ for the sheaf
+of symbols of sort $\tau$, a subobject of the Yoneda embedding of the empty
+symbol context, $\Yoneda{\cdot}$.
+
+\subsection{Relation to Nominal Sets and the Schanuel Topos}
 
 Pitts defines a category $\mathbf{Nom}$ of nominal sets in \cite{pitts:2013}
 which function equivalently to the sheaves that we considered above, in the
@@ -369,55 +469,50 @@ $\Sets^\SCtx$ which contains just the pullbacks-preserving functors.
 
 \end{proof}
 
-\subsubsection{Constructions on sheaves}
 
-For any Grothendieck site $\Match{\mathfrak{S}}{\Pair{\mathcal{C}}{J}}$, the
-inclusion $\Of{\iota}{\Sheaves{\mathfrak{S}}\ra\Presheaves{\mathcal{C}}}$ of
-sheaves into presheaves has a left adjoint
-$\IMode{\Sheafify{(-)}}\dashv\IMode{\iota}$, which takes any presheaf
-$\Of{X}{\Presheaves{\mathcal{C}}}$ to a unique sheaf
-$\Of{\Sheafify{X}}{\Sheaves{\mathfrak{S}}}$, called the \emph{sheafification}
-of $X$. Sheafification is the twice-iterated application of the
-\emph{+-construction} $X^+$, which turns a presheaf into a separated presheaf,
-and a separated presheaf into a sheaf \cite{mac-lane-moerdijk:1992}:
-\begin{align*}
-  \ADefine{
-    X^+(C)
-  }{
-    \int^{S\in J(C)}
-    \Hom{\Presheaves{\mathcal{C}}}{S}{X}
-  }\\
-  \ADefine{
-    \Sheafify{X}
-  }{
-    X^{++}
-  }
-\end{align*}
+\section{Operators and signatures}
 
-We also have a canonical map $\Of{\eta}{X\ra X^+}$, defined
-using the maximal sieve $\Define{t_C}{\Yoneda{C}}$:
+A valence $\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}$ specifies an expression
+of sort $\tau$ which binds symbols in $\vec{\sigma}$ and variables in
+$\vec{\tau}$.
+
 \[
-  \HypJ{
-    \Define{\eta_C(m)}{
-      \Pair{t_C}{
-        X(-)(m)
-      }
+  \infer{
+    \IsValence{
+      \MkValence
+        {\sigma_0,\dots,\sigma_m}
+        {\tau_0,\dots,\tau_n}
+        {\tau}
     }
   }{
-    \Member{m}{X(C)}
+    \IsSort{\tau}
+&
+    \HypJ{\IsSort{\sigma_i}}{\Leq{i}{m}}
+&
+    \HypJ{\IsSort{\tau_i}}{\Leq{i}{n}}
   }
 \]
 
+An arity $\MkArity{\vec{v}}{\tau}$ specifies an operator of sort $\tau$ with
+arguments of valences $\vec{v}$. We will call the set of valences $\Valences$,
+and the set of arities $\Arities$.
 
-Every category of sheaves on a site gives rise to a topos, which equips us with
-a number of standard constructions, including (among other things) the disjoint
-union of sheaves $X\oplus Y$, the product of sheaves $X\otimes Y$, and the terminal sheaf $\mathbb{1}$.
+\[
+  \infer{
+    \IsArity{
+      \MkArity
+        {v_0,\ldots,v_n}
+        {\tau}
+    }
+  }{
+    \IsSort{\tau}
+&
+    \HypJ
+      {\IsValence{v_i}}
+      {\Leq{i}{n}}
+  }
+\]
 
-Returning to the site $\SCtxSite$, we will write $\mathbf{S}_\tau$ for the sheaf
-of symbols of sort $\tau$, a subobject of the Yoneda embedding of the empty
-symbol context, $\Yoneda{\cdot}$.
-
-\subsection{Operators and signatures}
 
 Fix a family of sheaves of operators
 $\Member{\Operators_a}{\Sheaves{\SCtxSite}}$, indexed by arities
