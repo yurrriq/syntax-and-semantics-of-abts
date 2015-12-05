@@ -339,8 +339,7 @@ $\Perm\mathbb{A}$ has a single object $\bullet$ with morphisms
 $\Of{\pi}{\bullet\ra\bullet}$ for each $\Member{\pi}{\Dom{\Perm\mathbb{A}}}$.
 Then, the category of nominal sets $\mathbf{Nom}$ is the subcategory of
 $\Sets^{\Perm\mathbb{A}}$ containing just the presheaves which satisfy a
-\emph{finite support} condition analogous to the one that we have formulated
-above.\todo[inline]{write it out}
+\emph{finite support} condition.
 
 The category $\mathbf{Nom}$ is equivalent to the category of covariant sheaves
 on $\SymSets$ under the atomic coverage, called the Schanuel Topos
@@ -378,7 +377,7 @@ $\Sets^\SCtx$ which contains just the pullbacks-preserving functors.
   give a slightly more detailed version here. The presheaf $X$ is a sheaf on the
   atomic site $\SCtxSite$ just when, for any renaming
   $\Of{\varrho}{C\inj D}$ and any $\Member{n}{X(D)}$ if
-  $\IsEq{X(\varrho_0)(n)}{X(\varrho_1)(n)}$ for all diagrams
+  $\IsEq{n\cdot \varrho_0}{n\cdot \varrho_1}$ for all diagrams
   \[
     \begin{tikzcd}[sep=large]
       \IMode{C} \arrow[r, hook, "\IMode{\varrho}"] &
@@ -390,7 +389,7 @@ $\Sets^\SCtx$ which contains just the pullbacks-preserving functors.
     \end{tikzcd}
   \]
   such that $\IsEq{\varrho_0\circ\varrho}{\varrho_1\circ\varrho}$, then there
-  exists a unique $\Member{m}{X(C)}$ such that $\IsEq{X(\varrho)(m)}{n}$. In other
+  exists a unique $\Member{m}{X(C)}$ such that $\IsEq{m\cdot\varrho}{n}$. In other
   words, the arrow $X(\varrho)$ is an equalizer, as in the following:
   \[
     \begin{tikzcd}[sep=large]
@@ -653,7 +652,7 @@ $\Operators_a(\varrho)(\vartheta)$.
 \section{Contexts}
 
 In general, we will have three kinds of context: symbolic (parameter) contexts,
-variable contexts, and metavariable contexts The symbol contexts have already
+variable contexts, and metavariable contexts. The symbol contexts have already
 been defined via the comma construction $\SCtx$, but they also admit a
 syntactic characterization,
 \begin{gather*}
