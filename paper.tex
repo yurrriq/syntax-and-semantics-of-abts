@@ -629,13 +629,14 @@ Let the judgment $\IsBTm{\Theta}{\Upsilon}{\Gamma}{E}{v}$ presuppose
 $\IsValence{v}$. Then, the syntax of abstract binding trees is inductively
 defined in four rules:
 
-\begin{gather*}
+\[
   \infer[\textit{var}]{
     \IsAbt{\Theta}{\Upsilon}{\Gamma}{x}{\tau}
   }{
     \Lookup{\Gamma}{x}{\tau}
   }
-\\[6pt]
+\]
+\[
   \infer[\textit{mvar}]{
     \IsAbt{\Theta}{\Upsilon}{\Gamma}{
       \MApp{\MV{m}}{u_0,\dots,u_m}{M_0,\dots,M_n}
@@ -659,7 +660,8 @@ defined in four rules:
       }{\Leq{i}{n}}
     \end{array}
   }
-\\[6pt]
+\]
+\[
   \infer[\textit{app}]{
     \IsAbt{\Theta}{\Upsilon}{\Gamma}{
       \App{\vartheta}{E_0,\dots,E_n}
@@ -675,7 +677,8 @@ defined in four rules:
       }{\Leq{i}{n}}
     \end{array}
   }
-\\[6pt]
+\]
+\[
   \infer[\textit{abs}]{
     \IsBTm{\Theta}{\Upsilon}{\Gamma}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
@@ -693,7 +696,7 @@ defined in four rules:
       M
     }{\tau}
   }
-\end{gather*}
+\]
 
 Abts are identified up to $\alpha$-equivalence.
 
@@ -1907,8 +1910,6 @@ The refinement for telescopes proceeds by induction:
   $\Member{m}{X(C)}$ since $X$ is a sheaf. Therefore, $X$ preserves pullbacks.
 
 \end{proof}
-
-
 
 
 \ifdraft{}{
