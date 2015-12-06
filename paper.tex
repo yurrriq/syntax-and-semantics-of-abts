@@ -5,6 +5,7 @@
 \usepackage{notation/abts}
 \usepackage{notation/common}
 
+\usepackage{appendix}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
@@ -359,114 +360,12 @@ $\Perm_\mathfrak{s}\mathbb{A}$.
 
 In the same way as the Schanuel topos is equivalent to the unisorted nominal
 sets, we expect to find an equivalence between $\Sheaves{\SCtxSite}$ and the
-limit $\int_{\mathfrak{s}}\mathbf{Nom}_\mathfrak{s}$. At the very least,
-the sheaf topos $\Sheaves{\SCtxSite}$ may serve as a multi-sorted
-generalization of the Schanuel topos, for which we may carry over certain
-useful results, including its characterization as the subcategory of
-$\Sets^\SCtx$ which contains just the pullbacks-preserving functors.
-
-\begin{thm}
-  A presheaf $\Of{X}{\Sets^{\SCtx}}$ is a sheaf on $\SCtxSite$ just when it
-  preserves pullbacks.
-\end{thm}
-
-\begin{proof}
-
-  The proof is essentially the same as that of the analogous lemma for the
-  Schanuel topos as presented in \cite[A.2.1.11.h]{johnstone:2002}, but we will
-  give a slightly more detailed version here. The presheaf $X$ is a sheaf on the
-  atomic site $\SCtxSite$ just when, for any renaming
-  $\Of{\varrho}{C\inj D}$ and any $\Member{n}{X(D)}$ if
-  $\IsEq{n\cdot \varrho_0}{n\cdot \varrho_1}$ for all diagrams
-  \[
-    \begin{tikzcd}[sep=large]
-      \IMode{C} \arrow[r, hook, "\IMode{\varrho}"] &
-      \IMode{D}
-        \arrow[r, hook, shift left, "\IMode{\varrho_0}"]
-        \arrow[r, hook, swap, shift right, "\IMode{\varrho_1}"]
-      &
-      \IMode{E}
-    \end{tikzcd}
-  \]
-  such that $\IsEq{\varrho_0\circ\varrho}{\varrho_1\circ\varrho}$, then there
-  exists a unique $\Member{m}{X(C)}$ such that $\IsEq{m\cdot\varrho}{n}$. In other
-  words, the arrow $X(\varrho)$ is an equalizer, as in the following:
-  \[
-    \begin{tikzcd}[sep=large]
-      \IMode{X(C)} \arrow[r, "\IMode{X(\varrho)}"] &
-      \IMode{X(D)}
-        \arrow[r, shift left, "\IMode{X(\varrho_0)}"]
-        \arrow[r, swap, shift right, "\IMode{X(\varrho_1)}"]&
-      \IMode{X(E)}
-      \\
-      \IMode{\mathbb{1}}
-        \arrow[u, densely dotted, "\OMode{m}"]
-        \arrow[ur, "\IMode{n}"]
-    \end{tikzcd}
-  \]
-
-  Now, because $\Sets$ is a regular category, $X(\varrho)$ is an equalizer
-  precisely when it is a monomorphism. Therefore, if we have assumed that $X$
-  preserves pullbacks, in order to demonstrate that $X$ is a sheaf, it suffices
-  to show that $X(\varrho)$ is monic. If $X$ preserves pullbacks, then it also
-  preserves monomorphisms, because in any category with pullbacks, $\Of{f}{A\ra
-  B}$ is monic just when the square
-  \[
-    \begin{tikzcd}[sep=large]
-      \IMode{A}
-        \arrow[r, "\IMode{\ArrId{A}}"]
-        \arrow[d, "\IMode{\ArrId{A}}"] &
-      \IMode{A} \arrow[d, "\IMode{f}"]\\
-      \IMode{A} \arrow[r, "\IMode{f}"] &
-      \IMode{B}
-    \end{tikzcd}
-  \]
-  is a pullback \cite[p.\ 16]{mac-lane-moerdijk:1992}. Because $X$ preserves
-  monomorphisms, and all arrows in $\SCtx$ are monic, then $X(\varrho)$ is
-  monic. Hence, $X$ is a sheaf.
-
-  Next, we must show that if $X$ is a sheaf, then it preserves pullbacks; we
-  will loosely track the proof of Proposition~2.6.15 in \cite{biering:2004}.
-  Fix the following diagram such that it is a pullback square in $\SCtx$:
-  \[
-    \begin{tikzcd}[sep=large]
-      \IMode{C}
-        \arrow[r, "\IMode{f_j}"]
-        \arrow[d, "\IMode{f_i}"] &
-      \IMode{C_j} \arrow[d, "\IMode{s_j}"]\\
-      \IMode{C_i} \arrow[r, "\IMode{s_i}"] &
-      \IMode{D}
-    \end{tikzcd}
-  \]
-
-  Then it suffices to show that the following diagram is also pullback square
-  in $\Sets$:
-  \[
-    \begin{tikzcd}[sep=large]
-      \IMode{X(C)}
-        \arrow[r, "\IMode{X(f_j)}"]
-        \arrow[d, "\IMode{X(f_i)}"] &
-      \IMode{X(C_j)} \arrow[d, "\IMode{X(s_j)}"]\\
-      \IMode{X(C_i)} \arrow[r, "\IMode{X(s_i)}"] &
-      \IMode{X(D)}
-    \end{tikzcd}
-  \]
-
-  To prove that the above diagram is a pullback, it suffices to show that for
-  any $\Member{m_i}{X(C_i)}$ and $\Member{m_j}{X(C_j)}$ such that
-  $\IsEq{X(s_i)(m_i)}{X(s_j)(m_j)}$, we have a unique $\Member{m}{X(C)}$; the
-  universal property of the pullback follows immediately from this.
-
-  Consider the singleton cover on $C$ that contains $\Define{h}{s_i\circ
-  f_i}=\OMode{s_j\circ f_j}$; a matching family $\phi$ for the cover
-  $\MkSet{h}$ is a map that takes $h$ to an object in $X(D)$, and an
-  amalgamation for $\phi$ consists in an object $\Member{m}{X(C)}$ such that
-  $\IsEq{\phi(h)}{X(h)(m)}$. Now recall that $X$ is a sheaf on $\SCtxSite$ if
-  and only if every matching family has a unique amalgamation; for the matching
-  family $\Define{\phi(h)}{X(s_i)(m_i)}$, then, we must have a unique amalgamation
-  $\Member{m}{X(C)}$ since $X$ is a sheaf. Therefore, $X$ preserves pullbacks.
-
-\end{proof}
+limit $\int_{\mathfrak{s}}\mathbf{Nom}_\mathfrak{s}$. At the very least, the
+sheaf topos $\Sheaves{\SCtxSite}$ may serve as a multi-sorted generalization of
+the Schanuel topos, for which we may carry over certain useful results,
+including its characterization as the subcategory of $\Sets^\SCtx$ which
+contains just the pullbacks-preserving functors (see
+Theorem~\ref{thm:pullback-preservation} for the proof).
 
 
 \section{Operators and signatures}
@@ -1899,8 +1798,122 @@ The refinement for telescopes proceeds by induction:
   }
 \end{gather*}
 
+\newpage
+\appendix
+\appendixpage
+
+\section{Sheafhood on $\SCtxSite$}
+
+\begin{thm}
+  \label{thm:pullback-preservation}
+  A presheaf $\Of{X}{\Sets^{\SCtx}}$ is a sheaf on $\SCtxSite$ just when it
+  preserves pullbacks.
+\end{thm}
+
+\begin{proof}
+
+  The proof is essentially the same as that of the analogous lemma for the
+  Schanuel topos as presented in \cite[A.2.1.11.h]{johnstone:2002}, but we will
+  give a slightly more detailed version here. The presheaf $X$ is a sheaf on the
+  atomic site $\SCtxSite$ just when, for any renaming
+  $\Of{\varrho}{C\inj D}$ and any $\Member{n}{X(D)}$ if
+  $\IsEq{n\cdot \varrho_0}{n\cdot \varrho_1}$ for all diagrams
+  \[
+    \begin{tikzcd}[sep=large]
+      \IMode{C} \arrow[r, hook, "\IMode{\varrho}"] &
+      \IMode{D}
+        \arrow[r, hook, shift left, "\IMode{\varrho_0}"]
+        \arrow[r, hook, swap, shift right, "\IMode{\varrho_1}"]
+      &
+      \IMode{E}
+    \end{tikzcd}
+  \]
+  such that $\IsEq{\varrho_0\circ\varrho}{\varrho_1\circ\varrho}$, then there
+  exists a unique $\Member{m}{X(C)}$ such that $\IsEq{m\cdot\varrho}{n}$. In other
+  words, the arrow $X(\varrho)$ is an equalizer, as in the following:
+  \[
+    \begin{tikzcd}[sep=large]
+      \IMode{X(C)} \arrow[r, "\IMode{X(\varrho)}"] &
+      \IMode{X(D)}
+        \arrow[r, shift left, "\IMode{X(\varrho_0)}"]
+        \arrow[r, swap, shift right, "\IMode{X(\varrho_1)}"]&
+      \IMode{X(E)}
+      \\
+      \IMode{\mathbb{1}}
+        \arrow[u, densely dotted, "\OMode{m}"]
+        \arrow[ur, "\IMode{n}"]
+    \end{tikzcd}
+  \]
+
+  Now, because $\Sets$ is a regular category, $X(\varrho)$ is an equalizer
+  precisely when it is a monomorphism. Therefore, if we have assumed that $X$
+  preserves pullbacks, in order to demonstrate that $X$ is a sheaf, it suffices
+  to show that $X(\varrho)$ is monic. If $X$ preserves pullbacks, then it also
+  preserves monomorphisms, because in any category with pullbacks, $\Of{f}{A\ra
+  B}$ is monic just when the square
+  \[
+    \begin{tikzcd}[sep=large]
+      \IMode{A}
+        \arrow[r, "\IMode{\ArrId{A}}"]
+        \arrow[d, "\IMode{\ArrId{A}}"] &
+      \IMode{A} \arrow[d, "\IMode{f}"]\\
+      \IMode{A} \arrow[r, "\IMode{f}"] &
+      \IMode{B}
+    \end{tikzcd}
+  \]
+  is a pullback \cite[p.\ 16]{mac-lane-moerdijk:1992}. Because $X$ preserves
+  monomorphisms, and all arrows in $\SCtx$ are monic, then $X(\varrho)$ is
+  monic. Hence, $X$ is a sheaf.
+
+  Next, we must show that if $X$ is a sheaf, then it preserves pullbacks; we
+  will loosely track the proof of Proposition~2.6.15 in \cite{biering:2004}.
+  Fix the following diagram such that it is a pullback square in $\SCtx$:
+  \[
+    \begin{tikzcd}[sep=large]
+      \IMode{C}
+        \arrow[r, "\IMode{f_j}"]
+        \arrow[d, "\IMode{f_i}"] &
+      \IMode{C_j} \arrow[d, "\IMode{s_j}"]\\
+      \IMode{C_i} \arrow[r, "\IMode{s_i}"] &
+      \IMode{D}
+    \end{tikzcd}
+  \]
+
+  Then it suffices to show that the following diagram is also pullback square
+  in $\Sets$:
+  \[
+    \begin{tikzcd}[sep=large]
+      \IMode{X(C)}
+        \arrow[r, "\IMode{X(f_j)}"]
+        \arrow[d, "\IMode{X(f_i)}"] &
+      \IMode{X(C_j)} \arrow[d, "\IMode{X(s_j)}"]\\
+      \IMode{X(C_i)} \arrow[r, "\IMode{X(s_i)}"] &
+      \IMode{X(D)}
+    \end{tikzcd}
+  \]
+
+  To prove that the above diagram is a pullback, it suffices to show that for
+  any $\Member{m_i}{X(C_i)}$ and $\Member{m_j}{X(C_j)}$ such that
+  $\IsEq{X(s_i)(m_i)}{X(s_j)(m_j)}$, we have a unique $\Member{m}{X(C)}$; the
+  universal property of the pullback follows immediately from this.
+
+  Consider the singleton cover on $C$ that contains $\Define{h}{s_i\circ
+  f_i}=\OMode{s_j\circ f_j}$; a matching family $\phi$ for the cover
+  $\MkSet{h}$ is a map that takes $h$ to an object in $X(D)$, and an
+  amalgamation for $\phi$ consists in an object $\Member{m}{X(C)}$ such that
+  $\IsEq{\phi(h)}{X(h)(m)}$. Now recall that $X$ is a sheaf on $\SCtxSite$ if
+  and only if every matching family has a unique amalgamation; for the matching
+  family $\Define{\phi(h)}{X(s_i)(m_i)}$, then, we must have a unique amalgamation
+  $\Member{m}{X(C)}$ since $X$ is a sheaf. Therefore, $X$ preserves pullbacks.
+
+\end{proof}
+
+
+
+
 \ifdraft{}{
-  \nocite{*}
+  \newpage
+  % \nocite{*}
   \bibliographystyle{abbrv}
   \bibliography{refs}
 }
