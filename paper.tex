@@ -5,6 +5,7 @@
 \usepackage{notation/abts}
 \usepackage{notation/common}
 
+\usepackage{appendix}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
@@ -50,9 +51,8 @@
 \theoremstyle{remark}
 \newtheorem{remark}[thm]{Remark}
 \numberwithin{equation}{section}
-%% Euler doesn't have \varsigma and \varrho
+%% Euler doesn't have \varsigma
 \DeclareSymbolFont{greekletters}{OML}{cmr}{m}{it}
-\DeclareMathSymbol{\varrho}{\mathalpha}{greekletters}{"25}
 \DeclareMathSymbol{\varsigma}{\mathalpha}{greekletters}{"26}
 
 \newcommand\HypCat{\mathbf{H}}
@@ -83,6 +83,9 @@
 \newcommand\ConstPsh[1]{\Delta[#1]}
 \newcommand\ConstSh[1]{\Delta^\#[#1]}
 \newcommand\SCtxSite{\SymSets[\Sorts]}
+
+\DeclareMathOperator{\Perm}{\mathbf{Perm}}
+
 
 \begin{document}
 
@@ -121,12 +124,255 @@ support symbol-indexed families of operators. Additionally, we have developed
 the categorical semantics for abts formally in Constructive Type Theory using
 the Agda proof assistant~\cite{norell:2007}.
 
-\section{Preliminaries}
+\section{Categorical Preliminaries}
 
-Fix a set $\Sorts$ of \emph{sorts}. We will say $\IsSort{\tau}$ when
-$\Member{\tau}{\Sorts}$. A valence $\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}$
-specifies an expression of sort $\tau$ which binds symbols in $\vec{\sigma}$ and
-variables in $\vec{\tau}$.
+Fix a set $\Sorts$ of \emph{sorts}; we will say $\IsSort{\tau}$ when
+$\Member{\tau}{\Sorts}$. In this section, we will develop a theory of sets
+varying over collections of $\Sorts$-sorted symbols.
+
+Let $\SymSets$ be the category of finite cardinals and their injective maps;
+then the comma construction $\SCtx$, is the category of contexts of symbols
+whose objects are finite sets of symbols $U$ and sort-assignments
+\begin{tikzcd}[cramped]
+  \IMode{U}\arrow[r, "\IMode{\mathfrak{s}}"] &\IMode{\Sorts}
+\end{tikzcd}, and whose morphisms are
+sort-preserving renamings; we will write $\Upsilon$ for a symbol context
+$(U,\mathfrak{s})$.
+
+\begin{remark}
+
+  To be precise, $\SCtx$ is an abuse of notation for the comma category
+  $\Dom{-}_\SymSets\downarrow \Delta[\Sorts]$, with $\Dom{-}_\SymSets$ the
+  forgetful functor from $\SymSets$ to $\Sets$, and
+  $\Define{\Delta[\Sorts](*)}{\Sorts}$ a constant functor from $\mathbb{1}$ to $\Sets$.
+  Formally, an object of $\SCtx$ is, then, a triple $\Tuple{U, *,
+  \mathfrak{s}}$ with $U$ an object in $\SymSets$, $*$ the unique object in
+  $\mathbb{1}$, and $\mathfrak{s}$ a function $\Dom{U}_\SymSets\ra
+  \Sorts$; an arrow $\Of{\varrho}{\Tuple{U,*,\mathfrak{s}}\ra
+  \Tuple{V,*,\mathfrak{t}}}$ is a commuting triangle like the following:
+  \[
+    \begin{tikzcd}[cramped]
+      \IMode{\Dom{U}_\SymSets}
+        \arrow[rr, "\IMode{\Dom{\rho}_\SymSets}"]
+        \arrow[dr, swap, "\IMode{\mathfrak{s}}"] &&
+      \IMode{\Dom{V}_\SymSets}
+      \arrow[dl, "\IMode{\mathfrak{t}}"] \\
+      &\IMode{\Sorts}
+    \end{tikzcd}
+  \]
+
+  Because the object $\Of{*}{\mathbb{1}}$ is unique, we will always omit it
+  from the data of an object in $\SCtx$.
+\end{remark}
+
+\paragraph{Presheaves on $\SCtx$}
+
+A presheaf on a category $\mathcal{C}$ is a contravariant functor
+$\OpCat{\mathcal{C}}\ra\Sets$; when $\Match{\mathcal{C}}{\OpCat{\mathcal{D}}}$,
+we call this a \emph{copresheaf} (covariant presheaf) on $\mathcal{D}$.
+Therefore, a copresheaf on $\SCtx$ is a functor $\SCtx\ra\Sets$; colloquially,
+such a copresheaf can be thought of as a set that \emph{varies over} symbol
+contexts.
+
+This leads to a very intuitive setting in which to consider sets
+that vary over collections of $\Sorts$-sorted symbols. In particular, for any
+morphism
+%
+\begin{tikzcd}[cramped]
+  \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
+\end{tikzcd}
+%
+in $\SCtx$, we have a corresponding functorial renaming action on any
+copresheaf $\Of{X}{\Sets^\SCtx}$, namely $\Of{X(\varrho)}{X(\Upsilon)\ra
+X(\Upsilon')}$. When the copresheaf $X$ is clear from context, we will write
+$m\cdot\varrho$ for $X(\varrho)(m)$.
+
+Now, when $\Member{m}{X(\Upsilon)}$ for a copresheaf $\Of{X}{\Sets^\SCtx}$, we
+can define the notion that $m$ depends on \emph{at most} a subcontext
+$\Upsilon'$ of $\Upsilon$; this is called \emph{support}.
+
+\begin{definition}[Support]
+  \label{def:support}
+  When
+  \begin{tikzcd}[cramped]
+    \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
+  \end{tikzcd},
+  we say that $\Upsilon$ supports $\Member{m}{\Upsilon'}$ (written
+  $\Supports{\Upsilon}{\varrho}{m}$) when, for all
+  \begin{tikzcd}[cramped]
+    \IMode{\Upsilon'}\arrow[r, hook, "\IMode{\varrho_1}{,} \IMode{\varrho_2}"] & \IMode{\Upsilon''}
+  \end{tikzcd},
+  if $\IsEq{\varrho_1\circ\varrho}{\varrho_2\circ\varrho}$ then $\IsEq{m\cdot\varrho_1}{m\cdot\varrho_2}$.
+\end{definition}
+
+We can also always calculate the \emph{least support} of a term
+$\Member{m}{X(\Upsilon')}$, written $\Supp{m}$:
+\[
+  \Define{\Supp{m}}{
+    \bigcap_{
+      \begin{tikzcd}[cramped, ampersand replacement = \&]
+        \Upsilon\arrow[r, hook, "\varrho"] \& \Upsilon'
+      \end{tikzcd}
+    }
+    \MkSet{
+      \Upsilon
+      \mid
+      \SupportsUnmoded{\Upsilon}{\varrho}{m}
+    }
+  }
+\]
+Intuitively, $\Supp{m}$ is the exact symbol context that $m$ depends on.
+
+\subsection{Sheaves on the atomic site}
+
+Intuitively, when $\Upsilon$ supports $\Member{m}{X(\Upsilon')}$, we would
+expect that we can work backward to a unique $\Of{m'}{\Upsilon}$ such that
+$\IsEq{m'\cdot\varrho}{m}$; whilst it is not in general the case for presheaves
+$X$, this is precisely the sheaf condition for copresheaves on $\SCtx$
+under the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}. The sheaf
+condition, then, ensures that the notion of support is well-behaved.
+
+\paragraph{Sites and coverages}
+
+We will briefly discuss the basics of sheaves on a site. A \emph{site} is a
+pair $\Pair{\mathcal{C}}{J}$, with $\mathcal{C}$ a category of ``worlds'' and
+$J$ a Grothendieck topology (or ``coverage''). A coverage is a predicate that
+picks out for each object $\Of{C}{\mathcal{C}}$, the \emph{covering sieves} of
+$C$, subject to several axioms (see \cite{mac-lane-moerdijk:1992} for details).
+
+\paragraph{Covering sieves and matching families}
+
+A \emph{sieve} on an object $C$ is a subfunctor of the Yoneda embedding
+$\Define{\Yoneda{C}}{\Hom{\mathcal{C}}{-}{C}}$. We say that such a sieve $S$
+covers $C$ just when $\Member{S}{J(C)}$.  For a presheaf $X$ on the site
+$\Pair{\mathcal{C}}{J}$, a \emph{matching family} for the sieve $S$ is a
+natural transformation $\Of{\phi}{S\ra X}$. An \emph{amalgamation} for $\phi$
+is an object $\Member{m}{X(C)}$ such that $\IsEq{m\cdot f}{\phi_D(f)}$ for each
+$\Member{f}{S(D)}$, for all objects $D$.
+
+\paragraph{Separation and sheafhood}
+Then, we say that the presheaf $X$ is \emph{separated} in case for every sieve
+$\Member{S}{J(C)}$ and matching family $\Of{\phi}{S\ra X}$, there is at most
+one amalgamation $\Member{m}{X(C)}$ for $\phi$. Additionally, $X$ is called a
+\emph{sheaf} when there is \emph{exactly one} such amalgamation.
+
+\paragraph{The atomic coverage}
+
+The atomic coverage $J_\mathsf{atm}$ is the one in which all non-empty sieves
+cover. A sieve $\IMode{S}\sqsubseteq\IMode{\Yoneda{C}}$ is non-empty when the
+collection $\bigcup_D S(D)$ of all its arrows is non-empty.
+
+In the future, we will write $\SCtxSite$ for the Grothendieck site
+$\Pair{\OpCat{\left(\SCtx\right)}}{J_\mathsf{atm}}$, where $J_\mathsf{atm}$ is
+the atomic coverage. Sheafhood on the atomic site $\SCtxSite$ amounts to the
+following condition, using Definition~\ref{def:support}:
+\begin{quote}
+  A presheaf $\Of{X}{\Sets^\SCtx}$ is a sheaf on $\SCtxSite$ just when, for all $\Member{n}{X(\Upsilon')}$, if we have
+  \begin{tikzcd}[cramped]
+    \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
+  \end{tikzcd}
+  and $\Supports{\Upsilon}{\varrho}{n}$, then there is a unique
+  $\Member{m}{X(\Upsilon)}$ such that $\IsEq{m\cdot\varrho}{n}$.
+\end{quote}
+
+Therefore, a sheaf on $\SCtxSite$ is a set that varies over $\Sorts$-sorted
+symbols, which has a well-behaved notion of support. Another way to put it is,
+if $\Member{m}{X(\Upsilon)}$ only ``uses'' some of the symbols available at
+world $\Upsilon$, there's a canonical way to restrict $m$ to a term in the
+world which contains \emph{only} the symbols that it uses.
+
+\subsection{Constructions on sheaves}
+
+For any Grothendieck site $\Match{\mathfrak{S}}{\Pair{\mathcal{C}}{J}}$, the
+inclusion $\Of{\iota}{\Sheaves{\mathfrak{S}}\ra\Presheaves{\mathcal{C}}}$ of
+sheaves into presheaves has a left adjoint
+$\IMode{\Sheafify{(-)}}\dashv\IMode{\iota}$, which takes any presheaf
+$\Of{X}{\Presheaves{\mathcal{C}}}$ to a unique sheaf
+$\Of{\Sheafify{X}}{\Sheaves{\mathfrak{S}}}$, called the \emph{sheafification}
+of $X$. Sheafification is the twice-iterated application of the
+\emph{+-construction} $X^+$, which turns a presheaf into a separated presheaf,
+and a separated presheaf into a sheaf \cite{mac-lane-moerdijk:1992}:
+\begin{align*}
+  \ADefine{
+    X^+(C)
+  }{
+    \int^{S\in J(C)}
+    \Hom{\Presheaves{\mathcal{C}}}{S}{X}
+  }\\
+  \ADefine{
+    \Sheafify{X}
+  }{
+    X^{++}
+  }
+\end{align*}
+
+We also have a canonical natural transformation $\Of{\eta}{X\ra X^+}$, defined
+using the maximal sieve $\Define{t_C}{\Yoneda{C}}$:
+\[
+  \HypJ{
+    \Define{\eta_C(m)}{
+      \Pair{t_C}{
+        X(-)(m)
+      }
+    }
+  }{
+    \Member{m}{X(C)}
+  }
+\]
+
+
+Every category of sheaves on a site gives rise to a topos, which equips us with
+a number of standard constructions, including (among other things) the disjoint
+union of sheaves $X\oplus Y$, the product of sheaves $X\otimes Y$, and the terminal sheaf $\mathbb{1}$.
+
+Returning to the site $\SCtxSite$, we will write $\mathbf{S}_\tau$ for the sheaf
+of symbols of sort $\tau$, a subobject of the Yoneda embedding of the empty
+symbol context, $\Yoneda{\cdot}$.
+
+\subsection{Relation to Nominal Sets and the Schanuel Topos}
+
+Pitts defines a category $\mathbf{Nom}$ of nominal sets in \cite{pitts:2013}
+which function equivalently to the sheaves that we considered above, in the
+case of $\IMode{\Sorts}\cong\IMode{\mathbb{1}}$. Fix a countably infinite set
+of atoms $\mathbb{A}$; then let $\Perm\mathbb{A}$ be the group of permutations
+(i.e.\ autoequivalences) on $\mathbb{A}$.  Considered as a category,
+$\Perm\mathbb{A}$ has a single object $\bullet$ with morphisms
+$\Of{\pi}{\bullet\ra\bullet}$ for each $\Member{\pi}{\Dom{\Perm\mathbb{A}}}$.
+Then, the category of nominal sets $\mathbf{Nom}$ is the subcategory of
+$\Sets^{\Perm\mathbb{A}}$ containing just the presheaves which satisfy a
+\emph{finite support} condition.
+
+The category $\mathbf{Nom}$ is equivalent to the category of covariant sheaves
+on $\SymSets$ under the atomic coverage, called the Schanuel Topos
+$\Define{\mathbb{S}}{\Sheaves{\OpCat{\SymSets}}}$ \cite{pitts:2013,
+fiore-staton:2006}; equivalently, the Schanuel topos is the subcategory of
+$\Sets^\SymSets$ containing only pullbacks-preserving functors.
+
+In addition to the unisorted nominal sets framework, Pitts also briefly
+discusses a multi-sorted version of the apparatus in which the countably
+infinite set of atoms $\mathbb{A}$ is equipped with a sort assignment
+$\Of{\mathfrak{s}}{\mathbb{A}\to\Sorts}$ such that all the fibres of
+$\mathfrak{s}$ are countably infinite; then, he defines for any such assignment
+the category $\mathbf{Nom}_\mathfrak{s}$ of $\mathfrak{s}$-sorted nominal sets
+as a subcategory of the category of presheaves on the group of
+$\mathfrak{s}$-respecting permutations on $\mathbb{A}$,
+$\Perm_\mathfrak{s}\mathbb{A}$.
+
+In the same way as the Schanuel topos is equivalent to the unisorted nominal
+sets, we expect to find an equivalence between $\Sheaves{\SCtxSite}$ and the
+limit $\int_{\mathfrak{s}}\mathbf{Nom}_\mathfrak{s}$. At the very least, the
+sheaf topos $\Sheaves{\SCtxSite}$ may serve as a multi-sorted generalization of
+the Schanuel topos, for which we may carry over certain useful results,
+including its characterization as the subcategory of $\Sets^\SCtx$ which
+contains just the pullbacks-preserving functors (see
+Theorem~\ref{thm:pullback-preservation} for the proof).
+
+
+\section{Operators and signatures}
+
+A valence $\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}$ specifies an expression
+of sort $\tau$ which binds symbols in $\vec{\sigma}$ and variables in
+$\vec{\tau}$.
 
 \[
   \infer{
@@ -165,119 +411,6 @@ and the set of arities $\Arities$.
   }
 \]
 
-\subsection{Symbols, contexts and their sheaves}
-
-Let $\SymSets$ be the category of finite cardinals and their injective maps;
-then the comma construction $\SCtx$, with $\Discrete{\Sorts}$
-the discrete category on the set $\Sorts$, is the category of contexts of
-symbols whose objects are finite sets of symbols $U$ and sort-assignments
-\begin{tikzcd}[cramped]
-  \IMode{U}\arrow[r, "\IMode{\mathfrak{s}}"] &\IMode{\Sorts}
-\end{tikzcd}, and whose morphisms are
-sort-preserving renamings; we will write $\Upsilon$ for a symbol context
-$(U,\mathfrak{s})$.
-
-Now, a covariant presheaf $X$ on $\SCtx$ is an intensional set which is subject
-to renamings
-\begin{tikzcd}[cramped]
-  \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
-\end{tikzcd};
-that is, each element $\Member{m}{X(\Upsilon)}$ can be mapped to a unique
-element $\Member{m\varrho}{X(\Upsilon')}$.
-
-\begin{definition}[Support]
-  For a presheaf $\Of{X}{\Sets^\SCtx}$, when
-  \begin{tikzcd}[cramped]
-    \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
-  \end{tikzcd},
-  we say that $\Upsilon$ supports $\Member{m}{\Upsilon'}$ (written
-  $\Supports{\Upsilon}{\varrho}{m}$) when, for all
-  \begin{tikzcd}[cramped]
-    \IMode{\Upsilon'}\arrow[r, hook, "\IMode{\varrho_1}{,} \IMode{\varrho_2}"] & \IMode{\Upsilon''}
-  \end{tikzcd},
-  if $\IsEq{\varrho_1\circ\varrho}{\varrho_2\circ\varrho}$ then $\IsEq{m\varrho_1}{m\varrho_2}$.
-\end{definition}
-
-Intuitively, when $\Upsilon$ supports $\Member{m}{X(\Upsilon')}$, we would
-expect that we can work backward to a unique $\Of{m'}{\Upsilon}$ such that
-$\IsEq{m'\varrho}{m}$; whilst this is not in general the case for presheaves
-$X$, it is precisely the sheaf condition for covariant presheaves on $\SCtx$
-under the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}. The sheaf
-condition, then, ensures that the notion of support is well-behaved.
-
-Let $\Supp{m}$ be the \emph{least support} of $\Member{m}{X(\Upsilon')}$:
-\[
-  \Define{\Supp{m}}{
-    \bigcap_{
-      \begin{tikzcd}[cramped, ampersand replacement = \&]
-        \Upsilon\arrow[r, hook, "\varrho"] \& \Upsilon'
-      \end{tikzcd}
-    }
-    \SupportsUnmoded{\Upsilon}{\varrho}{m}
-  }
-\]
-Intuitively, $\Supp{m}$ is the exact symbol context that $m$ depends on.
-
-Going forward, we will write $\SCtxSite$ for the Grothendieck site
-$\Pair{\OpCat{\left(\SCtx\right)}}{J_\mathsf{atm}}$, where $J_\mathsf{atm}$
-is the atomic coverage (sc.\ every non-empty family covers).
-
-\begin{remark}
-  The presentation we have given above is related both to the Schanuel topos
-  and, equivalently, Pitts' category of nominal sets \cite{fiore-staton:2006,
-  pitts:2013}; we differ only in discussing sheaves on $\SCtxSite$, as opposed
-  to sheaves on $\OpCat{\SymSets}$ (i.e.\ unisorted contexts).
-\end{remark}
-
-\subsubsection{Constructions on sheaves}
-
-For any Grothendieck site $\Match{\mathfrak{S}}{\Pair{\mathcal{C}}{J}}$, the
-inclusion $\Of{\iota}{\Sheaves{\mathfrak{S}}\ra\Presheaves{\mathcal{C}}}$ of
-sheaves into presheaves has a left adjoint
-$\IMode{\Sheafify{(-)}}\dashv\IMode{\iota}$, which takes any presheaf
-$\Of{X}{\Presheaves{\mathcal{C}}}$ to a unique sheaf
-$\Of{\Sheafify{X}}{\Sheaves{\mathfrak{S}}}$, called the \emph{sheafification}
-of $X$. Sheafification is the twice-iterated application of the
-\emph{+-construction} $X^+$, which turns a presheaf into a separated presheaf,
-and a separated presheaf into a sheaf \cite{mac-lane-moerdijk:1992}:
-\begin{align*}
-  \ADefine{
-    X^+(C)
-  }{
-    \int^{S\in J(C)}
-    \Hom{\Presheaves{\mathcal{C}}}{S}{X}
-  }\\
-  \ADefine{
-    \Sheafify{X}
-  }{
-    X^{++}
-  }
-\end{align*}
-
-We also have a canonical map $\Of{\eta}{X\ra X^+}$, defined
-using the maximal sieve $\Define{t_C}{\Yoneda{C}}$:
-\[
-  \HypJ{
-    \Define{\eta_C(m)}{
-      \Pair{t_C}{
-        X(-)(m)
-      }
-    }
-  }{
-    \Member{m}{X(C)}
-  }
-\]
-
-
-Every category of sheaves on a site gives rise to a topos, which equips us with
-a number of standard constructions, including (among other things) the disjoint
-union of sheaves $X\oplus Y$, the product of sheaves $X\otimes Y$, and the terminal sheaf $\mathbb{1}$.
-
-Returning to the site $\SCtxSite$, we will write $\mathbf{S}_\tau$ for the sheaf
-of symbols of sort $\tau$, a subobject of the Yoneda embedding of the empty
-symbol context, $\Yoneda{\cdot}$.
-
-\subsection{Operators and signatures}
 
 Fix a family of sheaves of operators
 $\Member{\Operators_a}{\Sheaves{\SCtxSite}}$, indexed by arities
@@ -408,17 +541,17 @@ Note that the functoriality of $\Operators$ guarantees for any renaming
 $\Of{\varrho}{\Upsilon\inj\Upsilon'}$, a family of lifted maps
 $\Of{\Operators_a(\varrho)}{\Operators_a(\Upsilon)\inj\Operators_a(\Upsilon')}$
 natural in $a$, such that
-$\IsOperator{\Upsilon'}{\Operators_a(\varrho)(\vartheta)}{a}$ when
+$\IsOperator{\Upsilon'}{\Operators(\varrho)(\vartheta)}{a}$ when
 $\IsOperator{\Upsilon}{\vartheta}{a}$. In particular, the renaming
 $\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathtt{get}[u]$ to
 $\mathtt{get}[v]$. Going forward, we will write $\vartheta\varrho$ for
-$\Operators_a(\varrho)$.
+$\Operators_a(\varrho)(\vartheta)$.
 
 
 \section{Contexts}
 
 In general, we will have three kinds of context: symbolic (parameter) contexts,
-variable contexts, and metavaraible contexts The symbol contexts have already
+variable contexts, and metavariable contexts. The symbol contexts have already
 been defined via the comma construction $\SCtx$, but they also admit a
 syntactic characterization,
 \begin{gather*}
@@ -496,13 +629,14 @@ Let the judgment $\IsBTm{\Theta}{\Upsilon}{\Gamma}{E}{v}$ presuppose
 $\IsValence{v}$. Then, the syntax of abstract binding trees is inductively
 defined in four rules:
 
-\begin{gather*}
+\[
   \infer[\textit{var}]{
     \IsAbt{\Theta}{\Upsilon}{\Gamma}{x}{\tau}
   }{
     \Lookup{\Gamma}{x}{\tau}
   }
-\\[6pt]
+\]
+\[
   \infer[\textit{mvar}]{
     \IsAbt{\Theta}{\Upsilon}{\Gamma}{
       \MApp{\MV{m}}{u_0,\dots,u_m}{M_0,\dots,M_n}
@@ -526,7 +660,8 @@ defined in four rules:
       }{\Leq{i}{n}}
     \end{array}
   }
-\\[6pt]
+\]
+\[
   \infer[\textit{app}]{
     \IsAbt{\Theta}{\Upsilon}{\Gamma}{
       \App{\vartheta}{E_0,\dots,E_n}
@@ -542,7 +677,8 @@ defined in four rules:
       }{\Leq{i}{n}}
     \end{array}
   }
-\\[6pt]
+\]
+\[
   \infer[\textit{abs}]{
     \IsBTm{\Theta}{\Upsilon}{\Gamma}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
@@ -560,7 +696,7 @@ defined in four rules:
       M
     }{\tau}
   }
-\end{gather*}
+\]
 
 Abts are identified up to $\alpha$-equivalence.
 
@@ -615,13 +751,14 @@ structure:
 \end{gather*}
 
 Because this is a total relation, henceforth we will write $\FV{M}$ for
-$\vec{x}$ when $\CalcFV{M}{x}$.
+$\vec{x}$ when $\CalcFV{M}{\vec{x}}$.
 
 \subsection{Calculating free symbols}
 
 Whereas the calculation of free variables pivoted on the \emph{var} rule, the
-calculation of free symbols will pivot on the \emph{app} rule, because the only
-place a symbol can be introduced is as a parameter to an operator.
+calculation of free symbols will pivot on the \emph{app} and \emph{mvar} rule,
+because the only way a symbol can be introduced is as a parameter to an
+operator or as a parameter to a metavariable.
 
 \begin{gather*}
   \infer[\textit{var}]{
@@ -633,7 +770,7 @@ place a symbol can be introduced is as a parameter to an operator.
     \CalcFS{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{
-      \bigcup_{i\leq n} \vec{u}_i
+      \vec{u} \cup \bigcup_{i\leq n} \vec{u}_i
     }
   }{
     \HypJ{
@@ -669,7 +806,7 @@ place a symbol can be introduced is as a parameter to an operator.
 \end{gather*}
 
 Because this is a total relation, henceforth we will write $\FS{M}$ for
-$\vec{u}$ when $\CalcFS{M}{u}$.
+$\vec{u}$ when $\CalcFS{M}{\vec{u}}$.
 
 
 \subsection{Renaming of symbols}
@@ -683,12 +820,12 @@ and $\IsAbt{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$ and
 $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
 
 \begin{gather*}
-  \infer{
+  \infer[\textit{var}]{
     \IsRenaming{\varrho}{x}{x}
   }{
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{mvar}]{
     \IsRenaming{\varrho}{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{
@@ -704,7 +841,7 @@ $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
     }
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{app}]{
     \IsRenaming{\varrho}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
@@ -718,7 +855,7 @@ $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
     }
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{abs}]{
     \IsRenaming{\varrho}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
@@ -741,19 +878,19 @@ Variable substitution in abts is defined inductively by a pair of judgments,
 $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
 
 \begin{gather*}
-  \infer{
+  \infer[\textit{var}_1]{
     \IsSubst{N}{x}{y}{N}
   }{
     \IsEq{x}{y}
   }
 \qquad
-  \infer{
+  \infer[\textit{var}_2]{
     \IsSubst{N}{x}{y}{y}
   }{
     \IsApart{x}{y}
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{mvar}]{
     \IsSubst{N}{x}{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{
@@ -767,7 +904,7 @@ $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
     }
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{app}]{
     \IsSubst{N}{x}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
@@ -782,7 +919,7 @@ $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
   }
 \end{gather*}
 \begin{gather*}
-  \infer{
+  \infer[\textit{abs}_1]{
     \IsSubst{N}{x}{
       \MkBTm{\vec{u}}{\vec{y}}{M}
     }{
@@ -797,8 +934,8 @@ $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
 &
     \IsSubst{N}{x}{M}{M'}
   }
-\qquad
-  \infer{
+\\[6pt]
+  \infer[\textit{abs}_2]{
     \IsSubst{N}{x}{
       \MkBTm{\vec{u}}{\vec{y}}{M}
     }{
@@ -826,12 +963,12 @@ Substitution for metavariables is defined inductively by the judgments
 $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
 
 \begin{gather*}
-  \infer{
+  \infer[\textit{var}]{
     \IsSubst{E}{\MV{m}}{x}{x}
   }{
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{mvar}_1]{
     \IsSubst{E}{\MV{m}}{
       \MApp{\MV{n}}{\vec{u}}{M_0,\dots,M_n}
     }{
@@ -847,7 +984,7 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
     }
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{mvar}_2]{
     \IsSubst{
       \MkBTm{\vec{u}}{\vec{x}}{N}
     }{\MV{m}}{
@@ -863,7 +1000,7 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
     \IsRenaming{\vec{u}\mapsto\vec{v}}{N'}{N''}
   }\\[6pt]
   %
-  \infer{
+  \infer[\textit{app}]{
     \IsSubst{E}{\MV{m}}{
       \App{\vartheta}{F_0,\dots,F_n}
     }{
@@ -877,7 +1014,7 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
     }
   }
 \\[6pt]
-  \infer{
+  \infer[\textit{abs}]{
     \IsSubst{E}{\MV{m}}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
@@ -906,7 +1043,7 @@ a presheaf of symbols
 $\Define{S_\tau(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
     \Upsilon(x)=\tau}}$. Lastly, we have the presheaf of operators with arity
 $a$,
-$\Define{\Operators_a(\Upsilon\parallel\Gamma)}{\Operators\Pair{\Upsilon}{a}}$
+$\Define{\Operators_a(\Upsilon\parallel\Gamma)}{\Operators_a(\Upsilon)}$
 
 \subsection{Substitution monoidal structures}
 \newcommand\SymPsh{\mathbf{S}}
@@ -1002,7 +1139,7 @@ applications of each operator.
 
 \subsection{Interpretation of terms}
 
-The metavariable, symbol and variable contexts are interpreted in a model $P$ as
+The metavariable, symbol and variable contexts are interpreted for a model $P$ as
 an environment presheaf in the following way:
 \[
   \Define{
@@ -1351,11 +1488,10 @@ where $\phi_i,\psi_i$ are defined as follows:
               \phi_i\,
             }
             {
-              \,\Pair{
+              \,
                 \Tuple{\pi_u\circ\pi_1}_{u\in\Dom{\Upsilon}}
-              }{
+              ,
                 \,\Tuple{\pi_u\circ\pi_{[2,1]}}_{u\in\Dom{\vec{\sigma}_i}}
-              }
             }
           "
       ]
@@ -1376,11 +1512,10 @@ where $\phi_i,\psi_i$ are defined as follows:
           \Define{
             \psi_i\,
           }{
-            \,\Pair{
+            \,
               \Tuple{\pi_x\circ\pi_1}_{x\in\Dom{\Gamma}}
-            }{
+            ,
               \,\Tuple{\pi_x\circ\pi_{[2,1]}}_{x\in\Dom{\vec{\tau}_i}}
-            }
           }
           "
       ]
@@ -1666,8 +1801,120 @@ The refinement for telescopes proceeds by induction:
   }
 \end{gather*}
 
+\newpage
+\appendix
+\appendixpage
+
+\section{Sheafhood on $\SCtxSite$}
+
+\begin{thm}
+  \label{thm:pullback-preservation}
+  A presheaf $\Of{X}{\Sets^{\SCtx}}$ is a sheaf on $\SCtxSite$ just when it
+  preserves pullbacks.
+\end{thm}
+
+\begin{proof}
+
+  The proof is essentially the same as that of the analogous lemma for the
+  Schanuel topos as presented in \cite[A.2.1.11.h]{johnstone:2002}, but we will
+  give a slightly more detailed version here. The presheaf $X$ is a sheaf on the
+  atomic site $\SCtxSite$ just when, for any renaming
+  $\Of{\varrho}{C\inj D}$ and any $\Member{n}{X(D)}$ if
+  $\IsEq{n\cdot \varrho_0}{n\cdot \varrho_1}$ for all diagrams
+  \[
+    \begin{tikzcd}[sep=large]
+      \IMode{C} \arrow[r, hook, "\IMode{\varrho}"] &
+      \IMode{D}
+        \arrow[r, hook, shift left, "\IMode{\varrho_0}"]
+        \arrow[r, hook, swap, shift right, "\IMode{\varrho_1}"]
+      &
+      \IMode{E}
+    \end{tikzcd}
+  \]
+  such that $\IsEq{\varrho_0\circ\varrho}{\varrho_1\circ\varrho}$, then there
+  exists a unique $\Member{m}{X(C)}$ such that $\IsEq{m\cdot\varrho}{n}$. In other
+  words, the arrow $X(\varrho)$ is an equalizer, as in the following:
+  \[
+    \begin{tikzcd}[sep=large]
+      \IMode{X(C)} \arrow[r, "\IMode{X(\varrho)}"] &
+      \IMode{X(D)}
+        \arrow[r, shift left, "\IMode{X(\varrho_0)}"]
+        \arrow[r, swap, shift right, "\IMode{X(\varrho_1)}"]&
+      \IMode{X(E)}
+      \\
+      \IMode{\mathbb{1}}
+        \arrow[u, densely dotted, "\OMode{m}"]
+        \arrow[ur, "\IMode{n}"]
+    \end{tikzcd}
+  \]
+
+  Now, because $\Sets$ is a regular category, $X(\varrho)$ is an equalizer
+  precisely when it is a monomorphism. Therefore, if we have assumed that $X$
+  preserves pullbacks, in order to demonstrate that $X$ is a sheaf, it suffices
+  to show that $X(\varrho)$ is monic. If $X$ preserves pullbacks, then it also
+  preserves monomorphisms, because in any category with pullbacks, $\Of{f}{A\ra
+  B}$ is monic just when the square
+  \[
+    \begin{tikzcd}[sep=large]
+      \IMode{A}
+        \arrow[r, "\IMode{\ArrId{A}}"]
+        \arrow[d, "\IMode{\ArrId{A}}"] &
+      \IMode{A} \arrow[d, "\IMode{f}"]\\
+      \IMode{A} \arrow[r, "\IMode{f}"] &
+      \IMode{B}
+    \end{tikzcd}
+  \]
+  is a pullback \cite[p.\ 16]{mac-lane-moerdijk:1992}. Because $X$ preserves
+  monomorphisms, and all arrows in $\SCtx$ are monic, then $X(\varrho)$ is
+  monic. Hence, $X$ is a sheaf.
+
+  Next, we must show that if $X$ is a sheaf, then it preserves pullbacks; we
+  will loosely track the proof of Proposition~2.6.15 in \cite{biering:2004}.
+  Fix the following diagram such that it is a pullback square in $\SCtx$:
+  \[
+    \begin{tikzcd}[sep=large]
+      \IMode{C}
+        \arrow[r, "\IMode{f_j}"]
+        \arrow[d, "\IMode{f_i}"] &
+      \IMode{C_j} \arrow[d, "\IMode{s_j}"]\\
+      \IMode{C_i} \arrow[r, "\IMode{s_i}"] &
+      \IMode{D}
+    \end{tikzcd}
+  \]
+
+  Then it suffices to show that the following diagram is also pullback square
+  in $\Sets$:
+  \[
+    \begin{tikzcd}[sep=large]
+      \IMode{X(C)}
+        \arrow[r, "\IMode{X(f_j)}"]
+        \arrow[d, "\IMode{X(f_i)}"] &
+      \IMode{X(C_j)} \arrow[d, "\IMode{X(s_j)}"]\\
+      \IMode{X(C_i)} \arrow[r, "\IMode{X(s_i)}"] &
+      \IMode{X(D)}
+    \end{tikzcd}
+  \]
+
+  To prove that the above diagram is a pullback, it suffices to show that for
+  any $\Member{m_i}{X(C_i)}$ and $\Member{m_j}{X(C_j)}$ such that
+  $\IsEq{X(s_i)(m_i)}{X(s_j)(m_j)}$, we have a unique $\Member{m}{X(C)}$; the
+  universal property of the pullback follows immediately from this.
+
+  Consider the singleton cover on $C$ that contains $\Define{h}{s_i\circ
+  f_i}=\OMode{s_j\circ f_j}$; a matching family $\phi$ for the cover
+  $\MkSet{h}$ is a map that takes $h$ to an object in $X(D)$, and an
+  amalgamation for $\phi$ consists in an object $\Member{m}{X(C)}$ such that
+  $\IsEq{\phi(h)}{X(h)(m)}$. Now recall that $X$ is a sheaf on $\SCtxSite$ if
+  and only if every matching family has a unique amalgamation; for the matching
+  family $\Define{\phi(h)}{X(s_i)(m_i)}$, then, we must have a unique amalgamation
+  $\Member{m}{X(C)}$ since $X$ is a sheaf. Therefore, $X$ preserves pullbacks.
+
+\end{proof}
+
+
 \ifdraft{}{
-  \nocite{*}
+  \newpage
+  % \nocite{*}
   \bibliographystyle{abbrv}
   \bibliography{refs}
 }
