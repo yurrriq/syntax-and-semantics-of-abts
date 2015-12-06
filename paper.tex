@@ -622,6 +622,16 @@ construction $\MCtx$, which likewise admits an equivalent inductive definition:
 \section{Nominal Abstract Binding Trees}
 
 Let the judgment $\IsAbt{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$ presuppose
+\footnote{
+  In the \emph{judgmental method}, as pioneered by Per Martin-L\"of, a form of
+  judgment is propounded first by specifying its range of significance (i.e.\
+  the circumstances under which it shall have a meaning), and then, a meaning
+  explanation (definition) for the judgment is given. The range of significance
+  of a judgment is called its \emph{presupposition}, and the meaning of the
+  judgment may proceed by induction on the evidence that the presupposition
+  obtains. See \cite{schroeder-heister:1987} for a more detailed explanation of
+  presuppositions and the judgmental method.
+}
 $\IsMetaCtx{\Theta}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and
 $\IsSort{\tau}$, meaning that $M$ is an abstract binding tree of sort $s$, with
 metavariables in $\Theta$, parameters in $\Upsilon$, and variables in $\Gamma$.
