@@ -1818,6 +1818,17 @@ previous section is wellformed:
   }{\SortJdg}
 \]
 
+\begin{remark}
+  In the full development of a theory of behavioral refinements, the ad-hoc
+  judgment $\IsWf{\Upsilon}{\Gamma}{M}{\tau}$ would be replaced with a general
+  notion of refinement $\IMode{\phi}\sqsubset\tau$ ($\phi$ refines sort
+  $\tau$), and a new judgment $\IMode{\Upsilon}\parallel\IMode{\Phi}\vDash
+  \IMode{M} \in \IMode{\phi}$, such that $\phi$ refines $\tau$ the
+  refinement context $\Phi$ refines some sort context $\Gamma$. Furthermore, in
+  addition to restricting membership, refinements might also be designed to
+  coarsen equivalence.
+\end{remark}
+
 \section*{Acknowledgements}
 
 The first author wishes to thank Robert Harper for numerous conversations about
