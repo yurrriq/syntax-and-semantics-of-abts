@@ -70,11 +70,10 @@
 
 \newcommand\SortExp{\mathtt{exp}}
 
-\newcommand\IsWf[5]{%
-  \IMode{#1}\triangleright%
-  \IMode{#2}\parallel%
-  \IMode{#3}\vdash%
-  \IMode{#4}\in_{\mathbf{wf}}\IMode{#5}%
+\newcommand\IsWf[4]{%
+  \IMode{#1}\parallel%
+  \IMode{#2}\vdash%
+  \IMode{#3}\in_{\mathbf{wf}}\IMode{#4}%
 }
 
 \newcommand\Sheaves[1]{\mathbf{Sh}\left(#1\right)}
@@ -1663,7 +1662,7 @@ define some notation:
   \triangleq \OMode{\OpHyp{u}}
 \end{align*}
 
-Now, we have the following well-formed sequent:
+Now, we can write the following sequent:
 \[
   \IsAbt{\cdot}{
     u:\SortExp,
@@ -1706,53 +1705,34 @@ Then, we may write a closed sequent judgment as follows:
 Having specified an approximation of the grammar of telescopes and sequents in
 the abt logical framework, we can proceed to define proper wellformedness via
 \emph{inductive refinement}~\cite{harper:2016}. The basic idea is to introduce a
-new form of (meta)-judgment $\IsWf{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$ which
+new form of (meta)-judgment $\IsWf{\Upsilon}{\Gamma}{M}{\tau}$ which
 expresses the extrinsic wellformedness properties we wish to verify,
-presupposing $\IsAbt{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$. Additionally, we
+presupposing $\IsAbt{\cdot}{\Upsilon}{\Gamma}{M}{\tau}$. Additionally, we
 introduce an analogous judgment on bound terms,
-$\IsWf{\Theta}{\Upsilon}{\Gamma}{E}{v}$ presupposing
-$\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$, defined uniformly as follows:
+$\IsWf{\Upsilon}{\Gamma}{E}{v}$ presupposing
+$\IsAbt{\cdot}{\Upsilon}{\Gamma}{E}{v}$, defined uniformly as follows:
 \[
   \infer{
-    \IsWf{\Theta}{\Upsilon}{\Gamma}{
+    \IsWf{\Upsilon}{\Gamma}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
       \MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}
     }
   }{
-    \IsWf{\Theta}{\Upsilon,\vec{u}:\vec{\sigma}}{\Gamma,\vec{x}:\vec{\tau}}{M}{\tau}
+    \IsWf{\Upsilon,\vec{u}:\vec{\sigma}}{\Gamma,\vec{x}:\vec{\tau}}{M}{\tau}
   }
 \]
 
-Likewise, wellformedness for variables and metavariables is defined uniformly:
-\begin{gather*}
+Likewise, wellformedness for variables is defined uniformly:
+\[
   \infer{
-    \IsWf{\Theta}{\Upsilon}{\Gamma}{x}{\tau}
+    \IsWf{\Upsilon}{\Gamma}{x}{\tau}
   }{
   }
-\qquad
-  \infer{
-    \IsWf{\Theta}{\Upsilon}{\Gamma}{
-      \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
-    }{\tau}
-  }{
-    \begin{array}{l}
-      \Lookup{\Theta}{\MV{m}}{\MkValence{\vec{\sigma}}{\tau_0,\dots,\tau_n}{\tau}}
-\\
-      \HypJ{
-        \IsWf{\Theta}{\Upsilon}{\Gamma}{M_i}{\tau_i}
-      }{
-        \Leq{i}{n}
-      }
-    \end{array}
-  }
-\end{gather*}
-
-\begin{remark}
-  Note that the refinement for variables $x$ is not trivial, since it is only
-  defined in case the presupposition $\IsAbt{\Theta}{\Upsilon}{\Gamma}{x}{\tau}$
-  is satisfied.
-\end{remark}
+\]
+Note that the refinement for variables $x$ is not trivial, since it is only
+defined in case the presupposition $\IsAbt{\cdot}{\Upsilon}{\Gamma}{x}{\tau}$
+is satisfied.
 
 The remainder of the definition of refinement proceeds by induction on sorts and
 operators. For the sake of this example, we will just stipulate that anything of
@@ -1762,7 +1742,7 @@ sort $\SortExp$ or $\SortProp$ is grammatical if its subterms are grammatical:
   \infer[
     \text{for $\Member{\tau}{\MkSet{\SortExp,\SortProp}}$}
   ]{
-    \IsWf{\Theta}{\Upsilon}{\Gamma}{
+    \IsWf{\Upsilon}{\Gamma}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{\tau}
   }{
@@ -1774,7 +1754,7 @@ sort $\SortExp$ or $\SortProp$ is grammatical if its subterms are grammatical:
       }
 \\
       \HypJ{
-        \IsWf{\Theta}{\Upsilon}{\Gamma}{E_i}{v_i}
+        \IsWf{\Upsilon}{\Gamma}{E_i}{v_i}
       }{
         \Leq{i}{n}
       }
@@ -1786,43 +1766,57 @@ The refinements for parametric judgment and sequents simply delegate to their
 subterms as well:
 \begin{gather*}
   \infer{
-    \IsWf{\Theta}{\Upsilon}{\Gamma}{
+    \IsWf{\Upsilon}{\Gamma}{
       \App{\OpNabla{\vec{\sigma}}}{
         \MkBTm{\vec{u}}{}{J}
       }
     }{\SortJdg}
   }{
-    \IsWf{\Theta}{\Upsilon,\vec{u}:\vec{\sigma}}{\Gamma}{J}{\SortJdg}
+    \IsWf{\Upsilon,\vec{u}:\vec{\sigma}}{\Gamma}{J}{\SortJdg}
   }
 \\[6pt]
   \infer{
-    \IsWf{\Theta}{\Upsilon}{\Gamma}{
+    \IsWf{\Upsilon}{\Gamma}{
       H\gg A
     }{\SortJdg}
   }{
-    \IsWf{\Theta}{\Upsilon}{\Gamma}{H}{\SortTele}
+    \IsWf{\Upsilon}{\Gamma}{H}{\SortTele}
 &
-    \IsWf{\Theta}{\Upsilon}{\Gamma}{A}{\SortProp}
+    \IsWf{\Upsilon}{\Gamma}{A}{\SortProp}
   }
 \end{gather*}
 
 The refinement for telescopes proceeds by induction:
 \begin{gather*}
   \infer{
-    \IsWf{\Theta}{\Upsilon}{\Gamma}{\diamond}{\SortTele}
+    \IsWf{\Upsilon}{\Gamma}{\diamond}{\SortTele}
   }{
   }
 \qquad
   \infer{
-    \IsWf{\Theta}{\Upsilon}{\Gamma}{H,u:A}{\SortTele}
+    \IsWf{\Upsilon}{\Gamma}{H,u:A}{\SortTele}
   }{
     \begin{array}{l}
-      \IsWf{\Theta}{\Upsilon\setminus\MkSet{u}}{\Gamma}{H}{\SortTele}
+      \IsWf{\Upsilon\setminus\MkSet{u}}{\Gamma}{H}{\SortTele}
 \\
-      \IsWf{\Theta}{\Upsilon\setminus\MkSet{u}}{\Gamma}{A}{\SortProp}
+      \IsWf{\Upsilon\setminus\MkSet{u}}{\Gamma}{A}{\SortProp}
     \end{array}
   }
 \end{gather*}
+
+Based on these rules, it is easy to show that the example sequent from the
+previous section is wellformed:
+\[
+  \IsWf{\cdot}{\cdot}{
+    \App{\OpNabla{\SortExp,\SortExp}}{
+      \MkBTm{u,v}{}{
+        \diamond,u:\mathtt{P},v:\App{\mathtt{pred}}{`u}
+        \gg
+        \App{\mathtt{pred}}{`u}
+      }
+    }
+  }{\SortJdg}
+\]
 
 \section*{Acknowledgements}
 
