@@ -1571,6 +1571,17 @@ use symbols to encode the syntax of contexts, except that here, we have better
 control over their proliferation because, contrary to the state of
 affairs in Abella, symbols are \emph{not} terms.
 
+There are two reasons that one might want to model sequents in a (meta)-logical
+framework. Perhaps the most obvious reason is to prove things about a logic
+with sequent judgments; this is what motivated Crary's encoding of contexts in
+LF, for instance. However, another common use-case is the practical development
+of a proof assistant in which users can define new sequent rules; such
+user-defined rules may only be compiled into well-behaved tactics in the proof
+system in case they obey certain wellformedness properties including (among
+other things) correct scoping of names. MetaPRL is a salient example of such a
+proof assistant, whose implementation might have benefited from the more
+principled treatment of symbols and metavariables which we present here.
+
 This insight leads the way to a simple abt signature for the theory of
 telescopes and sequents.
 %
