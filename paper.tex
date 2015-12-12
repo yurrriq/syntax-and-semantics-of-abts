@@ -1543,10 +1543,10 @@ The representation of telescopes and sequents in a logical framework is
 notoriously difficult; whilst it is possible to use higher-order abstract
 syntax or abts to encode the binding-structure of telescopes and sequents, the
 encoding is sufficiently laborious and obscure that it is not used in practice.
-Crary has demonstrated a first-order encoding of contexts in the logical
-framework in bijection with actual LF-contexts~\cite{crary:2009}, which has
-been successfully used in large-scale mechanization efforts, including that of
-Standard ML~\cite{lee-crary-harper:2007} and the Edinburgh Logical Framework
+Crary has demonstrated a first-order encoding of contexts in the Edinburgh
+Logical Framework (ELF) in bijection with actual LF-contexts~\cite{crary:2009},
+which has been successfully used in large-scale mechanization efforts,
+including that of Standard ML~\cite{lee-crary-harper:2007} and the ELF
 itself~\cite{martens-crary:2012}.
 
 We will approach the problem of encoding telescopes and sequents from the
@@ -1823,7 +1823,7 @@ previous section is wellformed:
   judgment $\IsWf{\Upsilon}{\Gamma}{M}{\tau}$ would be replaced with a general
   notion of refinement $\IMode{\phi}\sqsubset\tau$ ($\phi$ refines sort
   $\tau$), and a new judgment $\IMode{\Upsilon}\parallel\IMode{\Phi}\vDash
-  \IMode{M} \in \IMode{\phi}$, such that $\phi$ refines $\tau$ the
+  \IMode{M} \in \IMode{\phi}$, such that $\phi$ refines $\tau$ and the
   refinement context $\Phi$ refines some sort context $\Gamma$. Furthermore, in
   addition to restricting membership, refinements might also be designed to
   coarsen equivalence.
