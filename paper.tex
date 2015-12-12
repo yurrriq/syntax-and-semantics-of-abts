@@ -1913,18 +1913,32 @@ understanding multi-sorted nominal sets and atomic sheaves.
     \end{tikzcd}
   \]
 
-  To prove that the above diagram is a pullback, it suffices to show that for
-  any $\Member{m_i}{X(C_i)}$ and $\Member{m_j}{X(C_j)}$ such that
-  $\IsEq{X(s_i)(m_i)}{X(s_j)(m_j)}$, we have a unique $\Member{m}{X(C)}$; the
-  universal property of the pullback follows immediately from this.
+  We have to show that $X(C)$ is, up to equivalence, the pullback of $X(s_j)$
+  along $X(s_j)$ in $\Sets$, namely:
+  \[
+    \IMode{X(C_i)\times_{X(D)}X(C_j)}
+      \cong
+    \OMode{
+      \MkSet{
+        (m_i, m_j)\in X(C_i)\times X(C_j)
+          \mid
+        m_i \cdot s_i = m_j \cdot s_j
+      }
+    }
+  \]
+  The first direction of the equivalence is trivial: for each
+  $\Member{m}{X(C)}$, we can easily exhibit $\Member{(m\cdot f_i,m\cdot
+  f_j)}{X(C_i)\times_{X(D)}X(C_j)}$.
 
-  Consider the singleton cover on $C$ that contains $\Define{h}{s_i\circ
-  f_i}=\OMode{s_j\circ f_j}$; a matching family $\phi$ for the cover
-  $\MkSet{h}$ is a map that takes $h$ to an object in $X(D)$, and an
-  amalgamation for $\phi$ consists in an object $\Member{m}{X(C)}$ such that
-  $\IsEq{\phi(h)}{X(h)(m)}$. Now recall that $X$ is a sheaf on $\SCtxSite$ if
-  and only if every matching family has a unique amalgamation; for the matching
-  family $\Define{\phi(h)}{X(s_i)(m_i)}$, then, we must have a unique amalgamation
+  For the other direction, fix $\Member{(m_i,
+  m_j)}{X(C_i)\times_{X(D)}X(C_j)}$.  Consider the singleton cover on $C$ that
+  contains $\Define{h}{s_i\circ f_i}=\OMode{s_j\circ f_j}$; a matching family
+  $\phi$ for the cover $\MkSet{h}$ is a map that takes $h$ to an object in
+  $X(D)$, and an amalgamation for $\phi$ consists in an object
+  $\Member{m}{X(C)}$ such that $\IsEq{\phi(h)}{X(h)(m)}$. Now recall that $X$
+  is a sheaf on $\SCtxSite$ if and only if every matching family has a unique
+  amalgamation; for the matching family $\Define{\phi(h)}{m_i\cdot
+  s_i}=\OMode{m_j\cdot s_j}$, then, we must have a unique amalgamation
   $\Member{m}{X(C)}$ since $X$ is a sheaf. Therefore, $X$ preserves pullbacks.
 
 \end{proof}
