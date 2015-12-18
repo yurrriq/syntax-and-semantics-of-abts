@@ -166,7 +166,7 @@ $(U,\mathfrak{s})$.
   from the data of an object in $\SCtx$.
 \end{remark}
 
-\paragraph{Presheaves on $\SCtx$}
+\paragraph{Copresheaves on $\SCtx$}
 
 A presheaf on a category $\mathcal{C}$ is a contravariant functor
 $\OpCat{\mathcal{C}}\ra\Sets$; when $\Match{\mathcal{C}}{\OpCat{\mathcal{D}}}$,
@@ -268,7 +268,7 @@ $\Pair{\OpCat{\left(\SCtx\right)}}{J_\mathsf{atm}}$, where $J_\mathsf{atm}$ is
 the atomic coverage. Sheafhood on the atomic site $\SCtxSite$ amounts to the
 following condition, using Definition~\ref{def:support}:
 \begin{quote}
-  A presheaf $\Of{X}{\Sets^\SCtx}$ is a sheaf on $\SCtxSite$ just when, for all $\Member{n}{X(\Upsilon')}$, if we have
+  A copresheaf $\Of{X}{\Sets^\SCtx}$ is a sheaf on $\SCtxSite$ just when, for all $\Member{n}{X(\Upsilon')}$, if we have
   \begin{tikzcd}[cramped]
     \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
   \end{tikzcd}
@@ -277,49 +277,49 @@ following condition, using Definition~\ref{def:support}:
 \end{quote}
 
 Therefore, a sheaf on $\SCtxSite$ is a set that varies over $\Sorts$-sorted
-symbols, which has a well-behaved notion of support. Another way to put it is,
-if $\Member{m}{X(\Upsilon)}$ only ``uses'' some of the symbols available at
-world $\Upsilon$, there's a canonical way to restrict $m$ to a term in the
+symbol contexts, which has a well-behaved notion of support. Another way to put
+it is, if $\Member{m}{X(\Upsilon)}$ only ``uses'' some of the symbols available
+at world $\Upsilon$, there's a canonical way to restrict $m$ to a term in the
 world which contains \emph{only} the symbols that it uses.
 
-\subsection{Constructions on sheaves}
+\paragraph{Constructions on sheaves}
 
-For any Grothendieck site $\Match{\mathfrak{S}}{\Pair{\mathcal{C}}{J}}$, the
-inclusion $\Of{\iota}{\Sheaves{\mathfrak{S}}\ra\Presheaves{\mathcal{C}}}$ of
-sheaves into presheaves has a left adjoint
-$\IMode{\Sheafify{(-)}}\dashv\IMode{\iota}$, which takes any presheaf
-$\Of{X}{\Presheaves{\mathcal{C}}}$ to a unique sheaf
-$\Of{\Sheafify{X}}{\Sheaves{\mathfrak{S}}}$, called the \emph{sheafification}
-of $X$. Sheafification is the twice-iterated application of the
-\emph{+-construction} $X^+$, which turns a presheaf into a separated presheaf,
-and a separated presheaf into a sheaf \cite{mac-lane-moerdijk:1992}:
-\begin{align*}
-  \ADefine{
-    X^+(C)
-  }{
-    \int^{S\in J(C)}
-    \Hom{\Presheaves{\mathcal{C}}}{S}{X}
-  }\\
-  \ADefine{
-    \Sheafify{X}
-  }{
-    X^{++}
-  }
-\end{align*}
-
-We also have a canonical natural transformation $\Of{\eta}{X\ra X^+}$, defined
-using the maximal sieve $\Define{t_C}{\Yoneda{C}}$:
-\[
-  \HypJ{
-    \Define{\eta_C(m)}{
-      \Pair{t_C}{
-        X(-)(m)
-      }
-    }
-  }{
-    \Member{m}{X(C)}
-  }
-\]
+%% For any Grothendieck site $\Match{\mathfrak{S}}{\Pair{\mathcal{C}}{J}}$, the
+%% inclusion $\Of{\iota}{\Sheaves{\mathfrak{S}}\ra\Presheaves{\mathcal{C}}}$ of
+%% sheaves into presheaves has a left adjoint
+%% $\IMode{\Sheafify{(-)}}\dashv\IMode{\iota}$, which takes any presheaf
+%% $\Of{X}{\Presheaves{\mathcal{C}}}$ to a unique sheaf
+%% $\Of{\Sheafify{X}}{\Sheaves{\mathfrak{S}}}$, called the \emph{sheafification}
+%% of $X$. Sheafification is the twice-iterated application of the
+%% \emph{+-construction} $X^+$, which turns a presheaf into a separated presheaf,
+%% and a separated presheaf into a sheaf \cite{mac-lane-moerdijk:1992}:
+%% \begin{align*}
+%%   \ADefine{
+%%     X^+(C)
+%%   }{
+%%     \int^{S\in J(C)}
+%%     \Hom{\Presheaves{\mathcal{C}}}{S}{X}
+%%   }\\
+%%   \ADefine{
+%%     \Sheafify{X}
+%%   }{
+%%     X^{++}
+%%   }
+%% \end{align*}
+%%
+%% We also have a canonical natural transformation $\Of{\eta}{X\ra X^+}$, defined
+%% using the maximal sieve $\Define{t_C}{\Yoneda{C}}$:
+%% \[
+%%   \HypJ{
+%%     \Define{\eta_C(m)}{
+%%       \Pair{t_C}{
+%%         X(-)(m)
+%%       }
+%%     }
+%%   }{
+%%     \Member{m}{X(C)}
+%%   }
+%% \]
 
 
 Every category of sheaves on a site gives rise to a topos, which equips us with
