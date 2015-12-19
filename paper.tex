@@ -545,7 +545,7 @@ natural in $a$, such that
 $\IsOperator{\Upsilon'}{\Operators(\varrho)(\vartheta)}{a}$ when
 $\IsOperator{\Upsilon}{\vartheta}{a}$. In particular, the renaming
 $\Upsilon,u\mapsto\Upsilon,v$ shall take $\mathtt{get}[u]$ to
-$\mathtt{get}[v]$. Going forward, we will write $\vartheta\varrho$ for
+$\mathtt{get}[v]$. Going forward, we will write $\Rename{\varrho}{\vartheta}$ for
 $\Operators_a(\varrho)(\vartheta)$.
 
 
@@ -856,7 +856,7 @@ $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
     \IsRenaming{\varrho}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
-      \App{\vartheta\varrho}{F_0,\dots,F_n}
+      \App{\Rename{\varrho}{\vartheta}}{F_0,\dots,F_n}
     }
   }{
     \HypJ{
