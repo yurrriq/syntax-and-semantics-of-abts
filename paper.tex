@@ -330,45 +330,6 @@ Returning to the site $\SCtxSite$, we will write $\mathbf{S}_\tau$ for the sheaf
 of symbols of sort $\tau$, a subobject of the Yoneda embedding of the empty
 symbol context, $\Yoneda{\cdot}$.
 
-\subsection{Relation to Nominal Sets and the Schanuel Topos}
-
-Pitts defines a category $\mathbf{Nom}$ of nominal sets in \cite{pitts:2013}
-which function equivalently to the sheaves that we considered above, in the
-case of $\IMode{\Sorts}\cong\IMode{\mathbb{1}}$. Fix a countably infinite set
-of atoms $\mathbb{A}$; then let $\Perm\mathbb{A}$ be the group of permutations
-(i.e.\ autoequivalences) on $\mathbb{A}$.  Considered as a category,
-$\Perm\mathbb{A}$ has a single object $\bullet$ with morphisms
-$\Of{\pi}{\bullet\ra\bullet}$ for each $\Member{\pi}{\Dom{\Perm\mathbb{A}}}$.
-Then, the category of nominal sets $\mathbf{Nom}$ is the subcategory of
-$\Sets^{\Perm\mathbb{A}}$ containing just the presheaves which satisfy a
-\emph{finite support} condition.
-
-The category $\mathbf{Nom}$ is equivalent to the category of covariant sheaves
-on $\SymSets$ under the atomic coverage, called the Schanuel Topos
-$\Define{\mathbb{S}}{\Sheaves{\OpCat{\SymSets}}}$ \cite{pitts:2013,
-fiore-staton:2006}; equivalently, the Schanuel topos is the subcategory of
-$\Sets^\SymSets$ containing only pullbacks-preserving functors.
-
-In addition to the unisorted nominal sets framework, Pitts also briefly
-discusses a multi-sorted version of the apparatus in which the countably
-infinite set of atoms $\mathbb{A}$ is equipped with a sort assignment
-$\Of{\mathfrak{s}}{\mathbb{A}\to\Sorts}$ such that all the fibres of
-$\mathfrak{s}$ are countably infinite; then, he defines for any such assignment
-the category $\mathbf{Nom}_\mathfrak{s}$ of $\mathfrak{s}$-sorted nominal sets
-as a subcategory of the category of presheaves on the group of
-$\mathfrak{s}$-respecting permutations on $\mathbb{A}$,
-$\Perm_\mathfrak{s}\mathbb{A}$.
-
-In the same way as the Schanuel topos is equivalent to the unisorted nominal
-sets, we expect to find an equivalence between $\Sheaves{\SCtxSite}$ and the
-limit $\int_{\mathfrak{s}}\mathbf{Nom}_\mathfrak{s}$. At the very least, the
-sheaf topos $\Sheaves{\SCtxSite}$ may serve as a multi-sorted generalization of
-the Schanuel topos, for which we may carry over certain useful results,
-including its characterization as the subcategory of $\Sets^\SCtx$ which
-contains just the pullbacks-preserving functors (see
-Theorem~\ref{thm:pullback-preservation} for the proof).
-
-
 \section{Operators and signatures}
 
 A valence $\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}$ specifies an expression
@@ -1839,7 +1800,43 @@ understanding multi-sorted nominal sets and atomic sheaves.
 \appendix
 \appendixpage
 
-\section{Sheafhood on $\SCtxSite$}
+\section{$\SCtxSite$, Nominal Sets, and the Schanuel Topos}
+
+Pitts defines a category $\mathbf{Nom}$ of nominal sets in \cite{pitts:2013}
+which function equivalently to the sheaves that we considered above, in the
+case of $\IMode{\Sorts}\cong\IMode{\mathbb{1}}$. Fix a countably infinite set
+of atoms $\mathbb{A}$; then let $\Perm\mathbb{A}$ be the group of permutations
+(i.e.\ autoequivalences) on $\mathbb{A}$.  Considered as a category,
+$\Perm\mathbb{A}$ has a single object $\bullet$ with morphisms
+$\Of{\pi}{\bullet\ra\bullet}$ for each $\Member{\pi}{\Dom{\Perm\mathbb{A}}}$.
+Then, the category of nominal sets $\mathbf{Nom}$ is the subcategory of
+$\Sets^{\Perm\mathbb{A}}$ containing just the presheaves which satisfy a
+\emph{finite support} condition.
+
+The category $\mathbf{Nom}$ is equivalent to the category of covariant sheaves
+on $\SymSets$ under the atomic coverage, called the Schanuel Topos
+$\Define{\mathbb{S}}{\Sheaves{\OpCat{\SymSets}}}$ \cite{pitts:2013,
+fiore-staton:2006}; equivalently, the Schanuel topos is the subcategory of
+$\Sets^\SymSets$ containing only pullbacks-preserving functors.
+
+In addition to the unisorted nominal sets framework, Pitts also briefly
+discusses a multi-sorted version of the apparatus in which the countably
+infinite set of atoms $\mathbb{A}$ is equipped with a sort assignment
+$\Of{\mathfrak{s}}{\mathbb{A}\to\Sorts}$ such that all the fibres of
+$\mathfrak{s}$ are countably infinite; then, he defines for any such assignment
+the category $\mathbf{Nom}_\mathfrak{s}$ of $\mathfrak{s}$-sorted nominal sets
+as a subcategory of the category of presheaves on the group of
+$\mathfrak{s}$-respecting permutations on $\mathbb{A}$,
+$\Perm_\mathfrak{s}\mathbb{A}$.
+
+In the same way as the Schanuel topos is equivalent to the unisorted nominal
+sets, we expect to find an equivalence between $\Sheaves{\SCtxSite}$ and the
+limit $\int_{\mathfrak{s}}\mathbf{Nom}_\mathfrak{s}$. At the very least, the
+sheaf topos $\Sheaves{\SCtxSite}$ may serve as a multi-sorted generalization of
+the Schanuel topos, for which we may carry over certain useful results,
+including its characterization as the subcategory of $\Sets^\SCtx$ which
+contains just the pullbacks-preserving functors.
+
 
 \begin{thm}
   \label{thm:pullback-preservation}
