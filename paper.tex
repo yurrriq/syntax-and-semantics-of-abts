@@ -928,9 +928,9 @@ substitution of $\vec{N}$ for $\vec{x}$ in $M$.
 
 \subsection{Substitution of metavariables}
 
-Metavariables are substituted by bound terms; since a metavariable may only
+Metavariables are substituted by abstractions; since a metavariable may only
 appear in an application expression $\MApp{\MV{m}}{\cdots}{\cdots}$, we will
-instantiate the bound term at the supplied parameters and arguments.
+instantiate the abstraction at the supplied parameters and arguments.
 Substitution for metavariables is defined inductively by the judgments
 $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
 
@@ -1669,7 +1669,7 @@ the abt logical framework, we can proceed to define proper wellformedness via
 new form of (meta)-judgment $\IsWf{\Upsilon}{\Gamma}{M}{\tau}$ which
 expresses the extrinsic wellformedness properties we wish to verify,
 presupposing $\IsAbt{\cdot}{\Upsilon}{\Gamma}{M}{\tau}$. Additionally, we
-introduce an analogous judgment on bound terms,
+introduce an analogous judgment on abstractions,
 $\IsWf{\Upsilon}{\Gamma}{E}{v}$ presupposing
 $\IsAbt{\cdot}{\Upsilon}{\Gamma}{E}{v}$, defined uniformly as follows:
 \[
