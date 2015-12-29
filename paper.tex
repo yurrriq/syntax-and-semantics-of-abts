@@ -85,6 +85,10 @@
 
 \DeclareMathOperator{\Perm}{\mathbf{Perm}}
 
+\newcommand\RuleNameVar[2]{{#1}_{\textit{var}_{#2}}}
+\newcommand\RuleNameMVar[2]{{#1}_{\textit{mvar}_{#2}}}
+\newcommand\RuleNameApp[1]{{#1}_\textit{app}}
+\newcommand\RuleNameAbs[2]{{#1}_{\textit{abs}_{#2}}}
 
 \begin{document}
 
@@ -601,15 +605,20 @@ Let the judgment $\IsBTm{\Theta}{\Upsilon}{\Gamma}{E}{v}$ presuppose
 $\IsValence{v}$. Then, the syntax of abstract binding trees is inductively
 defined in four rules:
 
+\newcommand\RuleIsAbtVar{\RuleNameVar{\vdash}{}}
+\newcommand\RuleIsAbtMVar{\RuleNameMVar{\vdash}{}}
+\newcommand\RuleIsAbtApp{\RuleNameApp{\vdash}}
+\newcommand\RuleIsAbtAbs{\RuleNameAbs{\vdash}{}}
+
 \[
-  \infer[\textit{var}]{
+  \infer[\RuleIsAbtVar]{
     \IsAbt{\Theta}{\Upsilon}{\Gamma}{x}{\tau}
   }{
     \Lookup{\Gamma}{x}{\tau}
   }
 \]
 \[
-  \infer[\textit{mvar}]{
+  \infer[\RuleIsAbtMVar]{
     \IsAbt{\Theta}{\Upsilon}{\Gamma}{
       \MApp{\MV{m}}{u_0,\dots,u_m}{M_0,\dots,M_n}
     }{\tau}
@@ -634,7 +643,7 @@ defined in four rules:
   }
 \]
 \[
-  \infer[\textit{app}]{
+  \infer[\RuleIsAbtApp]{
     \IsAbt{\Theta}{\Upsilon}{\Gamma}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{\tau}
@@ -651,7 +660,7 @@ defined in four rules:
   }
 \]
 \[
-  \infer[\textit{abs}]{
+  \infer[\RuleIsAbtAbs]{
     \IsBTm{\Theta}{\Upsilon}{\Gamma}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
@@ -674,16 +683,21 @@ Abts are identified up to $\alpha$-equivalence.
 
 \subsection{Calculating free variables}
 
+\newcommand\RuleFVVar{\RuleNameVar{\mathbf{FV}}{}}
+\newcommand\RuleFVMVar{\RuleNameMVar{\mathbf{FV}}{}}
+\newcommand\RuleFVApp{\RuleNameApp{\mathbf{FV}}}
+\newcommand\RuleFVAbs{\RuleNameAbs{\mathbf{FV}}{}}
+
 We can easily calculate the variables free in an expression by recursion on its
 structure:
 
 \begin{gather*}
-  \infer[\textit{var}]{
+  \infer[\RuleFVVar]{
     \CalcFV{x}{\MkSet{x}}
   }{
   }\\[6pt]
   %
-  \infer[\textit{mvar}]{
+  \infer[\RuleFVMVar]{
     \CalcFV{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{
@@ -697,7 +711,7 @@ structure:
     }
   }\\[6pt]
   %
-  \infer[\textit{app}]{
+  \infer[\RuleFVApp]{
     \CalcFV{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
@@ -711,7 +725,7 @@ structure:
     }
   }\\[6pt]
   %
-  \infer[\textit{abs}]{
+  \infer[\RuleFVAbs]{
     \CalcFV{
       \MkBTm{\vec{u}}{\vec{y}}{M}
     }{
@@ -727,18 +741,23 @@ $\vec{x}$ when $\CalcFV{M}{\vec{x}}$.
 
 \subsection{Calculating free symbols}
 
-Whereas the calculation of free variables pivoted on the \emph{var} rule, the
-calculation of free symbols will pivot on the \emph{app} and \emph{mvar} rule,
+\newcommand\RuleFSVar{\RuleNameVar{\mathbf{FS}}{}}
+\newcommand\RuleFSMVar{\RuleNameMVar{\mathbf{FS}}{}}
+\newcommand\RuleFSApp{\RuleNameApp{\mathbf{FS}}}
+\newcommand\RuleFSAbs{\RuleNameAbs{\mathbf{FS}}{}}
+
+Whereas the calculation of free variables pivoted on the $\RuleFVVar$ rule, the
+calculation of free symbols will pivot on the $\RuleFSApp$ and $\RuleFSMVar$ rules,
 because the only way a symbol can be introduced is as a parameter to an
 operator or as a parameter to a metavariable.
 
 \begin{gather*}
-  \infer[\textit{var}]{
+  \infer[\RuleFSVar]{
     \CalcFS{x}{\MkSet{}}
   }{
   }\\[6pt]
   %
-  \infer[\textit{mvar}]{
+  \infer[\RuleFSMVar]{
     \CalcFS{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{
@@ -752,7 +771,7 @@ operator or as a parameter to a metavariable.
     }
   }\\[6pt]
   %
-  \infer[\textit{app}]{
+  \infer[\RuleFSApp]{
     \CalcFS{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
@@ -766,7 +785,7 @@ operator or as a parameter to a metavariable.
     }
   }\\[6pt]
   %
-  \infer[\textit{abs}]{
+  \infer[\RuleFSAbs]{
     \CalcFS{
       \MkBTm{\vec{v}}{\vec{x}}{M}
     }{
@@ -783,6 +802,12 @@ $\vec{u}$ when $\CalcFS{M}{\vec{u}}$.
 
 \subsection{Renaming of symbols}
 
+\newcommand\RuleRenPrefix{\bullet}
+\newcommand\RuleRenVar{\RuleNameVar{\RuleRenPrefix}{}}
+\newcommand\RuleRenMVar{\RuleNameMVar{\RuleRenPrefix}{}}
+\newcommand\RuleRenApp{\RuleNameApp{\RuleRenPrefix}}
+\newcommand\RuleRenAbs{\RuleNameAbs{\RuleRenPrefix}{}}
+
 The only place that symbols appear in our calculus is as parameters to operators
 (unlike variables, symbols are not terms). Therefore, the functorial action of
 the operator sheaf can be lifted into terms by recursion on their
@@ -792,12 +817,12 @@ and $\IsAbt{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$ and
 $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
 
 \begin{gather*}
-  \infer[\textit{var}]{
+  \infer[\RuleRenVar]{
     \IsRenaming{\varrho}{x}{x}
   }{
   }
 \\[6pt]
-  \infer[\textit{mvar}]{
+  \infer[\RuleRenMVar]{
     \IsRenaming{\varrho}{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{
@@ -813,7 +838,7 @@ $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
     }
   }
 \\[6pt]
-  \infer[\textit{app}]{
+  \infer[\RuleRenApp]{
     \IsRenaming{\varrho}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
@@ -827,7 +852,7 @@ $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
     }
   }
 \\[6pt]
-  \infer[\textit{abs}]{
+  \infer[\RuleRenAbs]{
     \IsRenaming{\varrho}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
@@ -846,23 +871,29 @@ $\IsRenaming{\varrho}{M}{N}$.
 
 \subsection{Substitution of variables}
 
+\newcommand\RuleSubstPrefix{/}
+\newcommand\RuleSubstVar[1]{\RuleNameVar{\RuleSubstPrefix}{#1}}
+\newcommand\RuleSubstMVar{\RuleNameMVar{\RuleSubstPrefix}{}}
+\newcommand\RuleSubstApp{\RuleNameApp{\RuleSubstPrefix}}
+\newcommand\RuleSubstAbs[1]{\RuleNameAbs{\RuleSubstPrefix}{#1}}
+
 Variable substitution in abts is defined inductively by a pair of judgments,
 $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
 
 \begin{gather*}
-  \infer[\textit{var}_1]{
+  \infer[\RuleSubstVar{1}]{
     \IsSubst{N}{x}{y}{N}
   }{
     \IsEq{x}{y}
   }
-\qquad
-  \infer[\textit{var}_2]{
-    \IsSubst{N}{x}{y}{y}
-  }{
-    \IsApart{x}{y}
-  }
+  \qquad
+  \infer[\RuleSubstVar{2}]{
+      \IsSubst{N}{x}{y}{y}
+    }{
+      \IsApart{x}{y}
+    }
 \\[6pt]
-  \infer[\textit{mvar}]{
+  \infer[\RuleSubstMVar]{
     \IsSubst{N}{x}{
       \MApp{\MV{m}}{\vec{u}}{M_0,\dots,M_n}
     }{
@@ -876,7 +907,7 @@ $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
     }
   }
 \\[6pt]
-  \infer[\textit{app}]{
+  \infer[\RuleSubstApp]{
     \IsSubst{N}{x}{
       \App{\vartheta}{E_0,\dots,E_n}
     }{
@@ -891,7 +922,7 @@ $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
   }
 \end{gather*}
 \begin{gather*}
-  \infer[\textit{abs}_1]{
+  \infer[\RuleSubstAbs{1}]{
     \IsSubst{N}{x}{
       \MkBTm{\vec{u}}{\vec{y}}{M}
     }{
@@ -907,7 +938,7 @@ $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
     \IsSubst{N}{x}{M}{M'}
   }
 \\[6pt]
-  \infer[\textit{abs}_2]{
+  \infer[\RuleSubstAbs{2}]{
     \IsSubst{N}{x}{
       \MkBTm{\vec{u}}{\vec{y}}{M}
     }{
@@ -928,6 +959,14 @@ substitution of $\vec{N}$ for $\vec{x}$ in $M$.
 
 \subsection{Substitution of metavariables}
 
+\newcommand\RuleMSubstPrefix{/}
+\newcommand\RuleMSubstSuffix{\texttt{meta}}
+\newcommand\RuleMSubstVar{\RuleNameVar{\RuleMSubstPrefix}{}^\RuleMSubstSuffix}
+\newcommand\RuleMSubstMVar[1]{\RuleNameMVar{\RuleMSubstPrefix}{#1}^\RuleMSubstSuffix}
+\newcommand\RuleMSubstApp{\RuleNameApp{\RuleMSubstPrefix}^\RuleMSubstSuffix}
+\newcommand\RuleMSubstAbs{\RuleNameAbs{\RuleMSubstPrefix}{}^\RuleMSubstSuffix}
+
+
 Metavariables are substituted by abstractions; since a metavariable may only
 appear in an application expression $\MApp{\MV{m}}{\cdots}{\cdots}$, we will
 instantiate the abstraction at the supplied parameters and arguments.
@@ -935,12 +974,12 @@ Substitution for metavariables is defined inductively by the judgments
 $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
 
 \begin{gather*}
-  \infer[\textit{var}]{
+  \infer[\RuleMSubstVar]{
     \IsSubst{E}{\MV{m}}{x}{x}
   }{
   }
 \\[6pt]
-  \infer[\textit{mvar}_1]{
+  \infer[\RuleMSubstMVar{1}]{
     \IsSubst{E}{\MV{m}}{
       \MApp{\MV{n}}{\vec{u}}{M_0,\dots,M_n}
     }{
@@ -956,7 +995,7 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
     }
   }
 \\[6pt]
-  \infer[\textit{mvar}_2]{
+  \infer[\RuleMSubstMVar{2}]{
     \IsSubst{
       \MkBTm{\vec{u}}{\vec{x}}{N}
     }{\MV{m}}{
@@ -972,7 +1011,7 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
     \IsRenaming{\vec{u}\mapsto\vec{v}}{N'}{N''}
   }\\[6pt]
   %
-  \infer[\textit{app}]{
+  \infer[\RuleMSubstApp]{
     \IsSubst{E}{\MV{m}}{
       \App{\vartheta}{F_0,\dots,F_n}
     }{
@@ -986,7 +1025,7 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
     }
   }
 \\[6pt]
-  \infer[\textit{abs}]{
+  \infer[\RuleMSubstAbs]{
     \IsSubst{E}{\MV{m}}{
       \MkBTm{\vec{u}}{\vec{x}}{M}
     }{
