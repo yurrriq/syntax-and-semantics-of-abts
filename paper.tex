@@ -601,7 +601,7 @@ Let the judgment $\IsAbt{\Theta}{\Upsilon}{\Gamma}{M}{\tau}$ presuppose
 $\IsMetaCtx{\Theta}$, $\IsSymCtx\Upsilon$, $\IsVarCtx\Gamma$ and
 $\IsSort{\tau}$, meaning that $M$ is an abstract binding tree of sort $s$, with
 metavariables in $\Theta$, parameters in $\Upsilon$, and variables in $\Gamma$.
-Let the judgment $\IsBTm{\Theta}{\Upsilon}{\Gamma}{E}{v}$ presuppose
+Let the judgment $\IsAbs{\Theta}{\Upsilon}{\Gamma}{E}{v}$ presuppose
 $\IsValence{v}$. Then, the syntax of abstract binding trees is inductively
 defined in four rules:
 
@@ -654,15 +654,15 @@ defined in four rules:
       }
 \\
       \HypJ{
-        \IsBTm{\Theta}{\Upsilon}{\Gamma}{E_i}{v_i}
+        \IsAbs{\Theta}{\Upsilon}{\Gamma}{E_i}{v_i}
       }{\Leq{i}{n}}
     \end{array}
   }
 \]
 \[
   \infer[\RuleIsAbtAbs]{
-    \IsBTm{\Theta}{\Upsilon}{\Gamma}{
-      \MkBTm{\vec{u}}{\vec{x}}{M}
+    \IsAbs{\Theta}{\Upsilon}{\Gamma}{
+      \MkAbs{\vec{u}}{\vec{x}}{M}
     }{
       \MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}
     }
@@ -727,7 +727,7 @@ structure:
   %
   \infer[\RuleFVAbs]{
     \CalcFV{
-      \MkBTm{\vec{u}}{\vec{y}}{M}
+      \MkAbs{\vec{u}}{\vec{y}}{M}
     }{
       \vec{x}\setminus\vec{y}
     }
@@ -787,7 +787,7 @@ operator or as a parameter to a metavariable.
   %
   \infer[\RuleFSAbs]{
     \CalcFS{
-      \MkBTm{\vec{v}}{\vec{x}}{M}
+      \MkAbs{\vec{v}}{\vec{x}}{M}
     }{
       \vec{u}\setminus\vec{v}
     }
@@ -854,9 +854,9 @@ $\IsAbt{\Theta}{\Upsilon}{\Gamma}{E}{v}$ respectively:
 \\[6pt]
   \infer[\RuleRenAbs]{
     \IsRenaming{\varrho}{
-      \MkBTm{\vec{u}}{\vec{x}}{M}
+      \MkAbs{\vec{u}}{\vec{x}}{M}
     }{
-      \MkBTm{\vec{u}}{\vec{x}}{N}
+      \MkAbs{\vec{u}}{\vec{x}}{N}
     }
   }{
     \IsRenaming{\varrho\setminus\vec{u}}{M}{N}
@@ -924,9 +924,9 @@ $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
 \begin{gather*}
   \infer[\RuleSubstAbs{1}]{
     \IsSubst{N}{x}{
-      \MkBTm{\vec{u}}{\vec{y}}{M}
+      \MkAbs{\vec{u}}{\vec{y}}{M}
     }{
-      \MkBTm{\vec{u}}{\vec{y}}{M'}
+      \MkAbs{\vec{u}}{\vec{y}}{M'}
     }
   }{
     \NotIn{x}{\vec{y}}
@@ -940,9 +940,9 @@ $\IsSubst{N}{x}{M}{M'}$ and $\IsSubst{N}{x}{E}{F}$:
 \\[6pt]
   \infer[\RuleSubstAbs{2}]{
     \IsSubst{N}{x}{
-      \MkBTm{\vec{u}}{\vec{y}}{M}
+      \MkAbs{\vec{u}}{\vec{y}}{M}
     }{
-      \MkBTm{\vec{u}}{\vec{y}}{M}
+      \MkAbs{\vec{u}}{\vec{y}}{M}
     }
   }{
     \Member{x}{\vec{y}}
@@ -997,7 +997,7 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
 \\[6pt]
   \infer[\RuleMSubstMVar{2}]{
     \IsSubst{
-      \MkBTm{\vec{u}}{\vec{x}}{N}
+      \MkAbs{\vec{u}}{\vec{x}}{N}
     }{\MV{m}}{
       \MApp{\MV{n}}{\vec{v}}{\vec{M}}
     }{
@@ -1027,9 +1027,9 @@ $\IsSubst{E}{\MV{m}}{M}{N}$ and $\IsSubst{E}{\MV{m}}{F}{F'}$:
 \\[6pt]
   \infer[\RuleMSubstAbs]{
     \IsSubst{E}{\MV{m}}{
-      \MkBTm{\vec{u}}{\vec{x}}{M}
+      \MkAbs{\vec{u}}{\vec{x}}{M}
     }{
-      \MkBTm{\vec{u}}{\vec{x}}{N}
+      \MkAbs{\vec{u}}{\vec{x}}{N}
     }
   }{
     \IsApart{\vec{u}}{\FS{E}}
@@ -1691,7 +1691,7 @@ Then, we may write a closed sequent judgment as follows:
 \[
   \IsAbt{\cdot}{\cdot}{\cdot}{
     \App{\OpNabla{\SortExp,\SortExp}}{
-      \MkBTm{u,v}{}{
+      \MkAbs{u,v}{}{
         \diamond,u:\mathtt{P},v:\App{\mathtt{pred}}{`u}
         \gg
         \App{\mathtt{pred}}{`u}
@@ -1714,7 +1714,7 @@ $\IsAbt{\cdot}{\Upsilon}{\Gamma}{E}{v}$, defined uniformly as follows:
 \[
   \infer{
     \IsWf{\Upsilon}{\Gamma}{
-      \MkBTm{\vec{u}}{\vec{x}}{M}
+      \MkAbs{\vec{u}}{\vec{x}}{M}
     }{
       \MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}
     }
@@ -1768,7 +1768,7 @@ subterms as well:
   \infer{
     \IsWf{\Upsilon}{\Gamma}{
       \App{\OpNabla{\vec{\sigma}}}{
-        \MkBTm{\vec{u}}{}{J}
+        \MkAbs{\vec{u}}{}{J}
       }
     }{\SortJdg}
   }{
@@ -1809,7 +1809,7 @@ previous section is wellformed:
 \[
   \IsWf{\cdot}{\cdot}{
     \App{\OpNabla{\SortExp,\SortExp}}{
-      \MkBTm{u,v}{}{
+      \MkAbs{u,v}{}{
         \diamond,u:\mathtt{P},v:\App{\mathtt{pred}}{`u}
         \gg
         \App{\mathtt{pred}}{`u}
