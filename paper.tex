@@ -187,10 +187,9 @@ morphism
   \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
 \end{tikzcd}
 %
-in $\SCtx$, we have a corresponding functorial renaming action on any
-copresheaf $\Of{X}{\Sets^\SCtx}$, namely $\Of{X(\varrho)}{X(\Upsilon)\ra
-X(\Upsilon')}$. When the copresheaf $X$ is clear from context, we will write
-$m\cdot\varrho$ for $X(\varrho)(m)$.
+in $\SCtx$, any copresheaf $\Of{X}{\Sets^\SCtx}$ has a symbol-renaming action
+$\Of{X(\varrho)}{X(\Upsilon)\ra X(\Upsilon')}$. When the copresheaf $X$ is
+clear from context, we will write $m\cdot\varrho$ for $X(\varrho)(m)$.
 
 Now, when $\Member{m}{X(\Upsilon)}$ for a copresheaf $\Of{X}{\Sets^\SCtx}$, we
 can define the notion that $m$ depends on \emph{at most} a subcontext
@@ -230,12 +229,20 @@ Intuitively, $\Supp{m}$ is the exact symbol context that $m$ depends on.
 
 \subsection{Sheaves on the atomic site}
 
-Intuitively, when $\Upsilon$ supports $\Member{m}{X(\Upsilon')}$, we would
+When
+  \begin{tikzcd}[cramped]
+    \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
+  \end{tikzcd}
+such that $\Supports{\Upsilon}{\varrho}{m}$ for some $\Member{m}{X(\Upsilon')}$
+, we would
 expect that we can work backward to a unique $\Of{m'}{\Upsilon}$ such that
 $\IsEq{m'\cdot\varrho}{m}$; whilst it is not in general the case for presheaves
 $X$, this is precisely the sheaf condition for copresheaves on $\SCtx$
-under the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}. The sheaf
-condition, then, ensures that the notion of support is well-behaved.
+under the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}.
+%%% TODO: add definition of atomic coverage
+The sheaf condition, then, ensures that the notion of support is well-behaved in the
+following sense: if some term lies in two different fibers, then it may be
+\emph{strengthened} uniquely into the fibre of its support.
 
 \paragraph{Sites and coverages}
 
