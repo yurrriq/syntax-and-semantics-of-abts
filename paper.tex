@@ -82,6 +82,7 @@
 \newcommand\ConstPsh[1]{\Delta[#1]}
 \newcommand\ConstSh[1]{\Delta^\#[#1]}
 \newcommand\SCtxSite{\SymSets[\Sorts]}
+\newcommand\AtomicCoverage{J_{\mathtt{atm}}}
 
 \DeclareMathOperator{\Perm}{\mathbf{Perm}}
 
@@ -233,50 +234,66 @@ When
   \begin{tikzcd}[cramped]
     \IMode{\Upsilon}\arrow[r, hook, "\IMode{\varrho}"] & \IMode{\Upsilon'}
   \end{tikzcd}
-such that $\Supports{\Upsilon}{\varrho}{m}$ for some $\Member{m}{X(\Upsilon')}$
-, we would
-expect that we can work backward to a unique $\Of{m'}{\Upsilon}$ such that
-$\IsEq{m'\cdot\varrho}{m}$; whilst it is not in general the case for presheaves
-$X$, this is precisely the sheaf condition for copresheaves on $\SCtx$
-under the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}.
-%%% TODO: add definition of atomic coverage
-The sheaf condition, then, ensures that the notion of support is well-behaved in the
+such that $\Supports{\Upsilon}{\varrho}{m}$ for some $\Member{m}{X(\Upsilon')}$,
+we would expect that we can work backward to a unique $\Of{m'}{\Upsilon}$
+such that $\IsEq{m'\cdot\varrho}{m}$; whilst it is not in general the case for
+presheaves $X$, this is precisely the sheaf condition for copresheaves on
+$\SCtx$ under the atomic topology \cite[p.~126]{mac-lane-moerdijk:1992}, which
+we will define in Definition~$\ref{def:atomic-topology}$.
+
+The sheaf condition ensures that the notion of support is well-behaved in the
 following sense: if some term lies in two different fibers, then it may be
-\emph{strengthened} uniquely into the fibre of its support.
+\emph{strengthened} uniquely into the fiber of its support.
 
-\paragraph{Sites and coverages}
+\begin{definition}[Sieves and matching families]
+  A \emph{sieve} $S$ on an object $C$ is a subfunctor of the Yoneda embedding
+  $\Define{\Yoneda{C}}{\Hom{\mathcal{C}}{-}{C}}$, i.e.\
+  $\IMode{S}\sqsubseteq\IMode{\Yoneda{C}}$. For a presheaf $X$ on the category
+  $\mathcal{C}$, a \emph{matching family} for a sieve $S$ is a natural
+  transformation $\Of{\phi}{S\ra X}$. An \emph{amalgamation} for $\phi$ is an
+  object $\Member{m}{X(C)}$ such that $\IsEq{m\cdot f}{\phi_D(f)}$ for each
+  $\Member{f}{S(D)}$, for all objects $D$.
+\end{definition}
 
-We will briefly discuss the basics of sheaves on a site. A \emph{site} is a
-pair $\Pair{\mathcal{C}}{J}$, with $\mathcal{C}$ a category of ``worlds'' and
-$J$ a Grothendieck topology (or ``coverage''). A coverage is a predicate that
-picks out for each object $\Of{C}{\mathcal{C}}$, the \emph{covering sieves} of
-$C$, subject to several axioms (see \cite{mac-lane-moerdijk:1992} for details).
+\begin{definition}[Sites and coverages]
+  A \emph{site} is a pair $\Pair{\mathcal{C}}{J}$, with $\mathcal{C}$ a category
+  of ``worlds'' and $J$ a Grothendieck topology (or ``coverage''). A Grothendieck
+  topology $J$ (or \emph{coverage}) is a family of sets of sieves, indexed by
+  $\mathcal{C}$-objects; that is, for each object $\Of{C}{\mathcal{C}}$, $J(C)$
+  is the set of $C$-sieves which will be said to $\emph{cover}$ $C$. A topology
+  $J$ must satisfy several axioms (see \cite{mac-lane-moerdijk:1992} for
+  details).
+\end{definition}
 
-\paragraph{Covering sieves and matching families}
+\begin{definition}[Separation and sheafhood]
+  A presheaf on a site $\Pair{\mathcal{C}}{J}$ is a presheaf on $\mathcal{C}$; we
+  say that such a presheaf $X$ is \emph{separated} in case for every sieve
+  $\Member{S}{J(C)}$ and matching family $\Of{\phi}{S\ra X}$, there is at most
+  one amalgamation $\Member{m}{X(C)}$ for $\phi$. Additionally, $X$ is a
+  \emph{sheaf} when there is \emph{exactly one} such amalgamation.
+\end{definition}
 
-A \emph{sieve} on an object $C$ is a subfunctor of the Yoneda embedding
-$\Define{\Yoneda{C}}{\Hom{\mathcal{C}}{-}{C}}$. We say that such a sieve $S$
-covers $C$ just when $\Member{S}{J(C)}$.  For a presheaf $X$ on the site
-$\Pair{\mathcal{C}}{J}$, a \emph{matching family} for the sieve $S$ is a
-natural transformation $\Of{\phi}{S\ra X}$. An \emph{amalgamation} for $\phi$
-is an object $\Member{m}{X(C)}$ such that $\IsEq{m\cdot f}{\phi_D(f)}$ for each
-$\Member{f}{S(D)}$, for all objects $D$.
-
-\paragraph{Separation and sheafhood}
-Then, we say that the presheaf $X$ is \emph{separated} in case for every sieve
-$\Member{S}{J(C)}$ and matching family $\Of{\phi}{S\ra X}$, there is at most
-one amalgamation $\Member{m}{X(C)}$ for $\phi$. Additionally, $X$ is called a
-\emph{sheaf} when there is \emph{exactly one} such amalgamation.
-
-\paragraph{The atomic coverage}
-
-The atomic coverage $J_\mathsf{atm}$ is the one in which all non-empty sieves
-cover. A sieve $\IMode{S}\sqsubseteq\IMode{\Yoneda{C}}$ is non-empty when the
-collection $\bigcup_D S(D)$ of all its arrows is non-empty.
+\begin{definition}[The atomic topology]
+  \label{def:atomic-topology}
+  The atomic coverage $\AtomicCoverage$ is the one in which all non-empty sieves
+  cover; in other words:
+  \[
+    \Define{
+      \AtomicCoverage(C)
+    }{
+      \MkSet{
+        S\sqsubseteq\Yoneda{C}
+        \mid
+        \textstyle
+        \bigcup_D S(D)\ \textit{non-empty}
+      }
+    }
+  \]
+\end{definition}
 
 In the future, we will write $\SCtxSite$ for the Grothendieck site
-$\Pair{\OpCat{\left(\SCtx\right)}}{J_\mathsf{atm}}$, where $J_\mathsf{atm}$ is
-the atomic coverage. Sheafhood on the atomic site $\SCtxSite$ amounts to the
+$\Pair{\OpCat{\left(\SCtx\right)}}{\AtomicCoverage}$.
+Sheafhood on the atomic site $\SCtxSite$ amounts to the
 following condition, using Definition~\ref{def:support}:
 \begin{quote}
   A copresheaf $\Of{X}{\Sets^\SCtx}$ is a sheaf on $\SCtxSite$ just when, for all $\Member{n}{X(\Upsilon')}$, if we have
@@ -1868,7 +1885,7 @@ $\Sets^\SymSets$ containing only pullbacks-preserving functors.
 In addition to the unisorted nominal sets framework, Pitts also briefly
 discusses a multi-sorted version of the apparatus in which the countably
 infinite set of atoms $\mathbb{A}$ is equipped with a sort assignment
-$\Of{\mathfrak{s}}{\mathbb{A}\to\Sorts}$ such that all the fibres of
+$\Of{\mathfrak{s}}{\mathbb{A}\to\Sorts}$ such that all the fibers of
 $\mathfrak{s}$ are countably infinite; then, he defines for any such assignment
 the category $\mathbf{Nom}_\mathfrak{s}$ of $\mathfrak{s}$-sorted nominal sets
 as a subcategory of the category of presheaves on the group of
