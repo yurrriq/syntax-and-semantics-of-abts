@@ -354,10 +354,6 @@ Every category of sheaves on a site gives rise to a topos, which equips us with
 a number of standard constructions, including (among other things) the disjoint
 union of sheaves $X\oplus Y$, the product of sheaves $X\otimes Y$, and the terminal sheaf $\mathbb{1}$.
 
-Returning to the site $\SCtxSite$, we will write $\mathbf{S}_\tau$ for the sheaf
-of symbols of sort $\tau$, a subobject of the Yoneda embedding of the empty
-symbol context, $\Yoneda{\cdot}$.
-
 \section{Operators and signatures}
 
 A valence $\MkValence{\vec{\sigma}}{\vec{\tau}}{\tau}$ specifies an expression
@@ -411,9 +407,9 @@ $\Define{\Sigma}{\Pair{\Sorts}{\Operators}}$.
 We will write $\IsOperator{\Upsilon}{\vartheta}{a}$ in case
 $\Member{\vartheta}{\Operators_a(\Upsilon)}$; note that this judgment enjoys
 the structural properties of weakening and exchange via functoriality of
-$\Operators$. An operator signature is defined by specifying, for each arity
-$a$, the sheaf $\Operators_a$, whose ``elements'' are the operators of arity
-$a$.
+$\Operators$, and strengthening via the sheaf condition. An operator signature
+is defined by specifying, for each arity $a$, the sheaf $\Operators_a$, whose
+``elements'' are the operators of arity $a$.
 
 
 \paragraph{Examples}
@@ -491,7 +487,19 @@ extension of the calculus with assignables (references):
   }
 \end{gather*}
 
-These rules correspond to the following family of sheaves:
+Let $\mathbf{S}_\tau$ be the sheaf of symbols of sort $\tau$, a subobject of
+the Yoneda embedding of the empty symbol context, $\Yoneda{\cdot}$:
+\[
+  \Define{\mathbf{S}_\tau(\Upsilon)}{
+    \MkSet{
+      u\in\Dom{\Upsilon}
+      \mid
+      \Upsilon(u) \equiv \tau
+    }
+  }
+\]
+%
+Then the above rules correspond to the following family of sheaves:
 \begin{align*}
   \ADefine{
     \Operators_{
