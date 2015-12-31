@@ -1081,22 +1081,23 @@ $\IsSubst{E}{\MV{m}}{M}{N}$.
 
 \section{Model Theory}
 
+\newcommand\SymPsh{\mathbf{S}}
+\newcommand\VarPsh{\mathbf{V}}
+
 Let $\Define{\HypCat}{\OpCat{(\SCtx\times\Ctx)}}$; then we fix the functor
 category $\widehat{\HypCat}^\Sorts$ as our semantic universe, using the
 notation of the French school,
 $\Define{\widehat{\mathcal{C}}}{\Sets^{\OpCat{\mathcal{C}}}}$.
 %
-Let $\Define{V_\tau(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid
+Let $\Define{\VarPsh_\tau(\Upsilon\parallel\Gamma)}{\MkSet{x\in\Dom\Gamma\mid
     \Gamma(x)\equiv\tau}}$ be called the presheaf of variables; additionally, we have
 a presheaf of symbols
-$\Define{S_\tau(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
+$\Define{\SymPsh_\tau(\Upsilon\parallel\Gamma)}{\MkSet{u\in\Dom\Upsilon\mid
     \Upsilon(u)\equiv\tau}}$. Lastly, we have the presheaf of operators with arity
 $a$,
 $\Define{\Operators_a(\Upsilon\parallel\Gamma)}{\Operators_a(\Upsilon)}$
 
 \subsection{Substitution monoidal structures}
-\newcommand\SymPsh{\mathbf{S}}
-\newcommand\VarPsh{\mathbf{V}}
 
 For an object $\Of{P}{\widehat{\HypCat}^\Sorts}$, we will use the notation
 $P^{[\Gamma]}$ to mean $\prod_{x\in\Dom\Gamma}P_{\Gamma(x)}$; likewise,
