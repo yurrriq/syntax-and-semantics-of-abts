@@ -1609,8 +1609,10 @@ constants or symbols, which can be used in the syntax of contexts. In order to
 specify where such symbols are allowed to occur, a wellformedness predicate (a
 ``scheme'') is separately defined. Our setting is similar in that we may also
 use symbols to encode the syntax of contexts, except that here, we have better
-control over their proliferation because, contrary to the state of
-affairs in Abella, symbols are \emph{not} terms.
+control over their proliferation because, contrary to the state of affairs in
+Abella, symbols are \emph{not} expressions; following
+Harper~\cite{harper:2016}, symbols are meant only to serve as an open-ended
+indexing scheme for operators, not as actual expressions.
 
 There are two reasons that one might want to model sequents in a (meta)-logical
 framework. Perhaps the most obvious reason is to prove things about a logic
@@ -1719,8 +1721,8 @@ Now, we can write the following sequent:
 \newcommand\OpNabla[1]{\nabla[#1]}
 
 The above sequent has free symbols, but we can close over them by adding a form
-of parametric higher-order judgment to our object language, indexed by a
-collection of sorts $\vec{\sigma}$:
+of parametric higher-order judgment (as in \cite{harper:2016}) to our object
+language, indexed by a collection of sorts $\vec{\sigma}$:
 \[
   \IsOperator{\Upsilon}{\OpNabla{\vec{\sigma}}}{
     \MkArity{
