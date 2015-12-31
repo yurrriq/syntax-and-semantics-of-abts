@@ -86,11 +86,6 @@
 
 \DeclareMathOperator{\Perm}{\mathbf{Perm}}
 
-\newcommand\RuleNameVar[2]{{#1}_{\textit{var}_{#2}}}
-\newcommand\RuleNameMVar[2]{{#1}_{\textit{mvar}_{#2}}}
-\newcommand\RuleNameApp[1]{{#1}_\textit{app}}
-\newcommand\RuleNameAbs[2]{{#1}_{\textit{abs}_{#2}}}
-
 \begin{document}
 
 \title{Syntax and Semantics of Abstract Binding Trees}
@@ -636,11 +631,6 @@ metavariables in $\Theta$, parameters in $\Upsilon$, and variables in $\Gamma$.
 Let the judgment $\IsAbs{\Theta}{\Upsilon}{\Gamma}{E}{v}$ presuppose
 $\IsValence{v}$. Then, the syntax of abstract binding trees is inductively
 defined in four rules:
-
-\newcommand\RuleIsAbtVar{\RuleNameVar{\vdash}{}}
-\newcommand\RuleIsAbtMVar{\RuleNameMVar{\vdash}{}}
-\newcommand\RuleIsAbtApp{\RuleNameApp{\vdash}}
-\newcommand\RuleIsAbtAbs{\RuleNameAbs{\vdash}{}}
 
 \[
   \infer[\RuleIsAbtVar]{
