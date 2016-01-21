@@ -42,6 +42,7 @@
 \newcommand\SupportsUnmoded[3]{#1 \blacktriangleright_{#2} #3}
 \newcommand\Supports[3]{\SupportsUnmoded{\IMode{#1}}{\IMode{#2}}{\IMode{#3}}}
 
+\newcommand\ADefineEquiv[2]{\IMode{#1}&\cong\OMode{#2}}
 \newcommand\CalcFV[2]{
   \FV{\IMode{#1}}\leadsto \OMode{#2}
 }
@@ -416,7 +417,7 @@ operators:
 
 These rules correspond to the following definition of $\Operators$:
 \begin{align*}
-  \ADefine{
+  \ADefineEquiv{
     \Operators_{
        \MkArity{
         \MkValence{}{\SortExp}{\SortExp}
@@ -427,7 +428,7 @@ These rules correspond to the following definition of $\Operators$:
   }
   \\
   %
-  \ADefine{
+  \ADefineEquiv{
     \Operators_{
       \MkArity{
         \MkValence{}{}{\SortExp},
@@ -479,7 +480,7 @@ the Yoneda embedding of the empty symbol context, $\Yoneda{\cdot}$:
 %
 Then the above rules correspond to the following family of sheaves:
 \begin{align*}
-  \ADefine{
+  \ADefineEquiv{
     \Operators_{
       \MkArity{
         \MkValence{}{}{\SortExp},
@@ -491,14 +492,14 @@ Then the above rules correspond to the following family of sheaves:
   }{
     \mathbb{1}
   }\\
-  \ADefine{
+  \ADefineEquiv{
     \Operators_{
       \MkArity{}{\SortExp}
     }
   }{
     \mathbf{S}_\SortExp
   }\\
-  \ADefine{
+  \ADefineEquiv{
     \Operators_{
       \MkArity{
         \MkValence{}{}{\SortExp}
