@@ -1,0 +1,32 @@
+\newcommand\ADefineEquiv[2]{\IMode{#1}&\cong\OMode{#2}}
+
+\newcommand\HypCat{\mathbf{H}}
+\newcommand\Supp[1]{\mathbf{supp}(#1)}
+\newcommand\SupportsUnmoded[3]{#1 \blacktriangleright_{#2} #3}
+\newcommand\Supports[3]{\SupportsUnmoded{\IMode{#1}}{\IMode{#2}}{\IMode{#3}}}
+
+\newcommand\CalcFV[2]{
+  \FV{\IMode{#1}}\leadsto \OMode{#2}
+}
+
+\newcommand\CalcFS[2]{
+  \FS{\IMode{#1}}\leadsto \OMode{#2}
+}
+
+\newcommand\SortExp{\mathtt{exp}}
+
+\newcommand\IsWf[4]{%
+  \IMode{#1}\parallel%
+  \IMode{#2}\vdash%
+  \IMode{#3}\in_{\mathbf{wf}}\IMode{#4}%
+}
+
+\newcommand\Sheaves[1]{\mathbf{Sh}\left(#1\right)}
+\newcommand\Presheaves[1]{\mathbf{Psh}\left(#1\right)}
+\newcommand\Sheafify[1]{#1^{\#}}
+\newcommand\ConstPsh[1]{\Delta[#1]}
+\newcommand\ConstSh[1]{\Delta^\#[#1]}
+\newcommand\SCtxSite{\SymSets[\Sorts]}
+\newcommand\AtomicCoverage{J_{\mathtt{atm}}}
+
+\DeclareMathOperator{\Perm}{\mathbf{Perm}}
