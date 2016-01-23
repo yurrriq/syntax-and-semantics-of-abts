@@ -55,6 +55,8 @@
 \DeclareSymbolFont{greekletters}{OML}{cmr}{m}{it}
 \DeclareMathSymbol{\varsigma}{\mathalpha}{greekletters}{"26}
 
+\newcommand\ADefineEquiv[2]{\IMode{#1}&\cong\OMode{#2}}
+
 \newcommand\HypCat{\mathbf{H}}
 \newcommand\Supp[1]{\mathbf{supp}(#1)}
 \newcommand\SupportsUnmoded[3]{#1 \blacktriangleright_{#2} #3}
@@ -433,7 +435,7 @@ operators:
 
 These rules correspond to the following definition of $\Operators$:
 \begin{align*}
-  \ADefine{
+  \ADefineEquiv{
     \Operators_{
        \MkArity{
         \MkValence{}{\SortExp}{\SortExp}
@@ -444,7 +446,7 @@ These rules correspond to the following definition of $\Operators$:
   }
   \\
   %
-  \ADefine{
+  \ADefineEquiv{
     \Operators_{
       \MkArity{
         \MkValence{}{}{\SortExp},
@@ -496,7 +498,7 @@ the Yoneda embedding of the empty symbol context, $\Yoneda{\cdot}$:
 %
 Then the above rules correspond to the following family of sheaves:
 \begin{align*}
-  \ADefine{
+  \ADefineEquiv{
     \Operators_{
       \MkArity{
         \MkValence{}{}{\SortExp},
@@ -508,14 +510,14 @@ Then the above rules correspond to the following family of sheaves:
   }{
     \mathbb{1}
   }\\
-  \ADefine{
+  \ADefineEquiv{
     \Operators_{
       \MkArity{}{\SortExp}
     }
   }{
     \mathbf{S}_\SortExp
   }\\
-  \ADefine{
+  \ADefineEquiv{
     \Operators_{
       \MkArity{
         \MkValence{}{}{\SortExp}
